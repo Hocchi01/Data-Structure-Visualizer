@@ -8,6 +8,7 @@ using DataStructureVisualizer.ViewModels.Data;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,9 @@ using System.Windows.Controls;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
-    internal abstract partial class CanvasViewModelBase : 
-        ObservableRecipient, 
-        IRecipient<ValueChangedMessage<int[]>>, 
+    internal abstract partial class CanvasViewModelBase :
+        ObservableRecipient,
+        IRecipient<ValueChangedMessage<int[]>>,
         IRecipient<LoadAddAnimationMessage>,
         IRecipient<PauseAnyAnimationMessage>,
         IRecipient<ResumeAnyAnimationMessage>
@@ -28,6 +29,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         [ObservableProperty]
         private ObservableCollection<DataItemViewModelBase> dataItems;
 
+
+
         /// <summary>
         /// 数据结构的数据源
         /// </summary>
@@ -35,21 +38,29 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// 由于编辑动作都要配上动画，因此所有动作最终都对 Value 进行赋值从而调用其 set <br>
         /// 并且目前 DataItems 类型使用的是 可观测集合 也未用到其可观测性
         /// </remarks>
-        private List<int> values = new List<int>();
-        public List<int> Values 
-        {
-            get => values; 
-            set
-            {
-                values = value;
-                UpdateDataItems();
+        [ObservableProperty]
+        private ObservableCollection<int> values;
 
-                /* 
-                 * 1. 通知工具改变索引值选取的范围 
-                 */
-                WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
-            }
+        partial void OnValuesChanged(ObservableCollection<int> value)
+        {
+            ReloadValues();
         }
+
+        //private List<int> values = new List<int>();
+        //public List<int> Values
+        //{
+        //    get => values;
+        //    set
+        //    {
+        //        values = value;
+        //        UpdateDataItems();
+
+        //        /* 
+        //         * 1. 通知工具改变索引值选取的范围 
+        //         */
+        //        WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
+        //    }
+        //}
 
         public MyStoryboard MainStoryboard { get; set; }
 
@@ -63,6 +74,12 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             IsActive = true;
             DataItems = new ObservableCollection<DataItemViewModelBase>();
             MainStoryboard = new MyStoryboard();
+
+            Values = new ObservableCollection<int>();
+            Values.CollectionChanged += (s, e) =>
+            {
+                ReloadValues();
+            };
         }
 
         public abstract void UpdateDataItems();
@@ -74,7 +91,11 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// <exception cref="NotImplementedException"></exception>
         public void Receive(ValueChangedMessage<int[]> message)
         {
-            Values = new List<int>(message.Value);
+            Values = new ObservableCollection<int>(message.Value);
+            Values.CollectionChanged += (s, e) =>
+            {
+                ReloadValues();
+            };
         }
 
         /// <summary>
@@ -96,6 +117,16 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             {
                 MainStoryboard.Resume((Panel)GetCanvas());
             }
+        }
+
+        private void ReloadValues()
+        {
+            UpdateDataItems();
+
+            /* 
+             * 1. 通知工具改变索引值选取的范围 
+             */
+            WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
         }
     }
 }

@@ -11,7 +11,7 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <DataTemplate x:Key="dataTmp">
-            <data:ArrayItemUserControl x:Name="item"/>
+            <data:ArrayItemUserControl x:Name="item" />
         </DataTemplate>
     </UserControl.Resources>
     <Grid>

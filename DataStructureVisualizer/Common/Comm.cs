@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -83,13 +84,13 @@ namespace DataStructureVisualizer.Common
 
             return colors;
         }
-        public static List<Color> GetColorGradientByValues(List<int> values)
+        public static List<Color> GetColorGradientByValues(ObservableCollection<int> values)
         {
-            return GetColorGradientByValues(ListToArray(values));
+            return GetColorGradientByValues(ObservableCollectionToArray(values));
         }
 
 
-        public static int[] ListToArray(List<int> list)
+        public static int[] ObservableCollectionToArray(ObservableCollection<int> list)
         {
             int[] arr = new int[list.Count];
             for (int i = 0; i < list.Count; i++)

@@ -22,7 +22,7 @@ namespace DataStructureVisualizer.ViewModels
         [RelayCommand]
         private void PlayOrPause()
         {
-            switch (state)
+            switch (State)
             {
                 case AnimationState.Running: 
                     State = AnimationState.Paused;

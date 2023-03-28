@@ -66,7 +66,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     after += () =>
                     {
                         Values.Insert(message.Index, message.Value);
-                        Values = Values; // 调用 Set 访问器
+                        //Values.Add(message.Value);
+                        //Values = Values; // 调用 Set 访问器
                         WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(new LogViewModel() { Content = $"a[{message.Index}] = {message.Value};" }));
                     };
                 }

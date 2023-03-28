@@ -58,6 +58,32 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="upOrDownConsoleStyle" TargetType="Grid">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding AnimationControlPanel.State, Converter={StaticResource as2bCvtr}, ConverterParameter=IsBegin}" Value="True">
+                    <DataTrigger.EnterActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                    To="1"
+                                    Duration="0:0:0.5" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.EnterActions>
+                    <DataTrigger.ExitActions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                    To="0"
+                                    Duration="0:0:0.5" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </DataTrigger.ExitActions>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -204,205 +230,202 @@
 
         </Grid>
 
+
         <!--  工具栏  -->
-
-        <materialDesign:Flipper
-            IsFlipped="{Binding AnimationControlPanel.State, Converter={StaticResource as2bCvtr}, ConverterParameter=IsBegin}"
+        <Grid
             Grid.Column="2"
-            materialDesign:ElevationAssist.Elevation="Dp0"
-            Style="{StaticResource MaterialDesignCardFlipper}">
-            <materialDesign:Flipper.FrontContent>
-                <!--  工具栏  -->
-                <Grid MinWidth="230" Margin="5,10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <!--  标题  -->
-                    <Border
-                        Margin="0,0,0,5"
-                        BorderBrush="{DynamicResource PrimaryHueMidBrush}"
-                        BorderThickness="1">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon
-                                Width="24"
-                                Height="24"
-                                Margin="5"
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                Kind="ToolboxOutline" />
-                            <TextBlock
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="18"
-                                FontWeight="Black"
-                                Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                Text="Toolbox" />
-                        </StackPanel>
-                    </Border>
-                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
-                        <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
-                            <GroupBox
-                                Margin="0,5"
-                                materialDesign:ColorZoneAssist.Mode="SecondaryMid"
-                                Header="Sort"
-                                Style="{StaticResource MaterialDesignGroupBox}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <ComboBox
-                                        materialDesign:HintAssist.Foreground="{DynamicResource SecondaryHueMidBrush}"
-                                        materialDesign:HintAssist.Hint="Type"
-                                        materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryHueMidBrush}"
-                                        Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                                        <ComboBoxItem Content="Select Sort" />
-                                        <ComboBoxItem Content="Fast Sort" />
-                                        <ComboBoxItem Content="Bubble Sort" />
-                                    </ComboBox>
+            MinWidth="230"
+            Margin="5,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!--  标题  -->
+            <Border
+                Margin="0,0,0,5"
+                BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon
+                        Width="24"
+                        Height="24"
+                        Margin="5"
+                        Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        Kind="ToolboxOutline" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="18"
+                        FontWeight="Black"
+                        Foreground="{DynamicResource PrimaryHueMidBrush}"
+                        Text="Toolbox" />
+                </StackPanel>
+            </Border>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden">
+                <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <GroupBox
+                        Margin="0,5"
+                        materialDesign:ColorZoneAssist.Mode="SecondaryMid"
+                        Header="Sort"
+                        Style="{StaticResource MaterialDesignGroupBox}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ComboBox
+                                materialDesign:HintAssist.Foreground="{DynamicResource SecondaryHueMidBrush}"
+                                materialDesign:HintAssist.Hint="Type"
+                                materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryHueMidBrush}"
+                                Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                <ComboBoxItem Content="Select Sort" />
+                                <ComboBoxItem Content="Fast Sort" />
+                                <ComboBoxItem Content="Bubble Sort" />
+                            </ComboBox>
+                            <Button
+                                Grid.Column="1"
+                                Margin="9,0,0,0"
+                                Foreground="#FF00C853"
+                                Style="{StaticResource MaterialDesignIconButton}">
+                                <materialDesign:PackIcon Kind="PlayCircle" />
+                            </Button>
+                        </Grid>
+                    </GroupBox>
+
+                    <!--#region 随机生成工具-->
+                    <GroupBox
+                        Margin="0,5"
+                        materialDesign:ColorZoneAssist.Mode="PrimaryMid"
+                        Header="Random Generate">
+                        <GroupBox.HeaderTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left"
+                                        Text="{Binding}" />
                                     <Button
-                                        Grid.Column="1"
-                                        Margin="9,0,0,0"
-                                        Foreground="#FF00C853"
-                                        Style="{StaticResource MaterialDesignIconButton}">
-                                        <materialDesign:PackIcon Kind="PlayCircle" />
+                                        Width="25"
+                                        Height="25"
+                                        Margin="10,0,-5,0"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding DataContext.Toolbox.RandomGenerateTool.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                        DockPanel.Dock="Right"
+                                        Style="{StaticResource MaterialDesignIconForegroundButton}">
+                                        <materialDesign:PackIcon
+                                            Width="20"
+                                            Height="20"
+                                            Kind="Menu" />
                                     </Button>
-                                </Grid>
-                            </GroupBox>
+                                </DockPanel>
+                            </DataTemplate>
+                        </GroupBox.HeaderTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                            <!--#region 随机生成工具-->
-                            <GroupBox Margin="0,5" 
-                                      Header="Random Generate"
-                                      materialDesign:ColorZoneAssist.Mode="PrimaryMid">
-                                <GroupBox.HeaderTemplate>
-                                    <DataTemplate>
-                                        <DockPanel>
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                DockPanel.Dock="Left"
-                                                Text="{Binding}" />
-                                            <Button
-                                                Width="25"
-                                                Height="25"
-                                                Margin="10,0,-5,0"
-                                                HorizontalAlignment="Right"
-                                                Command="{Binding DataContext.Toolbox.RandomGenerateTool.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                                DockPanel.Dock="Right"
-                                                Style="{StaticResource MaterialDesignIconForegroundButton}">
-                                                <materialDesign:PackIcon
-                                                    Width="20"
-                                                    Height="20"
-                                                    Kind="Menu" />
-                                            </Button>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </GroupBox.HeaderTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
+                            <TextBox
+                                materialDesign:HintAssist.Hint="Amount"
+                                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                TextAlignment="Center">
+                                <TextBox.Text>
+                                    <Binding Path="Toolbox.RandomGenerateTool.Amount" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <rules:IntRangeValidationRule Max="100" Min="0" />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Button
+                                Grid.Column="1"
+                                Margin="5,0,-5,0"
+                                Command="{Binding Toolbox.RandomGenerateTool.ExecuteFuncCommand}"
+                                Style="{StaticResource MaterialDesignIconButton}">
+                                <materialDesign:PackIcon Kind="Refresh" />
+                            </Button>
+                            <Grid
+                                x:Name="rg_MoreSetting"
+                                Grid.Row="1"
+                                Grid.ColumnSpan="2"
+                                Visibility="{Binding Toolbox.RandomGenerateTool.IsShowMoreSetting, Converter={StaticResource b2vCvtr}}">
+                                <!--  Visibility="{Binding Toolbox.ToolExpandStates[RandomGenerate], Converter={StaticResource b2vCvtr}}"  -->
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1*" />
+                                    <ColumnDefinition Width="5" />
+                                    <ColumnDefinition Width="1*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox materialDesign:HintAssist.Hint="Min" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                                    <TextBox.Text>
+                                        <Binding Path="Toolbox.RandomGenerateTool.Min" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <rules:IntRangeValidationRule Max="999" Min="-999" />
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <TextBox
+                                    Grid.Column="2"
+                                    materialDesign:HintAssist.Hint="Max"
+                                    Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                                    <TextBox.Text>
+                                        <Binding Path="Toolbox.RandomGenerateTool.Max" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <rules:IntRangeValidationRule Max="999" Min="-999" />
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                            </Grid>
+                        </Grid>
+                    </GroupBox>
+                    <!--#endregion-->
 
-                                    <TextBox
-                                        materialDesign:HintAssist.Hint="Amount"
-                                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                        TextAlignment="Center">
-                                        <TextBox.Text>
-                                            <Binding Path="Toolbox.RandomGenerateTool.Amount" UpdateSourceTrigger="PropertyChanged">
-                                                <Binding.ValidationRules>
-                                                    <rules:IntRangeValidationRule Max="100" Min="0" />
-                                                </Binding.ValidationRules>
-                                            </Binding>
-                                        </TextBox.Text>
-                                    </TextBox>
+                    <!--#region 添加工具-->
+                    <GroupBox Margin="0,5" Header="Add">
+                        <GroupBox.HeaderTemplate>
+                            <DataTemplate>
+                                <DockPanel>
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left"
+                                        Text="Add" />
                                     <Button
-                                        Grid.Column="1"
-                                        Margin="5,0,-5,0"
-                                        Command="{Binding Toolbox.RandomGenerateTool.ExecuteFuncCommand}"
-                                        Style="{StaticResource MaterialDesignIconButton}">
-                                        <materialDesign:PackIcon Kind="Refresh" />
+                                        Width="25"
+                                        Height="25"
+                                        Margin="10,0,-5,0"
+                                        HorizontalAlignment="Right"
+                                        Command="{Binding DataContext.Toolbox.AddTool.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
+                                        CommandParameter="Add"
+                                        DockPanel.Dock="Right"
+                                        Style="{StaticResource MaterialDesignIconForegroundButton}">
+                                        <materialDesign:PackIcon
+                                            Width="20"
+                                            Height="20"
+                                            Kind="Menu" />
                                     </Button>
-                                    <Grid
-                                        x:Name="rg_MoreSetting"
-                                        Grid.Row="1"
-                                        Grid.ColumnSpan="2"
-                                        Visibility="{Binding Toolbox.RandomGenerateTool.IsShowMoreSetting, Converter={StaticResource b2vCvtr}}">
-                                        <!--  Visibility="{Binding Toolbox.ToolExpandStates[RandomGenerate], Converter={StaticResource b2vCvtr}}"  -->
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="1*" />
-                                            <ColumnDefinition Width="5" />
-                                            <ColumnDefinition Width="1*" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox materialDesign:HintAssist.Hint="Min" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-                                            <TextBox.Text>
-                                                <Binding Path="Toolbox.RandomGenerateTool.Min" UpdateSourceTrigger="PropertyChanged">
-                                                    <Binding.ValidationRules>
-                                                        <rules:IntRangeValidationRule Max="999" Min="-999" />
-                                                    </Binding.ValidationRules>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
-                                        <TextBox
-                                            Grid.Column="2"
-                                            materialDesign:HintAssist.Hint="Max"
-                                            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
-                                            <TextBox.Text>
-                                                <Binding Path="Toolbox.RandomGenerateTool.Max" UpdateSourceTrigger="PropertyChanged">
-                                                    <Binding.ValidationRules>
-                                                        <rules:IntRangeValidationRule Max="999" Min="-999" />
-                                                    </Binding.ValidationRules>
-                                                </Binding>
-                                            </TextBox.Text>
-                                        </TextBox>
-                                    </Grid>
-                                </Grid>
-                            </GroupBox>
-                            <!--#endregion-->
+                                </DockPanel>
+                            </DataTemplate>
+                        </GroupBox.HeaderTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="5" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                            <!--#region 添加工具-->
-                            <GroupBox Margin="0,5" Header="Add">
-                                <GroupBox.HeaderTemplate>
-                                    <DataTemplate>
-                                        <DockPanel>
-                                            <TextBlock
-                                                VerticalAlignment="Center"
-                                                DockPanel.Dock="Left"
-                                                Text="Add" />
-                                            <Button
-                                                Width="25"
-                                                Height="25"
-                                                Margin="10,0,-5,0"
-                                                HorizontalAlignment="Right"
-                                                Command="{Binding DataContext.Toolbox.AddTool.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}"
-                                                CommandParameter="Add"
-                                                DockPanel.Dock="Right"
-                                                Style="{StaticResource MaterialDesignIconForegroundButton}">
-                                                <materialDesign:PackIcon
-                                                    Width="20"
-                                                    Height="20"
-                                                    Kind="Menu" />
-                                            </Button>
-                                        </DockPanel>
-                                    </DataTemplate>
-                                </GroupBox.HeaderTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="5" />
-                                        <ColumnDefinition Width="1*" />
-                                        <ColumnDefinition Width="5" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <!--<TextBox
+                            <!--<TextBox
                                 materialDesign:HintAssist.Hint="Index"
                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                 TextAlignment="Center">
@@ -415,66 +438,73 @@
                                 </TextBox.Text>
                             </TextBox>-->
 
-                                    <ComboBox
-                                        materialDesign:HintAssist.Hint="Index"
-                                        ItemsSource="{Binding Toolbox.AddTool.Indices}"
-                                        SelectedItem="{Binding Toolbox.AddTool.Index}"
-                                        Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                                        <ComboBox.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <VirtualizingStackPanel />
-                                            </ItemsPanelTemplate>
-                                        </ComboBox.ItemsPanel>
-                                    </ComboBox>
+                            <ComboBox
+                                materialDesign:HintAssist.Hint="Index"
+                                ItemsSource="{Binding Toolbox.AddTool.Indices}"
+                                SelectedItem="{Binding Toolbox.AddTool.Index}"
+                                Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                                <ComboBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <VirtualizingStackPanel />
+                                    </ItemsPanelTemplate>
+                                </ComboBox.ItemsPanel>
+                            </ComboBox>
 
 
-                                    <TextBox
-                                        Grid.Column="2"
-                                        materialDesign:HintAssist.Hint="Value"
-                                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                                        TextAlignment="Center">
-                                        <TextBox.Text>
-                                            <Binding Path="Toolbox.AddTool.Value" UpdateSourceTrigger="PropertyChanged">
-                                                <Binding.ValidationRules>
-                                                    <rules:IntRangeValidationRule Max="999" Min="-999" />
-                                                </Binding.ValidationRules>
-                                            </Binding>
-                                        </TextBox.Text>
-                                    </TextBox>
-                                    <Button
-                                        x:Name="addToolBtn"
-                                        Grid.Column="4"
-                                        Margin="0,0,-5,0"
-                                        Command="{Binding Toolbox.AddTool.ExecuteFuncCommand}"
-                                        Style="{StaticResource MaterialDesignIconButton}">
-                                        <materialDesign:PackIcon Kind="PlusBox" />
-                                    </Button>
-                                </Grid>
-                            </GroupBox>
-                            <!--#endregion-->
-                        </StackPanel>
-                    </ScrollViewer>
-                    
-                </Grid>
-            </materialDesign:Flipper.FrontContent>
-            <materialDesign:Flipper.BackContent>
-                <Grid
-                    MinWidth="230"
-                    x:Name="logPanel"
-                    Grid.RowSpan="2"
-                    Background="{DynamicResource MaterialDesignDarkBackground}">
-                    <ListView VerticalAlignment="Bottom" 
-                              Foreground="{DynamicResource MaterialDesignDarkForeground}"
-                              FontSize="16"
-                              ItemsSource="{Binding LogPanel.LogItems}">
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Content}"/>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </Grid>
-            </materialDesign:Flipper.BackContent>
-        </materialDesign:Flipper>
+                            <TextBox
+                                Grid.Column="2"
+                                materialDesign:HintAssist.Hint="Value"
+                                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                TextAlignment="Center">
+                                <TextBox.Text>
+                                    <Binding Path="Toolbox.AddTool.Value" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <rules:IntRangeValidationRule Max="999" Min="-999" />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <Button
+                                x:Name="addToolBtn"
+                                Grid.Column="4"
+                                Margin="0,0,-5,0"
+                                Command="{Binding Toolbox.AddTool.ExecuteFuncCommand}"
+                                Style="{StaticResource MaterialDesignIconButton}">
+                                <materialDesign:PackIcon Kind="PlusBox" />
+                            </Button>
+                        </Grid>
+                    </GroupBox>
+                    <!--#endregion-->
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+
+        <!--  控制台  -->
+        <Grid
+            x:Name="logPanel"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            MinWidth="230"
+            Background="{DynamicResource MaterialDesignDarkBackground}"
+            RenderTransformOrigin="0.5,1"
+            Style="{StaticResource upOrDownConsoleStyle}">
+            <Grid.RenderTransform>
+                <ScaleTransform x:Name="consoleScale" ScaleY="0" />
+            </Grid.RenderTransform>
+
+            <ListView
+                VerticalAlignment="Bottom"
+                FontSize="16"
+                Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                ItemsSource="{Binding LogPanel.LogItems}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Content}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
     </Grid>
 </Window>
