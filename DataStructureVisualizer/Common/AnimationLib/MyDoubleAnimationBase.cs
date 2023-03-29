@@ -14,6 +14,9 @@ namespace DataStructureVisualizer.Common.AnimationLib
     internal class MyDoubleAnimationBase : DoubleAnimation
     {
         // public LogViewModel? Log { get; set; } = null;
+        //public UIElement TargetControl { get; set; }
+        //public object TargetParam { get; set; }
+        public MyDoubleAnimationBase() { }
 
         public MyDoubleAnimationBase(double to, double time, double? from)
         {
@@ -46,7 +49,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
             SetActions(before, after);
         }
 
-        private void SetActions(Action? before, Action? after)
+        public void SetActions(Action? before, Action? after)
         {
             CurrentStateInvalidated += (sender, e) =>
             {

@@ -21,12 +21,12 @@
             Height="50"
             Margin="1,1,1,0"
             Padding="3"
-            BorderBrush="#FF673AB7"
+            BorderBrush="{DynamicResource PrimaryHueMidBrush}"
             BorderThickness="2">
             <Grid x:Name="dataItem">
                 <Rectangle x:Name="rect" Fill="{Binding Color}">
                     <Rectangle.RenderTransform>
-                        <ScaleTransform x:Name="st" CenterY="40" ScaleY="{Binding Scale}" />
+                        <ScaleTransform x:Name="st" CenterY="40" ScaleY="1" />
                     </Rectangle.RenderTransform>
                 </Rectangle>
                 <TextBlock
@@ -49,8 +49,6 @@
                 FontSize="11"
                 Text="{Binding Index}"
                 TextAlignment="Center" />
-
         </DockPanel>
-
     </Grid>
 </UserControl>

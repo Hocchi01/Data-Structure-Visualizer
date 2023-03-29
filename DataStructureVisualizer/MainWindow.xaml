@@ -48,7 +48,7 @@
                 Duration="0:0:0.5" />
         </Storyboard>
 
-
+        <!--  控制【动画控制面板】中【播放/暂停按钮】图标切换  -->
         <Style x:Key="playOrPauseBtnStyle" TargetType="materialDesign:PackIcon">
             <Setter Property="Kind" Value="Play" />
             <Style.Triggers>
@@ -57,7 +57,8 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-
+        
+        <!--  控制【控制台】升降  -->
         <Style x:Key="upOrDownConsoleStyle" TargetType="Grid">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding AnimationControlPanel.State, Converter={StaticResource as2bCvtr}, ConverterParameter=IsBegin}" Value="True">
@@ -66,6 +67,8 @@
                             <Storyboard>
                                 <DoubleAnimation
                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                    AccelerationRatio="0.5"
+                                    DecelerationRatio="0.5"
                                     To="1"
                                     Duration="0:0:0.5" />
                             </Storyboard>
@@ -76,6 +79,8 @@
                             <Storyboard>
                                 <DoubleAnimation
                                     Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                                    AccelerationRatio="0.5"
+                                    DecelerationRatio="0.5"
                                     To="0"
                                     Duration="0:0:0.5" />
                             </Storyboard>
@@ -84,6 +89,7 @@
                 </DataTrigger>
             </Style.Triggers>
         </Style>
+        
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -277,15 +283,15 @@
                                 materialDesign:HintAssist.Foreground="{DynamicResource SecondaryHueMidBrush}"
                                 materialDesign:HintAssist.Hint="Type"
                                 materialDesign:TextFieldAssist.UnderlineBrush="{DynamicResource SecondaryHueMidBrush}"
-                                Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                                <ComboBoxItem Content="Select Sort" />
-                                <ComboBoxItem Content="Fast Sort" />
-                                <ComboBoxItem Content="Bubble Sort" />
-                            </ComboBox>
+                                Style="{StaticResource MaterialDesignOutlinedComboBox}"
+                                ItemsSource="{Binding Toolbox.SortTool.Sorts}"
+                                SelectedItem="{Binding Toolbox.SortTool.SelectedSort}"
+                                DisplayMemberPath="Name"/>
                             <Button
                                 Grid.Column="1"
                                 Margin="9,0,0,0"
                                 Foreground="#FF00C853"
+                                Command="{Binding Toolbox.SortTool.ExecuteFuncCommand}"
                                 Style="{StaticResource MaterialDesignIconButton}">
                                 <materialDesign:PackIcon Kind="PlayCircle" />
                             </Button>

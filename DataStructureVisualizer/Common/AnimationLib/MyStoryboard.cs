@@ -25,14 +25,21 @@ namespace DataStructureVisualizer.Common.AnimationLib
             {
                 SetTargetProperty(animation, new PropertyPath(targetParam));
             }
-            
+
         }
 
-        //public void AddAsyncAnimation(AnimationTimeline animation)
-        //{
-        //    animation.BeginTime = TimeSpan.FromMilliseconds(offset);
-        //    Children.Add(animation);
-        //}
+        public void AddAsyncAnimations(List<AnimationTimeline> animations, List<UIElement> targetControls, List<object> targetParams)
+        {
+            double maxTime = 0;
+            for (int i = 0; i < animations.Count; i++)
+            {
+                maxTime = Math.Max(maxTime, animations[i].Duration.TimeSpan.TotalMilliseconds);
+                animations[i].BeginTime = TimeSpan.FromMilliseconds(offset);
+                Children.Add(animations[i]);
+                Link(animations[i], targetControls[i], targetParams[i]);
+            }
+            offset += maxTime;
+        }
 
         public void AddSyncAnimation(AnimationTimeline animation, UIElement targetControl, object targetParam)
         {
@@ -58,6 +65,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
                 WeakReferenceMessenger.Default.Send(new EndAnyAnimationMessage());
             };
         }
+
 
         //private void Reset()
         //{

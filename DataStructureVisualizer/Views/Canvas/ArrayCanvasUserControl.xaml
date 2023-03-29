@@ -32,6 +32,41 @@
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
             </ItemsControl>
+
+            <!--  迭代器（排序时用）  -->
+            <Grid
+                x:Name="iterator"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Visibility="Hidden">
+                <Grid.RenderTransform>
+                    <TranslateTransform X="8" />
+                </Grid.RenderTransform>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border
+                    Width="50"
+                    Height="50"
+                    Margin="1,1,1,0"
+                    Padding="3"
+                    BorderBrush="{DynamicResource SecondaryHueMidBrush}"
+                    BorderThickness="2" />
+                <DockPanel Grid.Row="1" Width="50">
+                    <TextBlock
+                        Padding="8,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        DockPanel.Dock="Right"
+                        FontSize="11"
+                        Text="{Binding Index}"
+                        TextAlignment="Center" />
+                </DockPanel>
+            </Grid>
         </Grid>
+
+
+
     </Grid>
 </UserControl>

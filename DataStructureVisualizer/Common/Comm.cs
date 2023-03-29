@@ -57,6 +57,10 @@ namespace DataStructureVisualizer.Common
 
             return gradient;
         }
+        public static float[] GetGradient(ObservableCollection<int> values, float gMin = 0.0F, float gMax = 1.0F)
+        {
+           return GetGradient(ObservableCollectionToArray(values), gMin, gMax);
+        }
 
         /// <summary>
         /// 根据集合元素值计算相应颜色（透明度）梯度

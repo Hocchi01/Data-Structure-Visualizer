@@ -17,14 +17,20 @@ using MaterialDesignColors;
 using MaterialDesignThemes.Wpf;
 using System.Reflection;
 using CommunityToolkit.Mvvm.Messaging;
+using System.Windows.Media.Animation;
+using DataStructureVisualizer.Common.Sorts;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
-    internal class ArrayCanvasViewModel : CanvasViewModelBase
+    internal partial class ArrayCanvasViewModel : CanvasViewModelBase
     {
+        [ObservableProperty]
+        private ObservableCollection<ArrayItemViewModel> dataItems;
+
         public override void UpdateDataItems()
         {
-            DataItems = new ObservableCollection<DataItemViewModelBase>();
+            DataItems = new ObservableCollection<ArrayItemViewModel>();
 
             List<Color> colors = Comm.GetColorGradientByValues(Values);
             for (int i = 0; i < Values.Count; i++)
@@ -39,7 +45,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         }
 
         /// <summary>
-        /// 响应【添加工具】的 “执行添加动画” 消息
+        /// 响应【添加工具】的“执行添加动画”消息
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="NotImplementedException"></exception>
@@ -47,7 +53,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         {
             int count = DataItems.Count;
             Grid canvas = (Grid)GetCanvas();
-            var container = canvas.Children[0] as ItemsControl;
+            var container = canvas.FindName("arrItemsControl") as ItemsControl;
             var paletteHelper = new PaletteHelper();
 
             // TODO 02: 在数组末尾添加一个“空项”
@@ -58,7 +64,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             for (int i = count - 1; i >= message.Index; i--)
             {
                 var itemView = Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(container, i);
-                var oldColor = (DataItems[i] as ArrayItemViewModel).Color;
+                var oldColor = DataItems[i].Color;
 
                 Action after = () => { itemView.rect.Fill = oldColor; };
                 if (i == message.Index)
@@ -66,8 +72,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     after += () =>
                     {
                         Values.Insert(message.Index, message.Value);
-                        //Values.Add(message.Value);
-                        //Values = Values; // 调用 Set 访问器
                         WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(new LogViewModel() { Content = $"a[{message.Index}] = {message.Value};" }));
                     };
                 }
@@ -91,9 +95,42 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard.Begin_Ex(canvas, true);
         }
 
+        /// <summary>
+        /// 响应【排序工具】的“加载排序动画”消息
+        /// </summary>
+        /// <param name="message"></param>
+        public override void Receive(LoadSortAnimationMessage message)
+        {
+            MainStoryboard = new MyStoryboard();
+            Grid canvas = (Grid)GetCanvas();
+            var container = canvas.FindName("arrItemsControl") as ItemsControl;
+            var iterator = canvas.FindName("iterator") as Grid;
+
+            
+
+            SortBase sort = null;
+
+            switch (message.Type)
+            {
+                case SortType.SelectionSort:
+                    sort = new SelectionSort(Values, canvas, container, iterator, MainStoryboard, DataItems);
+                    break;
+                case SortType.QuickSort:
+                    break;
+            }
+
+            sort?.MainProgram();      
+        }
+
+        
+
         public ArrayCanvasViewModel()
         {
             Type = DS_SecondaryType.Array;
         }
+
+
     }
+
+
 }

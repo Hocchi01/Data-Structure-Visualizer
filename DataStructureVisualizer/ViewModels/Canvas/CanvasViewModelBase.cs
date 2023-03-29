@@ -22,14 +22,10 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         IRecipient<ValueChangedMessage<int[]>>,
         IRecipient<LoadAddAnimationMessage>,
         IRecipient<PauseAnyAnimationMessage>,
-        IRecipient<ResumeAnyAnimationMessage>
+        IRecipient<ResumeAnyAnimationMessage>,
+        IRecipient<LoadSortAnimationMessage>
     {
         protected DS_SecondaryType Type;
-
-        [ObservableProperty]
-        private ObservableCollection<DataItemViewModelBase> dataItems;
-
-
 
         /// <summary>
         /// 数据结构的数据源
@@ -72,7 +68,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         public CanvasViewModelBase()
         {
             IsActive = true;
-            DataItems = new ObservableCollection<DataItemViewModelBase>();
             MainStoryboard = new MyStoryboard();
 
             Values = new ObservableCollection<int>();
@@ -127,6 +122,11 @@ namespace DataStructureVisualizer.ViewModels.Canvas
              * 1. 通知工具改变索引值选取的范围 
              */
             WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
+        }
+
+        public virtual void Receive(LoadSortAnimationMessage message)
+        {
+            throw new NotImplementedException();
         }
     }
 }

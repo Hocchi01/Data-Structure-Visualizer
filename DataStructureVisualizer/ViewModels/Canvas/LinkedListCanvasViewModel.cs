@@ -1,4 +1,5 @@
-﻿using DataStructureVisualizer.Common;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DataStructureVisualizer.Common;
 using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.ViewModels.Data;
@@ -12,11 +13,14 @@ using System.Windows.Media;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
-    class LinkedListCanvasViewModel : CanvasViewModelBase
+    partial class LinkedListCanvasViewModel : CanvasViewModelBase
     {
+        [ObservableProperty]
+        private ObservableCollection<LinkedListItemViewModel> dataItems;
+
         public override void UpdateDataItems()
         {
-            DataItems = new ObservableCollection<DataItemViewModelBase>();
+            DataItems = new ObservableCollection<LinkedListItemViewModel>();
 
             List<Color> colors = Comm.GetColorGradientByValues(Values);
 

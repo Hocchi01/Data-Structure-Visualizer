@@ -11,6 +11,8 @@ namespace DataStructureVisualizer.Common.AnimationLib
 {
     internal class SimulatedDoubleAnimation : MyDoubleAnimationBase
     {
+        public SimulatedDoubleAnimation() : base() { }
+
         public SimulatedDoubleAnimation(double to, double time, double? from = null, double acc = 0.5, double dec = 0.5, LogViewModel? log = null) : base(to, time, from, log)
         {
             Simulate(acc, dec);
