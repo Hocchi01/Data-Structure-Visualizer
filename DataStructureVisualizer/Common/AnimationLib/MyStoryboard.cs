@@ -28,17 +28,27 @@ namespace DataStructureVisualizer.Common.AnimationLib
 
         }
 
-        public void AddAsyncAnimations(List<AnimationTimeline> animations, List<UIElement> targetControls, List<object> targetParams)
+        public void AddAsyncAnimations(List<AnimationTimeline> animations, List<UIElement> targetControls, List<object> targetParams, Action? before = null, Action? after = null)
         {
-            double maxTime = 0;
+            // 为持续时间最长的动画追加动作
+            int maxTimePos = 0;
             for (int i = 0; i < animations.Count; i++)
             {
-                maxTime = Math.Max(maxTime, animations[i].Duration.TimeSpan.TotalMilliseconds);
+                if (animations[i].Duration.TimeSpan.TotalMilliseconds > animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds)
+                {
+                    maxTimePos = i;
+                }
+            }
+            animations[maxTimePos].SetActions(before, after);
+            
+            for (int i = 0; i < animations.Count; i++)
+            {
                 animations[i].BeginTime = TimeSpan.FromMilliseconds(offset);
                 Children.Add(animations[i]);
                 Link(animations[i], targetControls[i], targetParams[i]);
             }
-            offset += maxTime;
+
+            offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
         }
 
         public void AddSyncAnimation(AnimationTimeline animation, UIElement targetControl, object targetParam)

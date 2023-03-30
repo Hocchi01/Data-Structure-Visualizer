@@ -29,7 +29,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
         {
             if (log != null)
             {
-                SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
+                this.SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
             }
         }
 
@@ -46,32 +46,32 @@ namespace DataStructureVisualizer.Common.AnimationLib
                     before += () => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); };
                 }
             }
-            SetActions(before, after);
+            this.SetActions(before, after);
         }
 
-        public void SetActions(Action? before, Action? after)
-        {
-            CurrentStateInvalidated += (sender, e) =>
-            {
-                Clock clock = (Clock)sender;
-                switch (clock.CurrentState)
-                {
-                    case ClockState.Active:
-                        if (before != null)
-                        {
-                            before();
-                        }
-                        break;
-                    case ClockState.Filling:
-                        if (after != null)
-                        {
-                            after();
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            };
-        }
+        //public void SetActions(Action? before, Action? after)
+        //{
+        //    CurrentStateInvalidated += (sender, e) =>
+        //    {
+        //        Clock clock = (Clock)sender;
+        //        switch (clock.CurrentState)
+        //        {
+        //            case ClockState.Active:
+        //                if (before != null)
+        //                {
+        //                    before();
+        //                }
+        //                break;
+        //            case ClockState.Filling:
+        //                if (after != null)
+        //                {
+        //                    after();
+        //                }
+        //                break;
+        //            default:
+        //                break;
+        //        }
+        //    };
+        //}
     }
 }

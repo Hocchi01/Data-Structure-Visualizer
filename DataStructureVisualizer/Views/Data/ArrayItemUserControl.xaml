@@ -5,9 +5,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:DataStructureVisualizer.Views.Data"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cvtr="clr-namespace:DataStructureVisualizer.Common.Converters"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <cvtr:DataItemStateToSolidColorBrushConverter x:Key="DataItemStateToSolidColorBrushConverter" />
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -23,10 +27,10 @@
             Padding="3"
             BorderBrush="{DynamicResource PrimaryHueMidBrush}"
             BorderThickness="2">
-            <Grid x:Name="dataItem">
+            <Grid x:Name="valueItem">
                 <Rectangle x:Name="rect" Fill="{Binding Color}">
                     <Rectangle.RenderTransform>
-                        <ScaleTransform x:Name="st" CenterY="40" ScaleY="1" />
+                        <ScaleTransform x:Name="rectScaleTransform" CenterY="40" ScaleY="1" />
                     </Rectangle.RenderTransform>
                 </Rectangle>
                 <TextBlock
@@ -44,7 +48,7 @@
             <TextBlock
                 Padding="8,0"
                 VerticalAlignment="Center"
-                Background="#CFD8DC"
+                Background="{Binding State, Converter={StaticResource DataItemStateToSolidColorBrushConverter}}"
                 DockPanel.Dock="Right"
                 FontSize="11"
                 Text="{Binding Index}"

@@ -86,7 +86,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                         after: after,
                         log: new LogViewModel() { Content = $"a[{i+1}] = a[{i}];" }
                     ),
-                    itemView.dataItem,
+                    itemView.valueItem,
                     "(UIElement.RenderTransform).(TranslateTransform.X)"
                 );
             }
@@ -105,8 +105,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
             var iterator = canvas.FindName("iterator") as Grid;
-
-            
 
             SortBase sort = null;
 

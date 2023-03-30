@@ -19,7 +19,7 @@
         <Grid
             x:Name="canvas"
             Grid.Row="1"
-            Background="#FFF8F1FF">
+            Background="#EDE7F6">
             <ItemsControl
                 x:Name="arrItemsControl"
                 Margin="8"
@@ -52,7 +52,7 @@
                     Margin="1,1,1,0"
                     Padding="3"
                     BorderBrush="{DynamicResource SecondaryHueMidBrush}"
-                    BorderThickness="2" />
+                    BorderThickness="3" />
                 <DockPanel Grid.Row="1" Width="50">
                     <TextBlock
                         Padding="8,0"

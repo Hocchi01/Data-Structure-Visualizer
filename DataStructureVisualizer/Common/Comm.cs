@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -62,6 +63,17 @@ namespace DataStructureVisualizer.Common
            return GetGradient(ObservableCollectionToArray(values), gMin, gMax);
         }
 
+        public static float GetSingleGradientVal(int value, IEnumerable<int> values, float gMin = 0.0F, float gMax = 1.0F)
+        {
+            int vMax = values.Max();
+            int vMin = values.Min();
+            if (vMax == vMin)
+            {
+                return (gMin + gMax) / 2;
+            }    
+            return gMin + (gMax - gMin) * ((float)(value - vMin) / (vMax - vMin));
+        }
+
         /// <summary>
         /// 根据集合元素值计算相应颜色（透明度）梯度
         /// </summary>
@@ -101,8 +113,19 @@ namespace DataStructureVisualizer.Common
             {
                 arr[i] = list[i];
             }
-
+            
             return arr;
+        }
+
+        public static List<int> ObservableCollectionToList(ObservableCollection<int> oc)
+        {
+            var list = new List<int>();
+            for (int i = 0; i < oc.Count; i++)
+            {
+                list.Add(oc[i]);
+            }
+
+            return list;
         }
 
         /// <summary>
