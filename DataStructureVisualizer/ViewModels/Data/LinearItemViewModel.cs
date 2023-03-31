@@ -11,9 +11,9 @@ namespace DataStructureVisualizer.ViewModels.Data
     internal partial class LinearItemViewModel : DataItemViewModelBase
     {
         /// <summary>
-        /// 存储上一个颜色，用于动画时颜色恢复
+        /// 根据当前数据值梯度计算出的原始颜色
         /// </summary>
-        public SolidColorBrush? OldColor { set; get; } = null;
+        public SolidColorBrush? OriginalColor { set; get; } = null;
         /// <summary>
         /// 数据背景色
         /// </summary>
@@ -23,17 +23,9 @@ namespace DataStructureVisualizer.ViewModels.Data
         [ObservableProperty]
         private SolidColorBrush? color = null;
 
-        partial void OnColorChanging(SolidColorBrush value)
-        {
-            if (Color != value)
-            {
-                OldColor = Color ?? value;
-            }
-        }
-
         public void RecoverColor()
         {
-            Color = OldColor;
+            Color = OriginalColor;
         }
 
     }

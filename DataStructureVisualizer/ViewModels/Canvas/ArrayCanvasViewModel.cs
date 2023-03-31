@@ -40,6 +40,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     Value = Values[i],
                     Index = i,
                     Color = new SolidColorBrush(colors[i]),
+                    OriginalColor = new SolidColorBrush(colors[i]),
                 });
             }
         }
@@ -111,16 +112,19 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             switch (message.Type)
             {
                 case SortType.SelectionSort:
-                    sort = new SelectionSort(Values, canvas, container, iterator, MainStoryboard, DataItems);
+                    sort = new SelectionSort(canvas, container, iterator, MainStoryboard, DataItems);
                     break;
                 case SortType.QuickSort:
                     break;
+                case SortType.BubbleSort:
+                    sort = new BubbleSort(canvas, container, iterator, MainStoryboard, DataItems);
+                    break;
             }
 
-            sort?.MainProgram();      
+            sort?.MainProgram();
         }
 
-        
+
 
         public ArrayCanvasViewModel()
         {

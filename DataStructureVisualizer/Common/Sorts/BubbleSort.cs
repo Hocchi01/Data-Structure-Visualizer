@@ -5,9 +5,7 @@ using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,46 +14,37 @@ using System.Windows.Media;
 
 namespace DataStructureVisualizer.Common.Sorts
 {
-    internal class SelectionSort : SortBase
+    internal class BubbleSort : SortBase
     {
-        private int minIndex = 0;
-
         public Grid Iterator { get; set; }
 
-        public SelectionSort(Grid canvas, ItemsControl container, Grid iterator, MyStoryboard myStoryboard, ObservableCollection<ArrayItemViewModel> dataItems) : base(canvas, container, myStoryboard, dataItems)
+        public BubbleSort(Grid canvas, ItemsControl container, Grid iterator, MyStoryboard myStoryboard, ObservableCollection<ArrayItemViewModel> dataItems) : base(canvas, container, myStoryboard, dataItems)
         {
             Iterator = iterator;
-            
         }
 
         public override void MainProgram()
         {
-            bool isLess = false;
+            bool isGreater = false;
 
             Stick(new Action(IterBegin));
 
-            for (int i = 0; i < last; i++, IterReturn(i, minIndex == last ? i - 1 : last))
+            for (int i = last; i >= 1; IterReturn(0, i), i--)
             {
-                minIndex = i;
-                for (int j = i + 1; j <= last; j++)
+                for (int j = 0; j < i; j++, IterNext(j, i))
                 {
-                    isLess = DataItems[table[j]].Value < DataItems[table[minIndex]].Value;
+                    isGreater = DataItems[table[j]].Value > DataItems[table[j + 1]].Value;
 
-                    IterNext(j, minIndex, isLess);
-
-                    if (isLess)
+                    if (isGreater)
                     {
-                        minIndex = j;
+                        int curJ = j;
+                        Swap(j, j + 1, () =>
+                        {
+                            DataItems[curJ].State = DataItemState.Normal;
+                            DataItems[curJ + 1].State = DataItemState.Max;
+                        });
                     }
                 }
-
-                int curI = i; // 若直接用 i，由于委托都是在“加载动画”后执行，则会使得最终 i 都为 count - 1
-                int curMinIndex = minIndex;
-                Swap(i, minIndex, () => 
-                {
-                    DataItems[curMinIndex].State = DataItemState.Normal;
-                    DataItems[curI].State = DataItemState.Sorted;
-                });
             }
 
             UnStick(new Action(IterEnd));
@@ -63,12 +52,9 @@ namespace DataStructureVisualizer.Common.Sorts
             MainStoryboard.Completed += (_, _) => { UpdateValues(); };
             MainStoryboard.Begin_Ex(Canvas, true);
         }
-        
 
-        private void IterNext(int toIndex, int minIndex, bool isLess)
+        private void IterNext(int toIndex, int iterationEnd)
         {
-            if (toIndex >= DataItems.Count) return;
-
             int toRealIndex = table[toIndex];
             int preRealIndex = table[toIndex - 1];
 
@@ -84,11 +70,9 @@ namespace DataStructureVisualizer.Common.Sorts
                         DataItems[preRealIndex].RecoverColor();
                         DataItems[toRealIndex].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
 
-                        if (isLess)
-                        {
-                            DataItems[minIndex].State = DataItemState.Normal;
-                            DataItems[toIndex].State = DataItemState.Min;
-                        }
+                        // 无需条件判断，一定会执行的
+                        DataItems[toIndex - 1].State = DataItemState.Normal;
+                        DataItems[toIndex].State = toIndex == iterationEnd ? DataItemState.Sorted : DataItemState.Max;
                     }
                 ),
                 Iterator,
@@ -98,8 +82,6 @@ namespace DataStructureVisualizer.Common.Sorts
 
         private void IterReturn(int toIndex, int preIndex)
         {
-            // if (toIndex == last) return;
-
             int toRealIndex = table[toIndex];
             int preRealIndex = table[preIndex];
 
@@ -114,7 +96,7 @@ namespace DataStructureVisualizer.Common.Sorts
                     {
                         DataItems[preRealIndex].RecoverColor();
                         DataItems[toRealIndex].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
-                        DataItems[toIndex].State = DataItemState.Min;
+                        DataItems[toIndex].State = DataItemState.Max;
                     }
                 ),
                 Iterator,
@@ -126,15 +108,15 @@ namespace DataStructureVisualizer.Common.Sorts
         {
             Iterator.Visibility = Visibility.Visible;
             DataItems[0].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
-            DataItems[0].State = DataItemState.Min;
+            DataItems[0].State = DataItemState.Max;
         }
 
         private void IterEnd()
         {
             Iterator.Visibility = Visibility.Hidden;
             Iterator.RenderTransform = new TranslateTransform() { X = 8 }; // 复位迭代器
-            DataItems[table[last]].RecoverColor();
-            DataItems[last].State = DataItemState.Sorted;
+            DataItems[table[0]].RecoverColor();
+            DataItems[0].State = DataItemState.Sorted;
         }
     }
 }

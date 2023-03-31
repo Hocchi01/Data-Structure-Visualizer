@@ -27,6 +27,7 @@ namespace DataStructureVisualizer.ViewModels.Tools
             Sorts = new List<Sort>
             {
                 new Sort("Selection Sort", SortType.SelectionSort),
+                new Sort("Bubble Sort", SortType.BubbleSort),
                 new Sort("Quick Sort", SortType.QuickSort),
             };
         }

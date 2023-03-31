@@ -11,6 +11,7 @@ namespace DataStructureVisualizer.Common.Enums
         Normal,
         Sorted,
         Min,
-        Actived
+        Max,
+        Actived,
     }
 }

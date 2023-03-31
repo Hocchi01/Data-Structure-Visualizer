@@ -10,15 +10,6 @@ namespace DataStructureVisualizer.ViewModels.Data
 {
     internal partial class ArrayItemViewModel : LinearItemViewModel
     {
-        public ArrayItemViewModel(ArrayItemViewModel aivm) 
-        { 
-            Value = aivm.Value;
-            Index = aivm.Index;
-            Color = aivm.Color;
-            OldColor = aivm.OldColor;
-            State = aivm.State;
-        }
-
         public ArrayItemViewModel()
         {
 
