@@ -49,6 +49,18 @@ namespace DataStructureVisualizer.Common.AnimationLib
             this.SetActions(before, after);
         }
 
+        public MyDoubleAnimationBase(float by, double time, double? from)
+        {
+            if (from != null) { From = from; }
+            By = by;
+            Duration = new Duration(TimeSpan.FromMilliseconds(time));
+        }
+
+        public MyDoubleAnimationBase(float by, double time, double? from, Action? before, Action? after) : this(by, time, from)
+        {
+            this.SetActions(before, after);
+        }
+
         //public void SetActions(Action? before, Action? after)
         //{
         //    CurrentStateInvalidated += (sender, e) =>

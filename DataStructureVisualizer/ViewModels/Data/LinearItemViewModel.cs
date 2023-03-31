@@ -25,7 +25,10 @@ namespace DataStructureVisualizer.ViewModels.Data
 
         partial void OnColorChanging(SolidColorBrush value)
         {
-            OldColor = Color ?? value;
+            if (Color != value)
+            {
+                OldColor = Color ?? value;
+            }
         }
 
         public void RecoverColor()
