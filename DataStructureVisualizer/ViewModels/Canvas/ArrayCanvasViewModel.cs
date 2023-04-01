@@ -119,6 +119,9 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                 case SortType.BubbleSort:
                     sort = new BubbleSort(canvas, container, iterator, MainStoryboard, DataItems);
                     break;
+                case SortType.InsertionSort:
+                    sort = new InsertionSort(canvas, container, iterator, MainStoryboard, DataItems);
+                    break;
             }
 
             sort?.MainProgram();

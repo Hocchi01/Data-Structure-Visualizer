@@ -10,6 +10,7 @@ namespace DataStructureVisualizer.Common.Enums
     {
         SelectionSort,
         BubbleSort,
+        InsertionSort,
         QuickSort,
 
     }
