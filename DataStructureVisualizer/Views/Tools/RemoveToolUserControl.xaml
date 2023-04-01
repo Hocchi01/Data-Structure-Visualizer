@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="DataStructureVisualizer.Views.Tools.RemoveToolUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:DataStructureVisualizer.Views.Tools"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
+    <Grid>
+        <GroupBox
+            Margin="0,0,0,10"
+            materialDesign:ColorZoneAssist.Mode="PrimaryLight"
+            Header="Remove">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ComboBox
+                    materialDesign:HintAssist.Hint="Index"
+                    ItemsSource="{Binding Indices}"
+                    SelectedItem="{Binding Index}"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+                
+                <Button
+                    Grid.Column="1"
+                    Margin="5,0,-5,0"
+                    Command="{Binding ExecuteFuncCommand}"
+                    Style="{StaticResource MaterialDesignIconButton}">
+                    <materialDesign:PackIcon Kind="MinusBox" />
+                </Button>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

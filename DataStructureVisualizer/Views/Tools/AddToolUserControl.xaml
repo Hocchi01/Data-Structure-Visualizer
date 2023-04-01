@@ -1,0 +1,92 @@
+﻿<UserControl
+    x:Class="DataStructureVisualizer.Views.Tools.AddToolUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ctrl="clr-namespace:System.Windows.Controls;assembly=PresentationFramework"
+    xmlns:cvtr="clr-namespace:DataStructureVisualizer.Common.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:DataStructureVisualizer.Views.Tools"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rules="clr-namespace:DataStructureVisualizer.Common.Rules"
+    d:Background="White"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <GroupBox Margin="0,0,0,10" Header="Add" materialDesign:ColorZoneAssist.Mode="PrimaryLight">
+            <GroupBox.HeaderTemplate>
+                <DataTemplate>
+                    <DockPanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            DockPanel.Dock="Left"
+                            Text="Add" />
+                        <Button
+                            Width="25"
+                            Height="25"
+                            Margin="10,0,-5,0"
+                            HorizontalAlignment="Right"
+                            Command="{Binding DataContext.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
+                            CommandParameter="Add"
+                            DockPanel.Dock="Right"
+                            Style="{StaticResource MaterialDesignIconForegroundButton}">
+                            <materialDesign:PackIcon
+                                Width="20"
+                                Height="20"
+                                Kind="Menu" />
+                        </Button>
+                    </DockPanel>
+                </DataTemplate>
+            </GroupBox.HeaderTemplate>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ComboBox
+                    materialDesign:HintAssist.Hint="Index"
+                    ItemsSource="{Binding Indices}"
+                    SelectedItem="{Binding Index}"
+                    Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                    <ComboBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <VirtualizingStackPanel />
+                        </ItemsPanelTemplate>
+                    </ComboBox.ItemsPanel>
+                </ComboBox>
+
+
+                <TextBox
+                    Grid.Column="2"
+                    materialDesign:HintAssist.Hint="Value"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    TextAlignment="Center">
+                    <TextBox.Text>
+                        <Binding Path="Value" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <rules:IntRangeValidationRule Max="999" Min="-999" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <Button
+                    x:Name="addToolBtn"
+                    Grid.Column="4"
+                    Margin="0,0,-5,0"
+                    Command="{Binding ExecuteFuncCommand}"
+                    Style="{StaticResource MaterialDesignIconButton}">
+                    <materialDesign:PackIcon Kind="PlusBox" />
+                </Button>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

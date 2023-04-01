@@ -28,5 +28,11 @@ namespace DataStructureVisualizer.ViewModels.Data
             Color = OriginalColor;
         }
 
+        public void Clear()
+        {
+            Value = null;
+            Color = null;
+        }
+
     }
 }

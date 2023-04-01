@@ -13,7 +13,7 @@ namespace DataStructureVisualizer.Common.Converters
             switch ((DataItemState)value)
             {
                 case DataItemState.Normal:
-                    return new SolidColorBrush(new Color() { ScA = 1.0F, R = 238, G = 238, B = 238 });
+                    return new SolidColorBrush(new Color() { ScA = 0.0F, R = 0, G = 0, B = 0 });
                 case DataItemState.Sorted:
                     return new SolidColorBrush(new Color() { ScA = 1.0F, R = 76, G = 175, B = 80 });
                 case DataItemState.Min:

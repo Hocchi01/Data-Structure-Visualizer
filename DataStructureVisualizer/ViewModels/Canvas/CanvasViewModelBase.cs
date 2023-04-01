@@ -23,7 +23,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         IRecipient<LoadAddAnimationMessage>,
         IRecipient<PauseAnyAnimationMessage>,
         IRecipient<ResumeAnyAnimationMessage>,
-        IRecipient<LoadSortAnimationMessage>
+        IRecipient<LoadRemoveAnimationMessage>
     {
         protected DS_SecondaryType Type;
 
@@ -124,9 +124,10 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
         }
 
-        public virtual void Receive(LoadSortAnimationMessage message)
-        {
-            throw new NotImplementedException();
-        }
+        /// <summary>
+        /// 响应【删除工具】的消息
+        /// </summary>
+        /// <param name="message"></param>
+        public abstract void Receive(LoadRemoveAnimationMessage message);
     }
 }

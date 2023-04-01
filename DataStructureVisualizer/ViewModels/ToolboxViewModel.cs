@@ -12,12 +12,14 @@ namespace DataStructureVisualizer.ViewModels
         public RandomGenerateToolViewModel RandomGenerateTool { get; set; }
         public AddToolViewModel AddTool { get; set; }
         public SortToolViewModel SortTool { get; set; }
+        public RemoveToolViewModel RemoveTool { get; set; }
 
         public ToolboxViewModel() 
         { 
             RandomGenerateTool = new RandomGenerateToolViewModel();
             AddTool = new AddToolViewModel();
             SortTool = new SortToolViewModel();
+            RemoveTool = new RemoveToolViewModel();
         }
     }
 }

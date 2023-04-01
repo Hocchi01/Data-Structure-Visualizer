@@ -23,7 +23,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
-    internal partial class ArrayCanvasViewModel : CanvasViewModelBase
+    internal partial class ArrayCanvasViewModel : CanvasViewModelBase, IRecipient<LoadSortAnimationMessage>
     {
         [ObservableProperty]
         private ObservableCollection<ArrayItemViewModel> dataItems;
@@ -52,6 +52,13 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// <exception cref="NotImplementedException"></exception>
         public override void Receive(LoadAddAnimationMessage message)
         {
+            // 若是尾部追加元素则不执行动画
+            if (message.Index == DataItems.Count)
+            {
+                Values.Add(message.Value);
+                return;
+            }
+
             int count = DataItems.Count;
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
@@ -100,7 +107,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// 响应【排序工具】的“加载排序动画”消息
         /// </summary>
         /// <param name="message"></param>
-        public override void Receive(LoadSortAnimationMessage message)
+        public void Receive(LoadSortAnimationMessage message)
         {
             MainStoryboard = new MyStoryboard();
             Grid canvas = (Grid)GetCanvas();
@@ -127,13 +134,43 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             sort?.MainProgram();
         }
 
+        public override void Receive(LoadRemoveAnimationMessage message)
+        {
+            int index = message.Index;
+            // 若是删除尾部元素则不执行动画
+            if (index == DataItems.Count - 1)
+            {
+                Values.RemoveAt(index);
+                return;
+            }
 
+            int count = DataItems.Count;
+            Grid canvas = (Grid)GetCanvas();
+            var container = canvas.FindName("arrItemsControl") as ItemsControl;
+            var paletteHelper = new PaletteHelper();
+
+            MainStoryboard = new MyStoryboard();
+
+            // 删除元素
+            DataItems[index].Clear();
+
+            for (int i = index + 1; i < count; i++)
+            {
+
+            }
+        }
 
         public ArrayCanvasViewModel()
         {
             Type = DS_SecondaryType.Array;
         }
 
+
+    }
+
+    class ArrayAnimationHelper
+    {
+        public ObservableCollection<ArrayItemViewModel> DataItems { get; set; }
 
     }
 

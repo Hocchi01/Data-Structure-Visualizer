@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -140,6 +141,12 @@ namespace DataStructureVisualizer.Common
         {
             var item = ic.ItemContainerGenerator.ContainerFromIndex(index) as ContentPresenter;
             return (item.ContentTemplate.FindName(name, item)) as T;
+        }
+
+        public static UserControl GetItemFromItemsControlByIndex(ItemsControl ic, int index, string name = "item")
+        {
+            var item = ic.ItemContainerGenerator.ContainerFromIndex(index) as ContentPresenter;
+            return item.ContentTemplate.FindName(name, item) as UserControl;
         }
     }
 }
