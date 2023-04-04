@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataStructureVisualizer.ViewModels.Data;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,6 +12,17 @@ namespace DataStructureVisualizer.Common.Extensions
         public static void RaiseCollectionChanged<T>(this ObservableCollection<T> collection) 
         {
             
+        }
+
+        public static ObservableCollection<DataItemViewModelBase> RevertElems<T>(this ObservableCollection<T> oldCollection)
+            where T : DataItemViewModelBase
+        {
+            var newCollection = new ObservableCollection<DataItemViewModelBase>();
+            foreach (var item in oldCollection)
+            {
+                newCollection.Add(item);
+            }
+            return newCollection;
         }
     }
 }

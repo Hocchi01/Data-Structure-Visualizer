@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataStructureVisualizer.ViewModels
 {
-    internal class LogViewModel
+    public class LogViewModel
     {
         public string Content { get; set; }
     }

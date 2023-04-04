@@ -9,7 +9,7 @@ using System.Windows.Media.Animation;
 
 namespace DataStructureVisualizer.Common.AnimationLib
 {
-    internal class SimulatedDoubleAnimation : MyDoubleAnimationBase
+    public class SimulatedDoubleAnimation : MyDoubleAnimationBase
     {
         public SimulatedDoubleAnimation() : base() 
         {

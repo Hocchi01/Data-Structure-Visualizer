@@ -59,7 +59,7 @@
                     Style="{StaticResource MaterialDesignOutlinedTextBox}"
                     TextAlignment="Center">
                     <TextBox.Text>
-                        <Binding Path="Toolbox.RandomGenerateTool.Amount" UpdateSourceTrigger="PropertyChanged">
+                        <Binding Path="Amount" UpdateSourceTrigger="PropertyChanged">
                             <Binding.ValidationRules>
                                 <rules:IntRangeValidationRule Max="100" Min="0" />
                             </Binding.ValidationRules>

@@ -11,11 +11,11 @@ using System.Windows.Media.Animation;
 
 namespace DataStructureVisualizer.Common.AnimationLib
 {
-    internal class MyDoubleAnimationBase : DoubleAnimation
+    public class MyDoubleAnimationBase : DoubleAnimation, ILinkableAnimation
     {
         // public LogViewModel? Log { get; set; } = null;
-        //public UIElement TargetControl { get; set; }
-        //public object TargetParam { get; set; }
+        public UIElement TargetControl { get; set; } = null;
+        public object TargetParam { get; set; } = null;
         public MyDoubleAnimationBase() { }
 
         public MyDoubleAnimationBase(double to, double time, double? from)
@@ -60,30 +60,5 @@ namespace DataStructureVisualizer.Common.AnimationLib
         {
             this.SetActions(before, after);
         }
-
-        //public void SetActions(Action? before, Action? after)
-        //{
-        //    CurrentStateInvalidated += (sender, e) =>
-        //    {
-        //        Clock clock = (Clock)sender;
-        //        switch (clock.CurrentState)
-        //        {
-        //            case ClockState.Active:
-        //                if (before != null)
-        //                {
-        //                    before();
-        //                }
-        //                break;
-        //            case ClockState.Filling:
-        //                if (after != null)
-        //                {
-        //                    after();
-        //                }
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    };
-        //}
     }
 }

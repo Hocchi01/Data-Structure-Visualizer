@@ -10,8 +10,16 @@ using System.Windows.Controls;
 
 namespace DataStructureVisualizer.Common.AnimationLib
 {
-    internal class AnimationHelper
+    internal static class AnimationHelper
     {
+        public const string HorizontallyMoveParam = "(UIElement.RenderTransform).(TranslateTransform.X)";
+
+        public const string VerticallyScaleParam = "(UIElement.RenderTransform).(ScaleTransform.ScaleY)";
+
+
+
+        public const double StepLen = 52.0;
+        public const double ArrayStart = 8.0;
         
     }
 }

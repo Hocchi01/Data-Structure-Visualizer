@@ -20,6 +20,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
     internal abstract partial class CanvasViewModelBase :
         ObservableRecipient,
         IRecipient<ValueChangedMessage<int[]>>,
+        IRecipient<ValueChangedMessage<int?[]>>,
         IRecipient<LoadAddAnimationMessage>,
         IRecipient<PauseAnyAnimationMessage>,
         IRecipient<ResumeAnyAnimationMessage>,
@@ -129,5 +130,22 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// </summary>
         /// <param name="message"></param>
         public abstract void Receive(LoadRemoveAnimationMessage message);
+
+        public void Receive(ValueChangedMessage<int?[]> message)
+        {
+            var tmpValues = new List<int>();
+            foreach (var value in message.Value)
+            {
+                if (value != null)
+                {
+                    tmpValues.Add(value ?? 0);
+                }
+            }
+            Values = new ObservableCollection<int>(tmpValues);
+            Values.CollectionChanged += (s, e) =>
+            {
+                ReloadValues();
+            };
+        }
     }
 }

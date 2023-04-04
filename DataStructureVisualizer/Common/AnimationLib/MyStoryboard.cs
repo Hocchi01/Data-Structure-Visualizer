@@ -51,6 +51,35 @@ namespace DataStructureVisualizer.Common.AnimationLib
             offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
         }
 
+        public void AddAsyncAnimations<T>(List<T> animations, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
+        {
+            // 为持续时间最长的动画追加动作
+            int maxTimePos = 0;
+            for (int i = 0; i < animations.Count; i++)
+            {
+                if (animations[i].Duration.TimeSpan.TotalMilliseconds > animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds)
+                {
+                    maxTimePos = i;
+                }
+            }
+            animations[maxTimePos].SetActions(before, after);
+
+            for (int i = 0; i < animations.Count; i++)
+            {
+                animations[i].BeginTime = TimeSpan.FromMilliseconds(offset);
+                Link(animations[i], animations[i].TargetControl, animations[i].TargetParam);
+                if (maxTimePos != i)
+                {
+                    Children.Add(animations[i]);
+                }
+            }
+
+            // 把其中执行时间最长的动画添加到当前 Children 最末尾
+            Children.Add(animations[maxTimePos]);
+
+            offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
+        }
+
         public void AddSyncAnimation(AnimationTimeline animation, UIElement targetControl, object targetParam)
         {
             animation.BeginTime = TimeSpan.FromMilliseconds(offset);
@@ -60,6 +89,10 @@ namespace DataStructureVisualizer.Common.AnimationLib
             offset += animation.Duration.TimeSpan.TotalMilliseconds;
         }
 
+        public void AddSyncAnimation<T>(T animation) where T : AnimationTimeline, ILinkableAnimation
+        {
+            AddSyncAnimation(animation, animation.TargetControl, animation.TargetParam);
+        }
         // 
         public void Begin_Ex(FrameworkElement containingObject, bool isControllable)
         {
@@ -70,6 +103,8 @@ namespace DataStructureVisualizer.Common.AnimationLib
 
         public MyStoryboard()
         {
+            //// 添加一个空动画，便于插入事件动作
+            //Children.Add(new DoubleAnimation() { Duration = TimeSpan.Zero });
             Completed += (s, e) => 
             { 
                 WeakReferenceMessenger.Default.Send(new EndAnyAnimationMessage());

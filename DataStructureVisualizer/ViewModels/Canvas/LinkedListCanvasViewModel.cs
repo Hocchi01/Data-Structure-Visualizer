@@ -42,6 +42,11 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             throw new NotImplementedException();
         }
 
+        public override void Receive(LoadRemoveAnimationMessage message)
+        {
+            throw new NotImplementedException();
+        }
+
         public LinkedListCanvasViewModel()
         {
             Type = DS_SecondaryType.LinkedList;

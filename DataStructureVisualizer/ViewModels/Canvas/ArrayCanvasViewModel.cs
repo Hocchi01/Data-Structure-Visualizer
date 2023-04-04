@@ -20,6 +20,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using System.Windows.Media.Animation;
 using DataStructureVisualizer.Common.Sorts;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DataStructureVisualizer.Common.AlgorithmFactories;
+using DataStructureVisualizer.Common.Extensions;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
@@ -52,54 +54,34 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// <exception cref="NotImplementedException"></exception>
         public override void Receive(LoadAddAnimationMessage message)
         {
+            int addIndex = message.Index;
+            int addVal = message.Value;
+            int count = DataItems.Count;
+
             // 若是尾部追加元素则不执行动画
-            if (message.Index == DataItems.Count)
+            if (addIndex == count)
             {
                 Values.Add(message.Value);
                 return;
             }
 
-            int count = DataItems.Count;
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
-            var paletteHelper = new PaletteHelper();
+            MainStoryboard = new MyStoryboard();
 
-            // TODO 02: 在数组末尾添加一个“空项”
+            // TODO 01: 在数组末尾添加一个“空项”
             DataItems.Add(new ArrayItemViewModel() { Index = count });
 
-            // TODO 03: 编写动画主体
-            MainStoryboard = new MyStoryboard();
-            for (int i = count - 1; i >= message.Index; i--)
+            var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
+
+            for (int i = count - 1; i >= addIndex; i--)
             {
-                var itemView = Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(container, i);
-                var oldColor = DataItems[i].Color;
-
-                Action after = () => { itemView.rect.Fill = oldColor; };
-                if (i == message.Index)
-                {
-                    after += () =>
-                    {
-                        Values.Insert(message.Index, message.Value);
-                        WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(new LogViewModel() { Content = $"a[{message.Index}] = {message.Value};" }));
-                    };
-                }
-
-                MainStoryboard.AddSyncAnimation
-                (
-                    new SimulatedDoubleAnimation
-                    (
-                        to: 52, 
-                        time: 500,
-                        before: () => { itemView.rect.Fill = new SolidColorBrush(paletteHelper.GetTheme().SecondaryMid.Color); },
-                        after: after,
-                        log: new LogViewModel() { Content = $"a[{i+1}] = a[{i}];" }
-                    ),
-                    itemView.valueItem,
-                    "(UIElement.RenderTransform).(TranslateTransform.X)"
-                );
+                // TODO 02: 依次后移元素
+                saf.MoveElem(i, i + 1);
             }
+            // TODO 03: 写入添加的元素
+            saf.WriteElem(addIndex, addVal);
 
-            // TODO 05: 执行动画
             MainStoryboard.Begin_Ex(canvas, true);
         }
 
@@ -113,51 +95,67 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
             var iterator = canvas.FindName("iterator") as Grid;
+            var iterator2 = canvas.FindName("iterator2") as Grid;
+            
 
-            SortBase sort = null;
+            // SortBase sort = null;
+
+            SortFactory sf = null;
 
             switch (message.Type)
             {
                 case SortType.SelectionSort:
-                    sort = new SelectionSort(canvas, container, iterator, MainStoryboard, DataItems);
+                    sf = new SelectionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
                     break;
                 case SortType.QuickSort:
+                    var lowIterator = canvas.FindName("lowIterator") as Grid;
+                    var highIterator = canvas.FindName("highIterator") as Grid;
+                    var pivot = canvas.FindName("pivot") as Grid;
+                    sf = new QuickSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { LowIterator = lowIterator, HighIterator = highIterator, Pivot = pivot };
                     break;
                 case SortType.BubbleSort:
-                    sort = new BubbleSort(canvas, container, iterator, MainStoryboard, DataItems);
+                    // sort = new BubbleSort(canvas, container, iterator, MainStoryboard, DataItems);
+                    sf = new BubbleSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
                     break;
                 case SortType.InsertionSort:
-                    sort = new InsertionSort(canvas, container, iterator, MainStoryboard, DataItems);
+                    sf = new InsertionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
                     break;
             }
 
-            sort?.MainProgram();
+            sf?.Execute();
         }
 
+        /// <summary>
+        /// 响应【删除工具】的“加载删除动画”消息
+        /// </summary>
+        /// <param name="message"></param>
         public override void Receive(LoadRemoveAnimationMessage message)
         {
-            int index = message.Index;
+            int rmvIndex = message.Index;
+            int count = DataItems.Count;
+
             // 若是删除尾部元素则不执行动画
-            if (index == DataItems.Count - 1)
+            if (rmvIndex == count - 1)
             {
-                Values.RemoveAt(index);
+                Values.RemoveAt(rmvIndex);
                 return;
             }
 
-            int count = DataItems.Count;
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
-            var paletteHelper = new PaletteHelper();
-
             MainStoryboard = new MyStoryboard();
+            
+            var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
 
-            // 删除元素
-            DataItems[index].Clear();
-
-            for (int i = index + 1; i < count; i++)
+            // TODO 01: 删除元素
+            saf.RemoveElem(rmvIndex);
+            for (int i = rmvIndex + 1; i < count; i++)
             {
-
+                // TODO 02: 依次左移元素
+                saf.MoveElem(i, i - 1);
             }
+
+            MainStoryboard.Begin_Ex(canvas, true);
         }
 
         public ArrayCanvasViewModel()
