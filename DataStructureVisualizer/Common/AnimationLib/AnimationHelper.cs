@@ -13,8 +13,15 @@ namespace DataStructureVisualizer.Common.AnimationLib
     internal static class AnimationHelper
     {
         public const string HorizontallyMoveParam = "(UIElement.RenderTransform).(TranslateTransform.X)";
+        public const string VerticallyMoveParam = "(UIElement.RenderTransform).(TranslateTransform.Y)";
 
         public const string VerticallyScaleParam = "(UIElement.RenderTransform).(ScaleTransform.ScaleY)";
+
+        //public const string VerticallyMoveParam = "(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)";
+        //public const string HorizontallyMoveParam = "(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)";
+        //public const string VerticallyScaleParam = "(UIElement.RenderTransform).(TransformGroup.Children)[1].(ScaleTransform.ScaleY)";
+
+        //"(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)"
 
 
 

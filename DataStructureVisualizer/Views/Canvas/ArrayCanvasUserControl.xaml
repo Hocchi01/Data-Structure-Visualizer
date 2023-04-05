@@ -10,8 +10,35 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <DataTemplate x:Key="dataTmp">
+
+        <DataTemplate x:Key="ArrayItemUserControl">
             <data:ArrayItemUserControl x:Name="item" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="tmpStoreTemplate">
+            <Grid x:Name="item" Visibility="Hidden">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border
+                    Width="50"
+                    Height="50"
+                    Margin="1,1,1,0"
+                    Padding="3"
+                    BorderBrush="{DynamicResource PrimaryHueLightBrush}"
+                    BorderThickness="2" />
+                <DockPanel Grid.Row="1" Width="50">
+                    <TextBlock
+                        Padding="8,0"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        DockPanel.Dock="Right"
+                        FontSize="11"
+                        Text="{Binding Index}"
+                        TextAlignment="Center" />
+                </DockPanel>
+            </Grid>
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
@@ -25,10 +52,26 @@
                 x:Name="arrItemsControl"
                 Margin="8"
                 VerticalAlignment="Center"
-                ItemTemplate="{StaticResource dataTmp}"
+                ItemTemplate="{StaticResource ArrayItemUserControl}"
                 ItemsSource="{Binding DataItems}">
                 <ItemsControl.RenderTransform>
                     <TranslateTransform X="0" />
+                </ItemsControl.RenderTransform>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+            <ItemsControl
+                x:Name="tmpArray"
+                Margin="8"
+                VerticalAlignment="Center"
+                ItemTemplate="{StaticResource tmpStoreTemplate}"
+                ItemsSource="{Binding DataItems}">
+                <ItemsControl.RenderTransform>
+                    <TranslateTransform X="0" Y="80" />
                 </ItemsControl.RenderTransform>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -57,7 +100,7 @@
                     Height="50"
                     Margin="1,1,1,0"
                     Padding="3"
-                    BorderBrush="{DynamicResource SecondaryHueMidBrush}"
+                    BorderBrush="#FF5722"
                     BorderThickness="3" />
                 <DockPanel Grid.Row="1" Width="50">
                     <TextBlock

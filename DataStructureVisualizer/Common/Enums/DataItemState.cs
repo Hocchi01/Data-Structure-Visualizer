@@ -13,5 +13,7 @@ namespace DataStructureVisualizer.Common.Enums
         Min,
         Max,
         Actived,
+        Group1,
+        Group2,
     }
 }

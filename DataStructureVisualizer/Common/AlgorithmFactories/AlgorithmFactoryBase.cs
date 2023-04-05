@@ -52,7 +52,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public void RemoveElem(int elemIndex)
         {
             int elemRealIndex = table[elemIndex];
-            InsertAction(() =>
+            MainStoryboard.InsertAction(() =>
             {
                 DataItems[elemRealIndex].Value = null; // 逻辑上删除
                 //DataItems[elemRealIndex].Color = null;
@@ -63,7 +63,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public void WriteElem(int elemIndex, int elemVal)
         {
             int elemRealIndex = table[elemIndex];
-            InsertAction(() =>
+            MainStoryboard.InsertAction(() =>
             {
                 DataItems[elemRealIndex].Value = elemVal;
                 //DataItems[elemRealIndex].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
@@ -78,6 +78,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             table[index2] = tmp;
         }
 
+
+
         protected void UpdateValues()
         {
             int?[] values = new int?[DataItems.Count];
@@ -88,22 +90,12 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             WeakReferenceMessenger.Default.Send(new ValueChangedMessage<int?[]>(values));
         }
 
-        protected void InsertAction(Action action)
-        {
-            int count = MainStoryboard.Children.Count;
-            if (count == 0)
-            {
-                action();
-            }
-            else
-            {
-                (MainStoryboard.Children[count - 1] as AnimationTimeline).SetActions(null, action);
-            }
-        }
-
         protected void ActivateElem(int elemIndex)
         {
-            DataItems[activeIndex].Deactivate();
+            if (activeIndex != elemIndex)
+            {
+                DataItems[activeIndex].Deactivate();
+            }
             DataItems[elemIndex].Activate();
 
             activeIndex = elemIndex;

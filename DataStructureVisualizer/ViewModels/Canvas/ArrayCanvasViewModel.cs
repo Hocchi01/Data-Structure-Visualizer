@@ -22,6 +22,7 @@ using DataStructureVisualizer.Common.Sorts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DataStructureVisualizer.Common.AlgorithmFactories;
 using DataStructureVisualizer.Common.Extensions;
+using DataStructureVisualizer.Test;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
@@ -119,6 +120,15 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     break;
                 case SortType.InsertionSort:
                     sf = new InsertionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
+                    break;
+                case SortType.MergeSort:
+                    var group1Iterator = canvas.FindName("lowIterator") as Grid;
+                    var group2Iterator = canvas.FindName("highIterator") as Grid;
+                    var tmpArray = canvas.FindName("tmpArray") as ItemsControl;
+                    sf = new MergeSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Group1Iterator = group1Iterator, Group2Iterator = group2Iterator, TmpArray = tmpArray };
+                    break;
+                case SortType.TEST:
+                    sf = new TestSort(canvas, container, MainStoryboard, DataItems.RevertElems());
                     break;
             }
 

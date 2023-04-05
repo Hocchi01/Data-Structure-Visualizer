@@ -12,6 +12,7 @@ namespace DataStructureVisualizer.Common.Enums
         BubbleSort,
         InsertionSort,
         QuickSort,
-
+        MergeSort,
+        TEST
     }
 }

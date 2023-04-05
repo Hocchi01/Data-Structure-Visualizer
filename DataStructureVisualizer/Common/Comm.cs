@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Xml.Serialization;
 
 namespace DataStructureVisualizer.Common
 {
@@ -61,7 +64,7 @@ namespace DataStructureVisualizer.Common
         }
         public static float[] GetGradient(ObservableCollection<int> values, float gMin = 0.0F, float gMax = 1.0F)
         {
-           return GetGradient(ObservableCollectionToArray(values), gMin, gMax);
+            return GetGradient(ObservableCollectionToArray(values), gMin, gMax);
         }
 
         public static float GetSingleGradientVal(int value, IEnumerable<int> values, float gMin = 0.0F, float gMax = 1.0F)
@@ -71,7 +74,7 @@ namespace DataStructureVisualizer.Common
             if (vMax == vMin)
             {
                 return (gMin + gMax) / 2;
-            }    
+            }
             return gMin + (gMax - gMin) * ((float)(value - vMin) / (vMax - vMin));
         }
 
@@ -114,7 +117,7 @@ namespace DataStructureVisualizer.Common
             {
                 arr[i] = list[i];
             }
-            
+
             return arr;
         }
 
@@ -137,7 +140,7 @@ namespace DataStructureVisualizer.Common
         /// <param name="index"></param>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static T GetItemFromItemsControlByIndex<T>(ItemsControl ic, int index, string name = "item") where T : UserControl
+        public static T GetItemFromItemsControlByIndex<T>(ItemsControl ic, int index, string name = "item") where T : UIElement
         {
             var item = ic.ItemContainerGenerator.ContainerFromIndex(index) as ContentPresenter;
             return (item.ContentTemplate.FindName(name, item)) as T;
@@ -147,6 +150,36 @@ namespace DataStructureVisualizer.Common
         {
             var item = ic.ItemContainerGenerator.ContainerFromIndex(index) as ContentPresenter;
             return item.ContentTemplate.FindName(name, item) as UserControl;
+        }
+
+        public static object DeepCopy(object obj)
+        {
+            Type type = obj.GetType();
+            object newObj = Activator.CreateInstance(type);
+            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            foreach (PropertyInfo propertyInfo in propertyInfos)
+            {
+                if (propertyInfo.CanWrite)
+                {
+                    if (propertyInfo.PropertyType.IsValueType || propertyInfo.PropertyType == typeof(string))
+                    {
+                        propertyInfo.SetValue(newObj, propertyInfo.GetValue(obj));
+                    }
+                    else
+                    {
+                        object childObj = propertyInfo.GetValue(obj);
+                        if (childObj == null)
+                        {
+                            propertyInfo.SetValue(newObj, null);
+                        }
+                        else
+                        {
+                            propertyInfo.SetValue(newObj, DeepCopy(childObj));
+                        }
+                    }
+                }
+            }
+            return newObj;
         }
     }
 }

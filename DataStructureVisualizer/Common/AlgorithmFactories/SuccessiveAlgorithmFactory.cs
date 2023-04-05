@@ -18,20 +18,22 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         {
         }
 
-        public void MoveElem(int elemIndex, int toIndex, Action? before, Action? after)
+        public void MoveElem(int elemIndex, int toIndex, Action? before, Action? after, bool isChangeTable = true)
         {
             var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, table[elemIndex]);
 
             MainStoryboard.AddSyncAnimation(elem.MoveValueItem(toIndex - elemIndex, before, after));
 
-            SwapElemsInTable(elemIndex, toIndex);
+            if (isChangeTable) SwapElemsInTable(elemIndex, toIndex);
         }
 
-        public void MoveElem(int elemIndex, int toIndex)
+        public void MoveElem(int elemIndex, int toIndex, bool isChangeTable = true)
         {
             int elemRealIndex = table[elemIndex];
-            MoveElem(elemIndex, toIndex, () => { ActivateElem(elemRealIndex); }, null);
+            MoveElem(elemIndex, toIndex, () => { ActivateElem(elemRealIndex); }, null, isChangeTable);
         }
+
+        //public void 
 
         public void SwapElems(int index1, int index2, Action? before = null, Action? after = null)
         {

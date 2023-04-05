@@ -44,9 +44,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         {
             ItersReturn(lowIndex, highIndex);
 
-            int pivotIndex = lowIndex;
             int pivot = DataItems[table[lowIndex]].Value ?? 0; // 将当前表中第一个元素设为枢轴值，对表进行划分
-            TmpStorePivotElem(pivotIndex);
+            TmpStorePivotElem(lowIndex);
 
             while (lowIndex < highIndex)
             {
@@ -65,7 +64,6 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 MoveElem(lowIndex, highIndex); // 将比枢轴值大的元素移动到右端
             }
 
-            // A[lowIndex] = pivot;
             ReturnPivotElem(lowIndex);
             return lowIndex;
         }
@@ -76,10 +74,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             {
                 IterBegin(LowIterator);
                 IterBegin(HighIterator, last);
-                Init();
             });
 
-            LoadInitAnimation();
+            LoadBeginAnimation();
 
             QuickSort(0, last);
 
@@ -105,48 +102,26 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         {
             int toRealIndex = table[toIndex];
 
-            MoveIter(iter, toIndex, null, () =>
-            {
-                ActivateElem(toRealIndex);
-            }, offset);
+            MoveIter(iter, toIndex, null, () => { ActivateElem(toRealIndex); }, offset);
         }
 
-        private void LoadInitAnimation()
+        private void LoadBeginAnimation()
         {
-            var rightMove1 = new SimulatedDoubleAnimation(by: (float)offset, time: 500);
-            var rightMove2 = new SimulatedDoubleAnimation(by: (float)offset, time: 500);
-            var rightMove3 = new SimulatedDoubleAnimation(by: (float)offset, time: 500);
-
-            var animations = new List<AnimationTimeline> { rightMove1, rightMove2, rightMove3 };
-
+            var rightMove = new SimulatedDoubleAnimation(by: (float)offset, time: 500);
             var targetControls = new List<UIElement> { Container, LowIterator, HighIterator };
-
             string param = AnimationHelper.HorizontallyMoveParam;
-            var targetParams = new List<object> { param, param, param };
 
-            MainStoryboard.AddAsyncAnimations(animations, targetControls, targetParams, null, () =>
-            {
-                Pivot.Visibility = Visibility.Visible;
-            });
+            MainStoryboard.AddAsyncAnimations(rightMove, targetControls, param, null, () => { Pivot.Visibility = Visibility.Visible; });
         }
 
         private void LoadEndAnimation()
         {
-            var rightMove1 = new SimulatedDoubleAnimation(by: -(float)offset, time: 500);
-            var rightMove2 = new SimulatedDoubleAnimation(by: -(float)offset, time: 500);
-            var rightMove3 = new SimulatedDoubleAnimation(by: -(float)offset, time: 500);
-
-            var animations = new List<AnimationTimeline> { rightMove1, rightMove2, rightMove3 };
-
+            var leftMove = new SimulatedDoubleAnimation(by: -(float)offset, time: 500);
             var targetControls = new List<UIElement> { Container, LowIterator, HighIterator };
-
             string param = AnimationHelper.HorizontallyMoveParam;
-            var targetParams = new List<object> { param, param, param };
 
-            MainStoryboard.AddAsyncAnimations(animations, targetControls, targetParams, () => { Pivot.Visibility = Visibility.Hidden; });
+            MainStoryboard.AddAsyncAnimations(leftMove, targetControls, param, () => { Pivot.Visibility = Visibility.Hidden; });
         }
-
-
 
         private void TmpStorePivotElem(int elemIndex)
         {
@@ -178,16 +153,13 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             var highAnimation = new SimulatedDoubleAnimation(to: start + step * highIndex + offset, time: 500) { TargetControl = HighIterator, TargetParam = param };
 
-            Action? after = lowIndex != highIndex ? null : () => { SetElemSorted(lowIndex); };
+            Action? after = lowIndex != highIndex ? null : () => 
+            {
+                ActivateElem(table[lowIndex]);
+                SetElemSorted(lowIndex); 
+            };
 
             MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { lowAnimation, highAnimation }, null, after);
-
-            var animations = new List<SimulatedDoubleAnimation>();
-            animations.AddRange(GetStickAnimations(lowIndex, highIndex));
-            animations.AddRange(GetUnStickAnimations(0, lowIndex));
-            animations.AddRange(GetUnStickAnimations(highIndex + 1, last));
-
-            MainStoryboard.AddAsyncAnimations(animations);
         }
     }
 }

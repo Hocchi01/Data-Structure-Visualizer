@@ -18,9 +18,12 @@ namespace DataStructureVisualizer.Common.Converters
                     return new SolidColorBrush(new Color() { ScA = 1.0F, R = 76, G = 175, B = 80 });
                 case DataItemState.Min:
                 case DataItemState.Max:
+                case DataItemState.Group2:
                     return new SolidColorBrush(new Color() { ScA = 1.0F, R = 41, G = 98, B = 255 });
                 case DataItemState.Actived:
                     return new SolidColorBrush(new Color() { ScA = 1.0F, R = 174, G = 234, B = 0 });
+                case DataItemState.Group1:
+                    return new SolidColorBrush(new Color() { ScA = 1.0F, R = 244, G = 67, B = 54 });
                 default:
                     return null;
             }

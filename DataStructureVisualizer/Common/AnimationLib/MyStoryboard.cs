@@ -14,6 +14,12 @@ namespace DataStructureVisualizer.Common.AnimationLib
     {
         private double offset = 0;
 
+        /// <summary>
+        /// 为动画绑定控件及其属性
+        /// </summary>
+        /// <param name="animation"></param>
+        /// <param name="targetControl"></param>
+        /// <param name="targetParam"></param>
         public void Link(AnimationTimeline animation, UIElement targetControl, object targetParam)
         {
             SetTarget(animation, targetControl);
@@ -49,6 +55,20 @@ namespace DataStructureVisualizer.Common.AnimationLib
             }
 
             offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
+        }
+
+        public void AddAsyncAnimations<T>(T animation, List<UIElement> targetControls, object targetParams, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
+        {
+            var animations = new List<T>();
+            for (int i = 0; i < targetControls.Count; i++)
+            {
+                T anim = Comm.DeepCopy(animation) as T;
+                anim.TargetControl = targetControls[i];
+                anim.TargetParam = targetParams;
+                animations.Add(anim);
+            }
+
+            AddAsyncAnimations(animations, before, after);
         }
 
         public void AddAsyncAnimations<T>(List<T> animations, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
@@ -93,6 +113,20 @@ namespace DataStructureVisualizer.Common.AnimationLib
         {
             AddSyncAnimation(animation, animation.TargetControl, animation.TargetParam);
         }
+
+        public void InsertAction(Action action)
+        {
+            int count = Children.Count;
+            if (count == 0)
+            {
+                action();
+            }
+            else
+            {
+                (Children[count - 1] as AnimationTimeline).SetActions(null, action);
+            }
+        }
+
         // 
         public void Begin_Ex(FrameworkElement containingObject, bool isControllable)
         {

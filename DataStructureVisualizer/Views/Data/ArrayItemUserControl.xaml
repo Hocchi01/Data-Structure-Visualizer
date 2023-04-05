@@ -28,7 +28,7 @@
             <Grid x:Name="valueItem" Visibility="{Binding IsRemoved, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter=reverse}">
                 <Rectangle x:Name="rect" Fill="{Binding Color}">
                     <Rectangle.RenderTransform>
-                        <ScaleTransform x:Name="rectScaleTransform" CenterY="40" ScaleY="1" />
+                        <ScaleTransform CenterY="40" ScaleY="1" />
                     </Rectangle.RenderTransform>
                 </Rectangle>
                 <TextBlock
@@ -38,7 +38,7 @@
                     Foreground="White"
                     Text="{Binding Value}" />
                 <Grid.RenderTransform>
-                    <TranslateTransform x:Name="dataTT" />
+                    <TranslateTransform />
                 </Grid.RenderTransform>
             </Grid>
         </Border>
