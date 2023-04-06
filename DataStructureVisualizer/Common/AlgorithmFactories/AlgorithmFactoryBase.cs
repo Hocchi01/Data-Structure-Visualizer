@@ -20,7 +20,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         protected int[] table; // 用于记录当前元素实际位置
         protected int last;
         protected int count;
-        protected int activeIndex = 0; // 维护一个当前唯一被激活的元素索引
+        protected int activeIndex = -1; // 维护一个当前唯一被激活的元素索引
 
         protected AnimationTimeline lastAnimation = null;
 
@@ -92,7 +92,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         protected void ActivateElem(int elemIndex)
         {
-            if (activeIndex != elemIndex)
+            if (activeIndex >= 0 && activeIndex != elemIndex)
             {
                 DataItems[activeIndex].Deactivate();
             }
@@ -107,6 +107,12 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             {
                 item.Deactivate();
             }
+        }
+
+        protected void DeactivateElem()
+        {
+            DataItems[activeIndex].Deactivate();
+            activeIndex = -1;
         }
     }
 }

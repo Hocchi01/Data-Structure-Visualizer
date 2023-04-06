@@ -98,13 +98,20 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             // throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 迭代器遍历下一个元素
+        /// </summary>
+        /// <param name="iter"></param>
+        /// <param name="toIndex"></param>
         private void IterNext(UIElement iter, int toIndex)
         {
             int toRealIndex = table[toIndex];
-
             MoveIter(iter, toIndex, null, () => { ActivateElem(toRealIndex); }, offset);
         }
 
+        /// <summary>
+        /// 初始动画：右移数组；显示 pivot
+        /// </summary>
         private void LoadBeginAnimation()
         {
             var rightMove = new SimulatedDoubleAnimation(by: (float)offset, time: 500);
@@ -114,6 +121,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.AddAsyncAnimations(rightMove, targetControls, param, null, () => { Pivot.Visibility = Visibility.Visible; });
         }
 
+        /// <summary>
+        /// 收尾动画：隐藏 pivot；左移数组恢复至原位
+        /// </summary>
         private void LoadEndAnimation()
         {
             var leftMove = new SimulatedDoubleAnimation(by: -(float)offset, time: 500);
@@ -123,43 +133,56 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.AddAsyncAnimations(leftMove, targetControls, param, () => { Pivot.Visibility = Visibility.Hidden; });
         }
 
+        /// <summary>
+        /// 将当前趟的 pivot 暂存到外部
+        /// </summary>
+        /// <param name="elemIndex"></param>
         private void TmpStorePivotElem(int elemIndex)
         {
-            int elemRealIndex = table[elemIndex];
-            var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
+            //int elemRealIndex = table[elemIndex];
+            //var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
 
             float by = -(float)(AnimationHelper.StepLen * elemIndex + offset);
 
-            MainStoryboard.AddSyncAnimation(elem.MoveValueItem(by, () => { ActivateElem(elemRealIndex); }));
+            //MainStoryboard.AddSyncAnimation(elem.MoveValueItem(by, () => { ActivateElem(elemRealIndex); }));
+
+            MoveElem(elemIndex, by);
         }
 
+        /// <summary>
+        /// 将暂存在 pivot 中的元素挪回数组中
+        /// </summary>
+        /// <param name="toIndex"></param>
         private void ReturnPivotElem(int toIndex)
         {
-            int elemRealIndex = table[toIndex];
-            var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
+            //int elemRealIndex = table[toIndex];
+            //var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
 
             float by = (float)(AnimationHelper.StepLen * toIndex + offset);
 
-            MainStoryboard.AddSyncAnimation(elem.MoveValueItem(by, () => { ActivateElem(elemRealIndex); }, () => { SetElemSorted(toIndex); }));
+            //MainStoryboard.AddSyncAnimation(elem.MoveValueItem(by, () => { ActivateElem(elemRealIndex); }, () => { SetElemSorted(toIndex); }));
+
+            MoveElem(toIndex, by, null, () => { SetElemSorted(toIndex); });
         }
 
+        /// <summary>
+        /// 将两个迭代器跳到下一个要划分的区间
+        /// </summary>
+        /// <param name="lowIndex"></param>
+        /// <param name="highIndex"></param>
         private void ItersReturn(int lowIndex, int highIndex)
         {
-            double start = AnimationHelper.ArrayStart;
-            double step = AnimationHelper.StepLen;
-            string param = AnimationHelper.HorizontallyMoveParam;
+            var lowIterMove = GetIterMovementAnimation(LowIterator, lowIndex, null, null, offset);
+            var highIterMove = GetIterMovementAnimation(HighIterator, highIndex, null, null, offset);
 
-            var lowAnimation = new SimulatedDoubleAnimation(to: start + step * lowIndex + offset, time: 500) { TargetControl = LowIterator, TargetParam = param };
-
-            var highAnimation = new SimulatedDoubleAnimation(to: start + step * highIndex + offset, time: 500) { TargetControl = HighIterator, TargetParam = param };
-
+            // 若划分区间只有一个元素，则无需做任何操作
             Action? after = lowIndex != highIndex ? null : () => 
             {
                 ActivateElem(table[lowIndex]);
                 SetElemSorted(lowIndex); 
             };
 
-            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { lowAnimation, highAnimation }, null, after);
+            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { lowIterMove, highIterMove }, null, after);
         }
     }
 }

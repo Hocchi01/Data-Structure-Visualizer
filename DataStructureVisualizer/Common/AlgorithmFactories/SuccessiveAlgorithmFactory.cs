@@ -18,46 +18,91 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         {
         }
 
-        public void MoveElem(int elemIndex, int toIndex, Action? before, Action? after, bool isChangeTable = true)
+        protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, float by, Action? before, Action? after, bool noActivate = false)
         {
-            var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, table[elemIndex]);
+            int elemRealIndex = table[elemIndex];
 
-            MainStoryboard.AddSyncAnimation(elem.MoveValueItem(toIndex - elemIndex, before, after));
+            Action beforeActions = () => { if (!noActivate) ActivateElem(elemRealIndex); }; // 默认前置动作：激活当前移动的元素
+            Action afterActions = () => { };
+            if (before != null) beforeActions += before;
+            if (after != null) afterActions += after;
+
+            var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
+
+            return elem.MoveValueItem(by, beforeActions, afterActions);
+        }
+
+        protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, int toIndex, Action? before, Action? after, bool noActivate = false)
+        {
+            return GetElemMovementAnimation(elemIndex, (toIndex - elemIndex) * (float)AnimationHelper.StepLen, before, after, noActivate);
+        }
+
+        /// <summary>
+        /// 容器内部移动元素
+        /// </summary>
+        /// <param name="elemIndex"></param>
+        /// <param name="toIndex"></param>
+        /// <param name="before"></param>
+        /// <param name="after"></param>
+        /// <param name="isChangeTable"></param>
+        public void MoveElem(int elemIndex, int toIndex, Action? before = null, Action? after = null, bool isChangeTable = true)
+        {
+            if (elemIndex == toIndex) return;
+
+            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, toIndex, before, after));
 
             if (isChangeTable) SwapElemsInTable(elemIndex, toIndex);
         }
 
-        public void MoveElem(int elemIndex, int toIndex, bool isChangeTable = true)
+        /// <summary>
+        /// 非容器内部移动元素
+        /// </summary>
+        /// <param name="elemIndex"></param>
+        /// <param name="by"></param>
+        public void MoveElem(int elemIndex, float by, Action? before = null, Action? after = null)
         {
-            int elemRealIndex = table[elemIndex];
-            MoveElem(elemIndex, toIndex, () => { ActivateElem(elemRealIndex); }, null, isChangeTable);
+            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, by, before, after));
         }
 
-        //public void 
-
+        /// <summary>
+        /// 交换两个元素
+        /// </summary>
+        /// <param name="index1"></param>
+        /// <param name="index2"></param>
+        /// <param name="before"></param>
+        /// <param name="after"></param>
         public void SwapElems(int index1, int index2, Action? before = null, Action? after = null)
         {
-            var elem1 = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, table[index1]);
-            var elem2 = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, table[index2]);
-
-            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> {
-                elem1.MoveValueItem(index2 - index1),
-                elem2.MoveValueItem(index1 - index2),
-            }, before, after);
+            var elem1Move = GetElemMovementAnimation(index1, index2, null, null, true);
+            var elem2Move = GetElemMovementAnimation(index2, index1, null, null, true);
+            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { elem1Move, elem2Move }, before, after);
 
             SwapElemsInTable(index1, index2);
         }
 
-        public void MoveIter(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0)
+
+
+        protected SimulatedDoubleAnimation GetIterMovementAnimation(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0)
         {
             double start = AnimationHelper.ArrayStart;
             double step = AnimationHelper.StepLen;
             string param = AnimationHelper.HorizontallyMoveParam;
-            MainStoryboard.AddSyncAnimation(new SimulatedDoubleAnimation(to: start + step * toIndex + offset, time: 500, before: before, after: after) { TargetControl = iter, TargetParam = param });
+
+            return new SimulatedDoubleAnimation(to: start + step * toIndex + offset, time: 500, before: before, after: after) { TargetControl = iter, TargetParam = param };
         }
 
-
-
+        /// <summary>
+        /// 移动迭代器
+        /// </summary>
+        /// <param name="iter"></param>
+        /// <param name="toIndex"></param>
+        /// <param name="before"></param>
+        /// <param name="after"></param>
+        /// <param name="offset"></param>
+        public void MoveIter(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0)
+        {
+            MainStoryboard.AddSyncAnimation(GetIterMovementAnimation(iter, toIndex, before, after, offset));
+        }
 
     }
 }

@@ -48,6 +48,10 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.Begin_Ex(Canvas, true);
         }
 
+        /// <summary>
+        /// 交换两元素
+        /// </summary>
+        /// <param name="iterIndex"></param>
         private void ElemSwap(int iterIndex)
         {
             SwapElems(iterIndex, iterIndex + 1, null, () =>
@@ -57,11 +61,21 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
         }
 
+        /// <summary>
+        /// 迭代器遍历下一个元素
+        /// </summary>
+        /// <param name="toIndex"></param>
         private void IterNext(int toIndex)
         {
             MoveIter(Iterator, toIndex, null, null);
         }
 
+        /// <summary>
+        /// 一趟插入排序后将迭代器返回未排序序列头部
+        /// </summary>
+        /// <param name="toIndex"></param>
+        /// <param name="preIndex"></param>
+        /// <param name="isLess"></param>
         private void IterReturn(int toIndex, int preIndex, bool isLess)
         {
             int sortedIndex = isLess ? preIndex : preIndex + 1;

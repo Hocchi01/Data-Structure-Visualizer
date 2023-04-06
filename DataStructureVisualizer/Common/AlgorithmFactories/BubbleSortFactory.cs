@@ -53,6 +53,10 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.Begin_Ex(Canvas, true);
         }
 
+        /// <summary>
+        /// 交换两元素后将后一个位置标记为“当前最大”
+        /// </summary>
+        /// <param name="iterIndex"></param>
         private void ElemSwap(int iterIndex)
         {
             SwapElems(iterIndex, iterIndex + 1, null, () =>
@@ -61,6 +65,10 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
         }
 
+        /// <summary>
+        /// 迭代器遍历下一个元素
+        /// </summary>
+        /// <param name="toIndex"></param>
         private void IterNext(int toIndex)
         {
             int toRealIndex = table[toIndex];
@@ -72,6 +80,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
         }
 
+        /// <summary>
+        /// 一趟冒泡结束后，迭代器返回到数组头部
+        /// </summary>
+        /// <param name="toIndex"></param>
+        /// <param name="sortedIndex"></param>
         private void IterReturn(int toIndex, int sortedIndex)
         {
             int toRealIndex = table[toIndex];

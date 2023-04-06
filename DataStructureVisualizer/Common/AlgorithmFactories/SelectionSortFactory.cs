@@ -58,6 +58,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.Begin_Ex(Canvas, true);
         }
 
+        /// <summary>
+        /// 一趟比较后，交换头部和最小元素
+        /// </summary>
+        /// <param name="leftIndex"></param>
+        /// <param name="minIndex"></param>
         private void ElemSwap(int leftIndex, int minIndex)
         {
             SwapElems(leftIndex, minIndex, null, () =>
@@ -67,6 +72,12 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
         }
 
+        /// <summary>
+        /// 迭代器遍历下一个元素
+        /// </summary>
+        /// <param name="toIndex"></param>
+        /// <param name="minIndex"></param>
+        /// <param name="isLess"></param>
         private void IterNext(int toIndex, int minIndex, bool isLess)
         {
             int toRealIndex = table[toIndex];
@@ -78,6 +89,10 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
         }
 
+        /// <summary>
+        /// 一趟结束后，迭代器返回到未排序序列头部
+        /// </summary>
+        /// <param name="toIndex"></param>
         private void IterReturn(int toIndex)
         {
             int toRealIndex = table[toIndex];

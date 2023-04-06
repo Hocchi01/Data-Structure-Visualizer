@@ -82,11 +82,16 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             for (int i = lowIndex; i <= highIndex; i++)
             {
-                var itemView = Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, table[i]);
-                animations.Add(new SimulatedDoubleAnimation(to: 1.0, time: 500) { TargetControl = itemView.rect, TargetParam = AnimationHelper.VerticallyScaleParam });
+                animations.Add(GetUnStickAnimation(i));
             }
 
             return animations;
+        }
+
+        protected SimulatedDoubleAnimation GetUnStickAnimation(int elemIndex)
+        {
+            var itemView = Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, table[elemIndex]);
+            return new SimulatedDoubleAnimation(to: 1.0, time: 500) { TargetControl = itemView.rect, TargetParam = AnimationHelper.VerticallyScaleParam };
         }
 
         protected void UpdateMinElem(int elemIndex, int minIndex)

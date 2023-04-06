@@ -15,7 +15,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     internal class MergeSortFactory : SortFactory
     {
-        private int[] sortedIndices;
+        private int[] mergedIndices;
         private int g1StateBegIndex = 0;
         private int g1StateEndIndex = 0;
         private int g2StateBegIndex = 0;
@@ -27,7 +27,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         public MergeSortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
         {
-            sortedIndices = new int[count];
+            mergedIndices = new int[count];
         }
 
         private void MergeSort(int begIndex, int endIndex)
@@ -51,34 +51,40 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             {
                 if (DataItems[table[g1Iter]].Value < DataItems[table[g2Iter]].Value)
                 {
-                    TmpStoreElem(g1Iter, iter);
-                    sortedIndices[iter++] = g1Iter++;
-                    if (g1Iter <= g1EndIndex) IterNext(Group1Iterator, g1Iter);
+                    OperateGroup1(ref g1Iter, ref iter, g1EndIndex);
                 }
                 else
                 {
-                    TmpStoreElem(g2Iter, iter);
-                    sortedIndices[iter++] = g2Iter++;
-                    if (g2Iter <= g2EndIndex) IterNext(Group2Iterator, g2Iter);
+                    OperateGroup2(ref g2Iter, ref iter, g2EndIndex);
                 }
             }
 
             while (g1Iter <= g1EndIndex)
             {
-                TmpStoreElem(g1Iter, iter);
-                sortedIndices[iter++] = g1Iter++;
-                if (g1Iter <= g1EndIndex) IterNext(Group1Iterator, g1Iter);
+                OperateGroup1(ref g1Iter, ref iter, g1EndIndex);
             }
 
             while (g2Iter <= g2EndIndex)
             {
-                TmpStoreElem(g2Iter, iter);
-                sortedIndices[iter++] = g2Iter++;
-                if (g2Iter <= g2EndIndex) IterNext(Group2Iterator, g2Iter);
+                OperateGroup2(ref g2Iter, ref iter, g2EndIndex);
             }
 
             MergeElemsInTable(begIndex, iter);
             ElemsReturn(begIndex, endIndex);
+        }
+
+        private void OperateGroup1(ref int g1Iter, ref int iter, int g1EndIndex)
+        {
+            TmpStoreElem(g1Iter, iter);
+            mergedIndices[iter++] = g1Iter++;
+            if (g1Iter <= g1EndIndex) IterNext(Group1Iterator, g1Iter);
+        }
+
+        private void OperateGroup2(ref int g2Iter, ref int iter, int g2EndIndex)
+        {
+            TmpStoreElem(g2Iter, iter);
+            mergedIndices[iter++] = g2Iter++;
+            if (g2Iter <= g2EndIndex) IterNext(Group2Iterator, g2Iter);
         }
 
 
@@ -109,19 +115,26 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// 将迭代器跳到下一次要归并的两组元素头部
+        /// </summary>
+        /// <param name="g1BegIndex"></param>
+        /// <param name="g2BegIndex"></param>
         private void ItersReturn(int g1BegIndex, int g2BegIndex)
         {
-            double start = AnimationHelper.ArrayStart;
-            double step = AnimationHelper.StepLen;
-            string param = AnimationHelper.HorizontallyMoveParam;
+            var g1IterMove = GetIterMovementAnimation(Group1Iterator, g1BegIndex);
+            var g2IterMove = GetIterMovementAnimation(Group2Iterator, g2BegIndex);
 
-            var g1Animation = new SimulatedDoubleAnimation(to: start + step * g1BegIndex, time: 500) { TargetControl = Group1Iterator, TargetParam = param };
-
-            var g2Animation = new SimulatedDoubleAnimation(to: start + step * g2BegIndex, time: 500) { TargetControl = Group2Iterator, TargetParam = param };
-
-            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { g1Animation, g2Animation });
+            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { g1IterMove, g2IterMove });
         }
 
+        /// <summary>
+        /// 分别标记当前正在归并的两组元素
+        /// </summary>
+        /// <param name="g1BegIndex"></param>
+        /// <param name="g1EndIndex"></param>
+        /// <param name="g2BegIndex"></param>
+        /// <param name="g2EndIndex"></param>
         private void DivideIntoGroups(int g1BegIndex, int g1EndIndex, int g2BegIndex, int g2EndIndex)
         {
             for (int i = g1StateBegIndex; i <= g1StateEndIndex; i++)
@@ -146,12 +159,17 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             g2StateEndIndex = g2EndIndex;
         }
 
+        /// <summary>
+        /// 一次归并完成后，更改对应的 table
+        /// </summary>
+        /// <param name="begIndex"></param>
+        /// <param name="len"></param>
         private void MergeElemsInTable(int begIndex, int len)
         {
             int[] tmpRealIndices = new int[len];
             for (int i = 0; i < len; i++)
             {
-                tmpRealIndices[i] = table[sortedIndices[i]];
+                tmpRealIndices[i] = table[mergedIndices[i]];
             }
 
             for (int i = 0; i < len; i++)
@@ -160,6 +178,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             }
         }
 
+        /// <summary>
+        /// 归并时将元素存入临时数组中
+        /// </summary>
+        /// <param name="elemIndex"></param>
+        /// <param name="toIndex"></param>
         private void TmpStoreElem(int elemIndex, int toIndex)
         {
             int elemRealIndex = table[elemIndex];
@@ -169,54 +192,63 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 TargetControl = Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, elemRealIndex).valueItem,
                 TargetParam = AnimationHelper.VerticallyMoveParam
             };
-            var scaleBack = GetUnStickAnimations(elemIndex, elemIndex);
+
             var animations = new List<SimulatedDoubleAnimation>
             {
+                GetUnStickAnimation(elemIndex),
                 downMove
             };
-            animations.AddRange(scaleBack);
 
             MainStoryboard.AddAsyncAnimations(animations, () => { ActivateElem(elemRealIndex); });
-            MoveElem(elemIndex, toIndex, false);
+            MoveElem(elemIndex, toIndex, null, null, false);
         }
 
+        /// <summary>
+        /// 迭代器遍历下一个元素
+        /// </summary>
+        /// <param name="iter"></param>
+        /// <param name="toIndex"></param>
         private void IterNext(UIElement iter, int toIndex)
         {
             int toRealIndex = table[toIndex];
-
             MoveIter(iter, toIndex);
         }
 
+        /// <summary>
+        /// 将排好序的元素返回到原数组中
+        /// </summary>
+        /// <param name="begIndex"></param>
+        /// <param name="endIndex"></param>
         private void ElemsReturn(int begIndex, int endIndex)
         {
             var rightMove = new SimulatedDoubleAnimation(by: begIndex * (float)AnimationHelper.StepLen, time: 500);
-            var targetControls1 = new List<UIElement>() { TmpArray };
-            for (int i = begIndex; i <= endIndex; i++)
-            {
-                targetControls1.Add(Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, table[i]).valueItem);
-            }
-
             var leftMove = new SimulatedDoubleAnimation(by: -begIndex * (float)AnimationHelper.StepLen, time: 500)
             {
                 TargetControl = TmpArray,
                 TargetParam = AnimationHelper.HorizontallyMoveParam,
             };
-
             var upMove = new SimulatedDoubleAnimation(by: -80, time: 500);
-            var targetControls2 = new List<UIElement>();
-            for (int i = begIndex; i <= endIndex; i++)
-            {
-                targetControls2.Add(Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, table[i]).valueItem);
-            }
-
             var stick = GetStickAnimations(begIndex, endIndex);
 
-            MainStoryboard.AddAsyncAnimations(rightMove, targetControls1, AnimationHelper.HorizontallyMoveParam);
-            MainStoryboard.AddAsyncAnimations(upMove, targetControls2, AnimationHelper.VerticallyMoveParam);
+            var valueItems = new List<UIElement>();
+            for (int i = begIndex; i <= endIndex; i++)
+            {
+                valueItems.Add(Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, table[i]).valueItem);
+            }
+
+            var tmpArrayContainer = new List<UIElement> { TmpArray };
+            tmpArrayContainer.AddRange(valueItems);
+
+            MainStoryboard.AddAsyncAnimations(rightMove, tmpArrayContainer, AnimationHelper.HorizontallyMoveParam, () => { DeactivateElem(); });
+            MainStoryboard.AddAsyncAnimations(upMove, valueItems, AnimationHelper.VerticallyMoveParam);
             MainStoryboard.AddAsyncAnimations(stick);
             MainStoryboard.AddSyncAnimation(leftMove);
         }
 
+        /// <summary>
+        /// 根据所需长度生成临时数组
+        /// </summary>
+        /// <param name="len"></param>
         private void GenerateTmpArray(int len)
         {
             for (int i = 0; i < count; i++)
@@ -226,6 +258,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             }
         }
 
+        /// <summary>
+        /// 隐藏临时数组
+        /// </summary>
         private void HideTmpArray()
         {
             GenerateTmpArray(0);
