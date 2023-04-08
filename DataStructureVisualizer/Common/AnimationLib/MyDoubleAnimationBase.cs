@@ -14,7 +14,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
     public class MyDoubleAnimationBase : DoubleAnimation, ILinkableAnimation
     {
         // public LogViewModel? Log { get; set; } = null;
-        public UIElement TargetControl { get; set; } = null;
+        public DependencyObject TargetControl { get; set; } = null;
         public object TargetParam { get; set; } = null;
         public MyDoubleAnimationBase() { }
 

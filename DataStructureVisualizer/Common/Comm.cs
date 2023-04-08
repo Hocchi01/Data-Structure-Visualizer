@@ -132,6 +132,16 @@ namespace DataStructureVisualizer.Common
             return list;
         }
 
+        public static int[] ListToArray(List<int> list)
+        {
+            var arr = new int[list.Count];
+            for (int i = 0; i < list.Count; i++)
+            {
+                arr[i] = list[i];
+            }
+            return arr;
+        }
+
         /// <summary>
         /// 获取 ItemsControl 中的子项 Item
         /// </summary>
@@ -180,6 +190,15 @@ namespace DataStructureVisualizer.Common
                 }
             }
             return newObj;
+        }
+
+        // public static Guid guid = new Guid();
+
+        public static uint uniqueCode = 0;
+
+        public static string GetUniqueString() 
+        {
+            return (uniqueCode++).ToString();
         }
     }
 }

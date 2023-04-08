@@ -10,8 +10,8 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <DataTemplate x:Key="dataTmp">
-            <data:LinkedListItemUserControl />
+        <DataTemplate x:Key="linkedListItemUserControl">
+            <data:LinkedListItemUserControl x:Name="item"/>
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
@@ -21,10 +21,10 @@
             Grid.Row="1"
             Background="#FFF8F1FF">
             <ItemsControl
-                x:Name="linearItemsControl"
+                x:Name="llItemsControl"
                 Margin="8"
                 VerticalAlignment="Center"
-                ItemTemplate="{StaticResource dataTmp}"
+                ItemTemplate="{StaticResource linkedListItemUserControl}"
                 ItemsSource="{Binding DataItems}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

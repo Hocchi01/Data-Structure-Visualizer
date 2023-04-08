@@ -109,7 +109,6 @@
                         Background="Transparent"
                         DockPanel.Dock="Right"
                         FontSize="11"
-                        Text="{Binding Index}"
                         TextAlignment="Center" />
                 </DockPanel>
             </Grid>
@@ -141,7 +140,6 @@
                         Background="Transparent"
                         DockPanel.Dock="Right"
                         FontSize="11"
-                        Text="{Binding Index}"
                         TextAlignment="Center" />
                 </DockPanel>
             </Grid>
@@ -185,7 +183,6 @@
                         Background="Transparent"
                         DockPanel.Dock="Right"
                         FontSize="11"
-                        Text="{Binding Index}"
                         TextAlignment="Center" />
                 </DockPanel>
             </Grid>
@@ -229,7 +226,6 @@
                         Background="Transparent"
                         DockPanel.Dock="Right"
                         FontSize="11"
-                        Text="{Binding Index}"
                         TextAlignment="Center" />
                 </DockPanel>
             </Grid>

@@ -20,7 +20,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
     internal abstract partial class CanvasViewModelBase :
         ObservableRecipient,
         IRecipient<ValueChangedMessage<int[]>>,
-        IRecipient<ValueChangedMessage<int?[]>>,
         IRecipient<LoadAddAnimationMessage>,
         IRecipient<PauseAnyAnimationMessage>,
         IRecipient<ResumeAnyAnimationMessage>,
@@ -31,10 +30,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// <summary>
         /// 数据结构的数据源
         /// </summary>
-        /// <remarks>
-        /// 由于编辑动作都要配上动画，因此所有动作最终都对 Value 进行赋值从而调用其 set <br>
-        /// 并且目前 DataItems 类型使用的是 可观测集合 也未用到其可观测性
-        /// </remarks>
         [ObservableProperty]
         private ObservableCollection<int> values;
 
@@ -42,22 +37,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         {
             ReloadValues();
         }
-
-        //private List<int> values = new List<int>();
-        //public List<int> Values
-        //{
-        //    get => values;
-        //    set
-        //    {
-        //        values = value;
-        //        UpdateDataItems();
-
-        //        /* 
-        //         * 1. 通知工具改变索引值选取的范围 
-        //         */
-        //        WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
-        //    }
-        //}
 
         public MyStoryboard MainStoryboard { get; set; }
 
@@ -130,22 +109,5 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// </summary>
         /// <param name="message"></param>
         public abstract void Receive(LoadRemoveAnimationMessage message);
-
-        public void Receive(ValueChangedMessage<int?[]> message)
-        {
-            var tmpValues = new List<int>();
-            foreach (var value in message.Value)
-            {
-                if (value != null)
-                {
-                    tmpValues.Add(value ?? 0);
-                }
-            }
-            Values = new ObservableCollection<int>(tmpValues);
-            Values.CollectionChanged += (s, e) =>
-            {
-                ReloadValues();
-            };
-        }
     }
 }

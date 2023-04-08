@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="DataStructureVisualizer.Views.Toolboxes.ArrayToolboxUserControl"
+    x:Class="DataStructureVisualizer.Views.Toolboxes.LinkedListToolboxUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,7 +15,6 @@
             <tool:RandomGenerateToolUserControl DataContext="{Binding RandomGenerateTool}" />
             <tool:AddToolUserControl DataContext="{Binding AddTool}" />
             <tool:RemoveToolUserControl DataContext="{Binding RemoveTool}" />
-            <tool:SortToolUserControl DataContext="{Binding SortTool}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

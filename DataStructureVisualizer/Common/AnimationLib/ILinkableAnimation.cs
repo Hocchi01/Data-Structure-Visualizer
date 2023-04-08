@@ -8,9 +8,9 @@ using System.Windows.Media.Animation;
 
 namespace DataStructureVisualizer.Common.AnimationLib
 {
-    internal interface ILinkableAnimation
+    public interface ILinkableAnimation
     {
-        public UIElement TargetControl { get; set; }
+        public DependencyObject TargetControl { get; set; }
         public object TargetParam { get; set; }
     }
 }

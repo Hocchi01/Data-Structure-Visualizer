@@ -10,9 +10,10 @@ using System.Windows.Media.Animation;
 
 namespace DataStructureVisualizer.Common.AnimationLib
 {
-    internal class MyStoryboard : Storyboard
+    public class MyStoryboard : Storyboard
     {
         private double offset = 0;
+        public List<KeyValuePair<string, DependencyObject>> RegisterTable { get; set; }
 
         /// <summary>
         /// 为动画绑定控件及其属性
@@ -20,7 +21,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
         /// <param name="animation"></param>
         /// <param name="targetControl"></param>
         /// <param name="targetParam"></param>
-        public void Link(AnimationTimeline animation, UIElement targetControl, object targetParam)
+        public void Link(AnimationTimeline animation, DependencyObject targetControl, object targetParam)
         {
             SetTarget(animation, targetControl);
             if (targetParam is string)
@@ -31,10 +32,9 @@ namespace DataStructureVisualizer.Common.AnimationLib
             {
                 SetTargetProperty(animation, new PropertyPath(targetParam));
             }
-
         }
 
-        public void AddAsyncAnimations(List<AnimationTimeline> animations, List<UIElement> targetControls, List<object> targetParams, Action? before = null, Action? after = null)
+        public void AddAsyncAnimations(List<AnimationTimeline> animations, List<DependencyObject> targetControls, List<object> targetParams, Action? before = null, Action? after = null)
         {
             // 为持续时间最长的动画追加动作
             int maxTimePos = 0;
@@ -57,7 +57,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
             offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
         }
 
-        public void AddAsyncAnimations<T>(T animation, List<UIElement> targetControls, object targetParams, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
+        public void AddAsyncAnimations<T>(T animation, List<DependencyObject> targetControls, object targetParams, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
         {
             var animations = new List<T>();
             for (int i = 0; i < targetControls.Count; i++)
@@ -100,7 +100,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
             offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
         }
 
-        public void AddSyncAnimation(AnimationTimeline animation, UIElement targetControl, object targetParam)
+        public void AddSyncAnimation(AnimationTimeline animation, DependencyObject targetControl, object targetParam)
         {
             animation.BeginTime = TimeSpan.FromMilliseconds(offset);
             Children.Add(animation);
@@ -128,11 +128,21 @@ namespace DataStructureVisualizer.Common.AnimationLib
         }
 
         // 
-        public void Begin_Ex(FrameworkElement containingObject, bool isControllable)
+        public void Begin_Ex(FrameworkElement containingObject, bool isControllable = true)
         {
-            Duration = TimeSpan.FromMilliseconds(offset + 1000); // 最终暂停 1s
+            foreach (var item in RegisterTable)
+            {
+                containingObject.RegisterName(item.Key, item.Value);
+            }
+
+            Duration = TimeSpan.FromMilliseconds(offset); // 最终暂停 1s
             Begin(containingObject, isControllable);
             WeakReferenceMessenger.Default.Send(new BeginAnyAnimationMessage());
+        }
+
+        public void Delay(double millisecond)
+        {
+            offset += millisecond;
         }
 
         public MyStoryboard()
@@ -143,6 +153,8 @@ namespace DataStructureVisualizer.Common.AnimationLib
             { 
                 WeakReferenceMessenger.Default.Send(new EndAnyAnimationMessage());
             };
+
+            RegisterTable = new List<KeyValuePair<string, DependencyObject>>();
         }
 
 

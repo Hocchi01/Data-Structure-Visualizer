@@ -230,13 +230,13 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             var upMove = new SimulatedDoubleAnimation(by: -80, time: 500);
             var stick = GetStickAnimations(begIndex, endIndex);
 
-            var valueItems = new List<UIElement>();
+            var valueItems = new List<DependencyObject>();
             for (int i = begIndex; i <= endIndex; i++)
             {
                 valueItems.Add(Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(Container, table[i]).valueItem);
             }
 
-            var tmpArrayContainer = new List<UIElement> { TmpArray };
+            var tmpArrayContainer = new List<DependencyObject> { TmpArray };
             tmpArrayContainer.AddRange(valueItems);
 
             MainStoryboard.AddAsyncAnimations(rightMove, tmpArrayContainer, AnimationHelper.HorizontallyMoveParam, () => { DeactivateElem(); });

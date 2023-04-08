@@ -115,7 +115,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         private void LoadBeginAnimation()
         {
             var rightMove = new SimulatedDoubleAnimation(by: (float)offset, time: 500);
-            var targetControls = new List<UIElement> { Container, LowIterator, HighIterator };
+            var targetControls = new List<DependencyObject> { Container, LowIterator, HighIterator };
             string param = AnimationHelper.HorizontallyMoveParam;
 
             MainStoryboard.AddAsyncAnimations(rightMove, targetControls, param, null, () => { Pivot.Visibility = Visibility.Visible; });
@@ -127,7 +127,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         private void LoadEndAnimation()
         {
             var leftMove = new SimulatedDoubleAnimation(by: -(float)offset, time: 500);
-            var targetControls = new List<UIElement> { Container, LowIterator, HighIterator };
+            var targetControls = new List<DependencyObject> { Container, LowIterator, HighIterator };
             string param = AnimationHelper.HorizontallyMoveParam;
 
             MainStoryboard.AddAsyncAnimations(leftMove, targetControls, param, () => { Pivot.Visibility = Visibility.Hidden; });

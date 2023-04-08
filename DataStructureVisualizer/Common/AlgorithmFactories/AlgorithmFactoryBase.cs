@@ -82,12 +82,14 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         protected void UpdateValues()
         {
-            int?[] values = new int?[DataItems.Count];
+            List<int> values = new List<int>();
             for (int i = 0; i < DataItems.Count; i++)
             {
-                values[i] = DataItems[table[i]].Value;
+                if (DataItems[table[i]].Value != null)
+                    values.Add(DataItems[table[i]].Value ?? 0);
             }
-            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<int?[]>(values));
+
+            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<int[]>(Comm.ListToArray(values)));
         }
 
         protected void ActivateElem(int elemIndex)

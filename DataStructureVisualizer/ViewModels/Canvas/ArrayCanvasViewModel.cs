@@ -18,7 +18,6 @@ using MaterialDesignThemes.Wpf;
 using System.Reflection;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Windows.Media.Animation;
-using DataStructureVisualizer.Common.Sorts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DataStructureVisualizer.Common.AlgorithmFactories;
 using DataStructureVisualizer.Common.Extensions;
@@ -95,38 +94,40 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard = new MyStoryboard();
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
-            var iterator = canvas.FindName("iterator") as Grid;
-            var iterator2 = canvas.FindName("iterator2") as Grid;
             
-
-            // SortBase sort = null;
-
             SortFactory sf = null;
 
             switch (message.Type)
             {
                 case SortType.SelectionSort:
-                    sf = new SelectionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
+                    var selectionIterator = canvas.FindName("iterator") as Grid;
+                    sf = new SelectionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = selectionIterator };
                     break;
+
                 case SortType.QuickSort:
                     var lowIterator = canvas.FindName("lowIterator") as Grid;
                     var highIterator = canvas.FindName("highIterator") as Grid;
                     var pivot = canvas.FindName("pivot") as Grid;
                     sf = new QuickSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { LowIterator = lowIterator, HighIterator = highIterator, Pivot = pivot };
                     break;
+
                 case SortType.BubbleSort:
-                    // sort = new BubbleSort(canvas, container, iterator, MainStoryboard, DataItems);
-                    sf = new BubbleSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
+                    var bubbleIterator = canvas.FindName("iterator") as Grid;
+                    sf = new BubbleSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = bubbleIterator };
                     break;
+
                 case SortType.InsertionSort:
-                    sf = new InsertionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = iterator };
+                    var insertionIterator = canvas.FindName("iterator") as Grid;
+                    sf = new InsertionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = insertionIterator };
                     break;
+
                 case SortType.MergeSort:
                     var group1Iterator = canvas.FindName("lowIterator") as Grid;
                     var group2Iterator = canvas.FindName("highIterator") as Grid;
                     var tmpArray = canvas.FindName("tmpArray") as ItemsControl;
                     sf = new MergeSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Group1Iterator = group1Iterator, Group2Iterator = group2Iterator, TmpArray = tmpArray };
                     break;
+
                 case SortType.TEST:
                     sf = new TestSort(canvas, container, MainStoryboard, DataItems.RevertElems());
                     break;
