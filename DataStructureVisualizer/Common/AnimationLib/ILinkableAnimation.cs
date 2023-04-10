@@ -12,5 +12,6 @@ namespace DataStructureVisualizer.Common.AnimationLib
     {
         public DependencyObject TargetControl { get; set; }
         public object TargetParam { get; set; }
+        public string? TargetName { get; set; }
     }
 }

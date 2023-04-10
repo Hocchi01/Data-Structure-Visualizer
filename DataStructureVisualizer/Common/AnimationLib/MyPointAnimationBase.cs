@@ -8,10 +8,11 @@ using System.Windows.Media.Animation;
 
 namespace DataStructureVisualizer.Common.AnimationLib
 {
-    class MyPointAnimationBase : PointAnimation, ILinkableAnimation
+    public class MyPointAnimationBase : PointAnimation, ILinkableAnimation
     {
         public DependencyObject TargetControl { get; set; } = null;
         public object TargetParam { get; set; } = null;
+        public string? TargetName { get; set; } = null;
 
         public MyPointAnimationBase(Point to, double time, Point? from = null, Action? before = null, Action? after = null)
         {

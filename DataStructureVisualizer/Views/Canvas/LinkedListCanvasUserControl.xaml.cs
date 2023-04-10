@@ -23,6 +23,7 @@ namespace DataStructureVisualizer.Views.Canvas
         public LinkedListCanvasUserControl()
         {
             InitializeComponent();
+            
         }
     }
 }

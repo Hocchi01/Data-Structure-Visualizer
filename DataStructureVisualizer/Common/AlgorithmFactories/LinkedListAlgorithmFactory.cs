@@ -12,6 +12,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DataStructureVisualizer.Common.Theme;
 using DataStructureVisualizer.Common.Extensions;
+using System.Diagnostics;
+using DataStructureVisualizer.Common.Enums;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
@@ -90,12 +92,35 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             }
         }
 
-        public void InsertElem(int toIndex)
+        public void InsertElem(int toIndex, int value)
         {
             var preItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, toIndex);
-            preItem.next.LengthenOrShorten(MainStoryboard, 70);
+
+            MainStoryboard.AddAsyncAnimations(preItem.next.LengthenOrShorten(35 * 2 + 50));
+
+            var newItemViewModel = new LinkedListItemViewModel()
+            {
+                Value = value,
+                EditType = DataItemEditType.New,
+                Color = new SolidColorBrush(new Color() { ScA = 1.0F, R = 255, G = 152, B = 0 })
+            };
+
+            var newItem = new LinkedListItemUserControl(25)
+            {
+                Margin = new Thickness(8),
+                VerticalAlignment = VerticalAlignment.Center,
+                RenderTransform = new TranslateTransform() { X = toIndex * (50 + 35) + 50 + 35, Y = 80 },
+                Visibility = Visibility.Hidden,
+                DataContext = newItemViewModel
+            };
+            Canvas.Children.Add(newItem);
+
+            var animations1 = newItem.next.NewItemNextPointerTowardNext();
+            MainStoryboard.AddAsyncAnimations(animations1[0], () => { newItem.Visibility = Visibility.Visible; });
+            for (int i = 1; i < animations1.Count; i++)
+            {
+                MainStoryboard.AddAsyncAnimations(animations1[i]);
+            }
         }
-
-
     }
 }

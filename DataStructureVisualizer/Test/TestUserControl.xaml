@@ -12,25 +12,52 @@
         <sys:Int16 x:Key="flag">1</sys:Int16>
  
     </UserControl.Resources>
-    <Canvas>
-        
-        <!--<Path Stroke="{DynamicResource PrimaryHueMidBrush}" StrokeThickness="1">
+    <Grid>
+        <Path x:Name="main" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Path.RenderTransform>
+                <RotateTransform Angle="0"/>
+            </Path.RenderTransform>
+            <Path.Fill>
+                <LinearGradientBrush x:Name="brush" StartPoint="0,0" EndPoint="0,0">
+                    <GradientStop Offset="0" Color="#FF8BC34A" />
+                    <GradientStop Offset="1" Color="#FF8BC34A" />
+                    <GradientStop Offset="1" Color="#FF673AB7" />
+                </LinearGradientBrush>
+            </Path.Fill>
             <Path.Data>
-                <PathGeometry>
-                    <PathGeometry.Figures>
-                        <PathFigure>
-                            <PathFigure.Segments>
-                                <LineSegment Point="140,20" />
-                                <LineSegment Point="140,18" />
-                                <LineSegment Point="144,20" />
-                                <LineSegment Point="140,22" />
-                                <LineSegment Point="140,20" />
-                            </PathFigure.Segments>
-                        </PathFigure>
-                    </PathGeometry.Figures>
-                </PathGeometry>
-
+                <GeometryGroup FillRule="EvenOdd">
+                    <RectangleGeometry x:Name="line" Rect="0,3,34,2"/>
+                    <RectangleGeometry x:Name="line_1" Rect="0,3,34,2">
+                        <RectangleGeometry.Transform>
+                            <TransformGroup>
+                                <RotateTransform Angle="-90" CenterX="-1" CenterY="4"/>
+                                <TranslateTransform X="34" />
+                            </TransformGroup>
+                        </RectangleGeometry.Transform>
+                    </RectangleGeometry>
+                    <PathGeometry x:Name="arrow">
+                        <PathGeometry.Transform>
+                            <TransformGroup>
+                                <RotateTransform Angle="-180" CenterY="4" CenterX="33" />
+                                <TranslateTransform X="0" Y="-33"/>
+                            </TransformGroup>
+                        </PathGeometry.Transform>
+                        <PathGeometry.Figures>
+                            <PathFigure StartPoint="33,3" IsClosed="True">
+                                <PathFigure.Segments>
+                                    <LineSegment Point="33,3" />
+                                    <LineSegment Point="35,3" />
+                                    <LineSegment Point="35,0" />
+                                    <LineSegment Point="42,4" />
+                                    <LineSegment Point="35,8" />
+                                    <LineSegment Point="35,5" />
+                                    <LineSegment Point="33,5" />
+                                </PathFigure.Segments>
+                            </PathFigure>
+                        </PathGeometry.Figures>
+                    </PathGeometry>
+                </GeometryGroup>
             </Path.Data>
-        </Path>-->
-    </Canvas>
+        </Path>
+    </Grid>
 </UserControl>

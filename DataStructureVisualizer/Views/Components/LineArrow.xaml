@@ -4,9 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:DataStructureVisualizer.Views.Components"
+             xmlns:cvtr="clr-namespace:DataStructureVisualizer.Common.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
     <UserControl.Resources>
+        <cvtr:DataItemEditTypeToColorConverter x:Key="dataItemEditTypeToColorConverter" />
     </UserControl.Resources>
     <Grid>
         <Path x:Name="main">
@@ -17,23 +19,32 @@
                 <LinearGradientBrush x:Name="brush" StartPoint="0,0" EndPoint="0,0">
                     <GradientStop Offset="0" Color="#FF8BC34A" />
                     <GradientStop Offset="1" Color="#FF8BC34A" />
-                    <GradientStop Offset="1" Color="#FF673AB7" />
+                    <GradientStop Offset="1" Color="{Binding EditType, Converter={StaticResource dataItemEditTypeToColorConverter}}" />
                 </LinearGradientBrush>
             </Path.Fill>
             <Path.Data>
-                <GeometryGroup>
-                    <RectangleGeometry x:Name="line" Rect="0,3,35,2"/>
-                    <!--<PathGeometry x:Name="arrow">
+                <GeometryGroup x:Name="geometryGroup" FillRule="Nonzero">
+                    <RectangleGeometry x:Name="line" Rect="0,3,0,2"/>
+                    <PathGeometry x:Name="arrow">
+                        <PathGeometry.Transform>
+                            <TransformGroup>
+                                <RotateTransform x:Name="arrowRotate" CenterX="-1" CenterY="4"/>
+                                <TranslateTransform x:Name="arrowTranslate" X="0"/>
+                            </TransformGroup>
+                        </PathGeometry.Transform>
                         <PathGeometry.Figures>
-                            <PathFigure StartPoint="35,3" IsClosed="True">
+                            <PathFigure StartPoint="-1,3" IsClosed="True">
                                 <PathFigure.Segments>
-                                    <LineSegment Point="35,0" />
-                                    <LineSegment Point="42,4" />
-                                    <LineSegment Point="35,8" />
+                                    <LineSegment Point="1,3" />
+                                    <LineSegment Point="1,0" />
+                                    <LineSegment Point="8,4" />
+                                    <LineSegment Point="1,8" />
+                                    <LineSegment Point="1,5" />
+                                    <LineSegment Point="-1,5" />
                                 </PathFigure.Segments>
                             </PathFigure>
                         </PathGeometry.Figures>
-                    </PathGeometry>-->
+                    </PathGeometry>
                 </GeometryGroup>
             </Path.Data>
         </Path>

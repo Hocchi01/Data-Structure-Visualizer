@@ -20,9 +20,14 @@ namespace DataStructureVisualizer.Views.Data
     /// </summary>
     public partial class LinkedListItemUserControl : UserControl
     {
+        // public double NextPointerLength { get; set; } = 35;
         public LinkedListItemUserControl()
         {
             InitializeComponent();
+        }
+        public LinkedListItemUserControl(double nextPointerLength) : this()
+        {
+            next.Length = nextPointerLength;
         }
     }
 }

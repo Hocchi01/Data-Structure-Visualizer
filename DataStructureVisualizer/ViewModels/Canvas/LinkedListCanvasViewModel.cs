@@ -48,6 +48,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         public override void Receive(LoadAddAnimationMessage message)
         {
             int addIndex = message.Index;
+            int addValue = message.Value;
 
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("llItemsControl") as ItemsControl;
@@ -56,7 +57,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems);
 
             llaf.FindElem(addIndex - 1);
-            llaf.InsertElem(addIndex);
+            llaf.InsertElem(addIndex, addValue);
 
             MainStoryboard.Begin_Ex(canvas, true);
         }
@@ -74,8 +75,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard = new MyStoryboard();
 
             var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems);
-
-            llaf.InsertElem(rmvIndex);
 
             MainStoryboard.Begin_Ex(canvas, true);
         }

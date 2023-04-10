@@ -16,6 +16,9 @@ namespace DataStructureVisualizer.ViewModels.Data
         public int? Index { get; set; } = null;
 
         [ObservableProperty]
+        private DataItemEditType editType = DataItemEditType.None;
+
+        [ObservableProperty]
         private DataItemState state = DataItemState.Normal;
 
         [ObservableProperty]

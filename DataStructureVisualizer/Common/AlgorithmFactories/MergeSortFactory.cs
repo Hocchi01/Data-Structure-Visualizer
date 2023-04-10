@@ -49,7 +49,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             while (g1Iter <= g1EndIndex && g2Iter <= g2EndIndex)
             {
-                if (DataItems[table[g1Iter]].Value < DataItems[table[g2Iter]].Value)
+                if (DataItems[table[g1Iter]].Value <= DataItems[table[g2Iter]].Value)
                 {
                     OperateGroup1(ref g1Iter, ref iter, g1EndIndex);
                 }

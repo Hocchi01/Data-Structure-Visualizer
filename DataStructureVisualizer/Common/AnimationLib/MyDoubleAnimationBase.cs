@@ -16,6 +16,8 @@ namespace DataStructureVisualizer.Common.AnimationLib
         // public LogViewModel? Log { get; set; } = null;
         public DependencyObject TargetControl { get; set; } = null;
         public object TargetParam { get; set; } = null;
+        public string? TargetName { get; set; } = null;
+
         public MyDoubleAnimationBase() { }
 
         public MyDoubleAnimationBase(double to, double time, double? from)

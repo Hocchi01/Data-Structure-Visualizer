@@ -15,6 +15,7 @@
     <UserControl.Resources>
         <cvtr:LinkedListItemTypeToBooleanConverter x:Key="t2b" />
         <cvtr:DataItemStateToSolidColorBrushConverter x:Key="dataItemStateToSolidColorBrushConverter" />
+        <cvtr:DataItemEditTypeToColorConverter x:Key="dataItemEditTypeToColorConverter" />
         <!-- 普通结点文字默认白色 -->
         <Style x:Key="itemValueTextStyleBase" TargetType="TextBlock">
             <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidForegroundBrush}"/>
@@ -83,7 +84,7 @@
                 <LinearGradientBrush x:Name="borderBrush" StartPoint="0,0" EndPoint="0,0">
                     <GradientStop Offset="0" Color="#FF8BC34A" />
                     <GradientStop Offset="1" Color="#FF8BC34A" />
-                    <GradientStop Offset="1" Color="#FF673AB7" />
+                    <GradientStop Offset="1" Color="{Binding EditType, Converter={StaticResource dataItemEditTypeToColorConverter}}" />
                 </LinearGradientBrush>
             </Border.BorderBrush>
             <Grid x:Name="valueItem">
@@ -120,8 +121,16 @@
         </DockPanel>
         
         <!-- 指针箭头 -->
-        <cpt:LineArrow x:Name="next" Grid.Column="1" VerticalAlignment="Center" />
-        <!--<ed:LineArrow
+        <!-- 这里不使用  VerticalAlignment="Center" 而是 RenderTransform 来控制居中，因为当箭头旋转动画执行后会使指针高度变化，导致居中位置偏移-->
+        <cpt:LineArrow x:Name="next" Length="35" Grid.Column="1">
+            <cpt:LineArrow.RenderTransform>
+                <TranslateTransform Y="21" />
+            </cpt:LineArrow.RenderTransform>
+        </cpt:LineArrow>
+    </Grid>
+</UserControl>
+    
+<!--<ed:LineArrow
             x:Name="arrow"
             Grid.Column="2"
             Width="35"
@@ -137,6 +146,3 @@
                 </LinearGradientBrush>
             </ed:LineArrow.Stroke>
         </ed:LineArrow>-->
-        
-    </Grid>
-</UserControl>
