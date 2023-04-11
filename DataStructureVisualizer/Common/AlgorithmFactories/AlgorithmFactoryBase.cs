@@ -22,6 +22,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         protected int count;
         protected int activeIndex = -1; // 维护一个当前唯一被激活的元素索引
 
+        protected List<Action> dataOperations = new List<Action>();
+
         protected AnimationTimeline lastAnimation = null;
 
         public Grid Canvas { get; set; }
@@ -60,14 +62,34 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
         }
 
-        public void WriteElem(int elemIndex, int elemVal)
+        public void FinallyRemoveElem(int elemIndex)
+        {
+            int elemRealIndex = table[elemIndex];
+            dataOperations.Add(() =>
+            {
+                DataItems[elemRealIndex].Value = null; // 逻辑上删除
+                //DataItems[elemRealIndex].Color = null;
+                DataItems[elemRealIndex].IsRemoved = true;
+            });
+        }
+
+        public void FinallyWriteElem(int elemIndex, int elemVal)
+        {
+            int elemRealIndex = table[elemIndex];
+            dataOperations.Add(() => 
+            { 
+                DataItems[elemRealIndex].Value = elemVal;
+                //DataItems[elemRealIndex].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
+                // 由于【数组:添加动画】时并未移动“空项”的 valueItem，因此目前改变颜色会在末尾显示
+            });
+        }
+
+        public void WriteElem(int elemIndex, int elemVal) 
         {
             int elemRealIndex = table[elemIndex];
             MainStoryboard.InsertAction(() =>
             {
                 DataItems[elemRealIndex].Value = elemVal;
-                //DataItems[elemRealIndex].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
-                // 由于【数组:添加动画】时并未移动“空项”的 valueItem，因此目前改变颜色会在末尾显示
             });
         }
 
@@ -82,6 +104,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         protected void UpdateValues()
         {
+            foreach (var op in dataOperations)
+            {
+                op();
+            }
+
             List<int> values = new List<int>();
             for (int i = 0; i < DataItems.Count; i++)
             {

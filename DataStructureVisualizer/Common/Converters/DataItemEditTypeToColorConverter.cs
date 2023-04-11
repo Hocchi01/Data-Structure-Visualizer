@@ -13,12 +13,11 @@ namespace DataStructureVisualizer.Common.Converters
         {
             switch ((DataItemEditType)value)
             {
+                default:
                 case DataItemEditType.None:
                     return ThemeHelper.GetTheme().PrimaryMid.Color;
                 case DataItemEditType.New:
                     return new Color() { ScA = 1.0F, R = 255, G = 152, B = 0 };
-                default:
-                    return null;
             }
         }
 

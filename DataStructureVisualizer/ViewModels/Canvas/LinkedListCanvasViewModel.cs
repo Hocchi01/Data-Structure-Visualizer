@@ -54,7 +54,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var container = canvas.FindName("llItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
 
-            var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems);
+            var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems) { Values = Values };
 
             llaf.FindElem(addIndex - 1);
             llaf.InsertElem(addIndex, addValue);

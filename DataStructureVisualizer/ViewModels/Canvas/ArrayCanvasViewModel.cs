@@ -80,7 +80,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                 saf.MoveElem(i, i + 1);
             }
             // TODO 03: 写入添加的元素
-            saf.WriteElem(addIndex, addVal);
+            saf.FinallyWriteElem(addIndex, addVal);
 
             MainStoryboard.Begin_Ex(canvas, true);
         }
