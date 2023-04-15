@@ -19,6 +19,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Border
+            x:Name="border"
             Width="50"
             Height="50"
             Margin="1,1,1,0"
@@ -36,13 +37,13 @@
                     VerticalAlignment="Center"
                     FontWeight="Black"
                     Foreground="White"
-                    Text="{Binding Value}" />
+                    Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
                 <Grid.RenderTransform>
                     <TranslateTransform />
                 </Grid.RenderTransform>
             </Grid>
         </Border>
-        <DockPanel Grid.Row="1" Width="50">
+        <DockPanel x:Name="bottom" Grid.Row="1" Width="50">
             <TextBlock
                 Padding="8,0"
                 VerticalAlignment="Center"

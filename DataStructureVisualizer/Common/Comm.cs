@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DataStructureVisualizer.Views.Data;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -156,10 +157,10 @@ namespace DataStructureVisualizer.Common
             return (item.ContentTemplate.FindName(name, item)) as T;
         }
 
-        public static UserControl GetItemFromItemsControlByIndex(ItemsControl ic, int index, string name = "item")
+        public static DataItemUserControlBase GetItemFromItemsControlByIndex(ItemsControl ic, int index, string name = "item")
         {
             var item = ic.ItemContainerGenerator.ContainerFromIndex(index) as ContentPresenter;
-            return item.ContentTemplate.FindName(name, item) as UserControl;
+            return item.ContentTemplate.FindName(name, item) as DataItemUserControlBase;
         }
 
         public static object DeepCopy(object obj)

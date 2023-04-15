@@ -76,6 +76,9 @@ namespace DataStructureVisualizer.ViewModels.Canvas
 
             var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems);
 
+            llaf.FindElem(rmvIndex - 1);
+            llaf.RemoveElemInLinkedList(rmvIndex);
+
             MainStoryboard.Begin_Ex(canvas, true);
         }
 

@@ -12,7 +12,10 @@ namespace DataStructureVisualizer.ViewModels.Data
 {
     internal partial class DataItemViewModelBase : ObservableObject
     {
-        public int? Value { get; set; } = null;
+        [ObservableProperty]
+        private int? value = null;
+        //public int? Value { get; set; } = null;
+
         public int? Index { get; set; } = null;
 
         [ObservableProperty]

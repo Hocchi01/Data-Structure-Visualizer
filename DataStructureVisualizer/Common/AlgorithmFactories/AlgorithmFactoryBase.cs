@@ -12,17 +12,22 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using MaterialDesignThemes.Wpf;
 using System.Windows.Media;
+using System.Windows;
+using System.Windows.Documents;
+using DataStructureVisualizer.Common.Theme;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     internal class AlgorithmFactoryBase
     {
-        protected int[] table; // 用于记录当前元素实际位置
+        protected Dictionary<int, int> newValues = new Dictionary<int, int>();
+        // protected List<int?> vals;
+        protected List<int> table; // 用于记录当前元素实际位置
         protected int last;
         protected int count;
         protected int activeIndex = -1; // 维护一个当前唯一被激活的元素索引
 
-        protected List<Action> dataOperations = new List<Action>();
+        protected List<Action> endOperations = new List<Action>();
 
         protected AnimationTimeline lastAnimation = null;
 
@@ -38,59 +43,66 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard = myStoryboard;
             DataItems = dataItems;
 
-            
-            table = new int[DataItems.Count];
-            for (int i = 0; i < DataItems.Count; i++)
+            count = DataItems.Count;
+            last = count - 1;
+
+            table = new List<int>();
+            for (int i = 0; i < count; i++)
             {
-                table[i] = i;
+                table.Add(i);
             }
 
-            count = DataItems.Count;
-            last = DataItems.Count - 1;
-
-            MainStoryboard.Completed += (_, _) => { UpdateValues(); };
-        }
-
-        public void RemoveElem(int elemIndex)
-        {
-            int elemRealIndex = table[elemIndex];
-            MainStoryboard.InsertAction(() =>
+            MainStoryboard.Completed += (_, _) => 
             {
-                DataItems[elemRealIndex].Value = null; // 逻辑上删除
-                //DataItems[elemRealIndex].Color = null;
-                DataItems[elemRealIndex].IsRemoved = true;
-            });
+                foreach (var op in endOperations)
+                {
+                    op();
+                }
+                UpdateValues(); 
+            };
         }
 
-        public void FinallyRemoveElem(int elemIndex)
+        public void RemoveElem(int elemIndex, DependencyObject control, bool isChangeTable = true, Action? before = null, Action? after = null)
         {
             int elemRealIndex = table[elemIndex];
-            dataOperations.Add(() =>
-            {
-                DataItems[elemRealIndex].Value = null; // 逻辑上删除
-                //DataItems[elemRealIndex].Color = null;
-                DataItems[elemRealIndex].IsRemoved = true;
-            });
+            Action afterActions = () => { DataItems[elemRealIndex].Value = null; };
+            afterActions += after;
+
+            var rmvAnim = new SimulatedDoubleAnimation(to: 0, time: 500, before: before, after: afterActions) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
+
+            MainStoryboard.AddSyncAnimation(rmvAnim);
+
+            if (isChangeTable)
+                table.RemoveAt(elemIndex);
         }
 
-        public void FinallyWriteElem(int elemIndex, int elemVal)
+        public void RemoveElem(int elemIndex, bool isChangeTable = false, Action? before = null, Action? after = null)
         {
             int elemRealIndex = table[elemIndex];
-            dataOperations.Add(() => 
-            { 
-                DataItems[elemRealIndex].Value = elemVal;
-                //DataItems[elemRealIndex].Color = new SolidColorBrush(new PaletteHelper().GetTheme().SecondaryMid.Color);
-                // 由于【数组:添加动画】时并未移动“空项”的 valueItem，因此目前改变颜色会在末尾显示
-            });
+            var control = Comm.GetItemFromItemsControlByIndex(Container, elemRealIndex).ValueItem;
+            RemoveElem(elemIndex, control, isChangeTable, before, after);
         }
 
         public void WriteElem(int elemIndex, int elemVal) 
         {
             int elemRealIndex = table[elemIndex];
-            MainStoryboard.InsertAction(() =>
+
+            var control = Comm.GetItemFromItemsControlByIndex(Container, elemRealIndex).ValueItem;
+
+            var writeAnim = new SimulatedDoubleAnimation(from: 0, to: 1, time: 1000, before: () =>
             {
                 DataItems[elemRealIndex].Value = elemVal;
-            });
+                DataItems[elemRealIndex].Color = new SolidColorBrush(ThemeHelper.NewColor);
+            }, after: null)
+            { TargetControl = control, TargetParam = UIElement.OpacityProperty };
+
+            MainStoryboard.AddSyncAnimation(writeAnim);
+        }
+
+        public void NewElem(DependencyObject control, Action? before = null, Action? after = null)
+        {
+            var newAnim = new SimulatedDoubleAnimation(from: 0, to: 1, time: 1000, before: before, after: after) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
+            MainStoryboard.AddSyncAnimation(newAnim);
         }
 
         protected void SwapElemsInTable(int index1, int index2)
@@ -100,20 +112,19 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             table[index2] = tmp;
         }
 
-
-
         protected void UpdateValues()
         {
-            foreach (var op in dataOperations)
-            {
-                op();
-            }
-
             List<int> values = new List<int>();
-            for (int i = 0; i < DataItems.Count; i++)
+            for (int i = 0; i < table.Count; i++)
             {
-                if (DataItems[table[i]].Value != null)
+                if (table[i] > last)
+                {
+                    values.Add(newValues[table[i]]);
+                }
+                else if (DataItems[table[i]].Value != null)
+                {
                     values.Add(DataItems[table[i]].Value ?? 0);
+                }
             }
 
             WeakReferenceMessenger.Default.Send(new ValueChangedMessage<int[]>(Comm.ListToArray(values)));

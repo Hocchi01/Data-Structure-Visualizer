@@ -25,67 +25,38 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
     {
         public ObservableCollection<int> Values { get; set; }
 
-        protected const string BorderBrushEndPoint = "BorderBrush.(LinearGradientBrush.EndPoint)";
-        protected const string StrokeBrushEndPoint = "Stroke.(LinearGradientBrush.EndPoint)";
-        protected const string FillBrushEndPoint = "Fill.(LinearGradientBrush.EndPoint)";
-
         public LinkedListAlgorithmFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<LinkedListItemViewModel> dataItems) : base(canvas, container, myStoryboard, dataItems.RevertElems())
         {
+            //table = new List<int>();
+            //for (int i = 1; i < last; i++) // 忽略链表中非数据结点
+            //{
+            //    table.Add(i);
+            //}
         }
 
-        protected void SetOutBrush(ref LinearGradientBrush brush)
-        {
-            var theme = ThemeHelper.GetTheme();
-
-            brush.StartPoint = new Point(0, 0);
-            brush.EndPoint = new Point(0, 0);
-            brush.GradientStops.Clear();
-            brush.GradientStops.Add(new GradientStop(theme.PrimaryMid.Color, 0.0));
-            brush.GradientStops.Add(new GradientStop(theme.PrimaryMid.Color, 1.0));
-            brush.GradientStops.Add(new GradientStop(theme.SecondaryDark.Color, 1.0));
-        }
-
-        protected void SetInBrush(ref LinearGradientBrush brush)
-        {
-            var theme = ThemeHelper.GetTheme();
-
-            brush.StartPoint = new Point(0, 0);
-            brush.EndPoint = new Point(0, 0);
-            brush.GradientStops.Clear();
-            brush.GradientStops.Add(new GradientStop(theme.SecondaryDark.Color, 0.0));
-            brush.GradientStops.Add(new GradientStop(theme.SecondaryDark.Color, 1.0));
-            brush.GradientStops.Add(new GradientStop(theme.PrimaryMid.Color, 1.0));
-        }
-
-        protected void InitPointer()
+        public void InitPointer()
         {
             var head = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, 0);
-            SetInBrush(ref head.borderBrush);
+            head.SetInBrush(ref head.borderBrush);
             head.borderBrush.EndPoint = new Point(1, 0);
         }
 
         public void PointerNext(int toIndex, Action? before = null, Action? after = null)
         {
+            ++toIndex;
             int preIndex = toIndex - 1;
 
-            var preItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, preIndex + 1); // + 1 算上头结点
-            var toItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, toIndex + 1);
+            var preItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, preIndex);
+            var toItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, toIndex);
 
-            var startPoint = new Point(0, 0);
-            var endPoint = new Point(1, 0);
-
-            var preBorderOut = new MyPointAnimationBase(from: startPoint, to: endPoint, time: 500, before: () => { SetOutBrush(ref preItem.borderBrush); }) { AccelerationRatio = 0.5, TargetControl = preItem.border, TargetParam = BorderBrushEndPoint };
-
-            var preArrowIn = new MyPointAnimationBase(from: startPoint, to: endPoint, time: 500, before: () => { SetInBrush(ref preItem.next.brush); }) { AccelerationRatio = 0.5, TargetControl = preItem.next.main, TargetParam = FillBrushEndPoint };
-
-            var preArrowOut = new MyPointAnimationBase(from: startPoint, to: endPoint, time: 500, before: () => { SetOutBrush(ref preItem.next.brush); }) { DecelerationRatio = 0.5, TargetControl = preItem.next.main, TargetParam = FillBrushEndPoint };
-
-            var toBorderIn = new MyPointAnimationBase(from: startPoint, to: endPoint, time: 500, before: () => { SetInBrush(ref toItem.borderBrush); }) { DecelerationRatio = 0.5, TargetControl = toItem.border, TargetParam = BorderBrushEndPoint };
-
+            var preBorderOut = preItem.GetBorderOutAnimation();
+            var preArrowIn = preItem.GetPointerInAnimation();
+            var preArrowOut = preItem.GetPointerOutAnimation(true);
+            var toBorderIn = toItem.GetBorderInAnimation(true);
 
             MainStoryboard.AddAsyncAnimations(new List<MyPointAnimationBase> { preBorderOut, preArrowIn }, before);
             MainStoryboard.AddAsyncAnimations(new List<MyPointAnimationBase> { preArrowOut, toBorderIn }, null, after);
-            // MainStoryboard.Delay(300);
+            MainStoryboard.Delay(200);
         }
 
         public void FindElem(int elemIndex)
@@ -94,88 +65,117 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             for (int i = 0; i <= elemIndex; i++)
             {
                 PointerNext(i);
-
             }
         }
 
-        public void InsertElem(int toIndex, int value)
+        private LinkedListItemUserControl GenerateVirtualElem(int elemIndex, DataItemViewModelBase viewModel, double initPoinerLen = 35)
         {
-            var preItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, toIndex);
-            var preArrowIn = new MyPointAnimationBase(from: new Point(0,0), to: new Point(1,0), time: 500, before: () => { SetInBrush(ref preItem.next.brush); }) { AccelerationRatio = 0.5, TargetControl = preItem.next.main, TargetParam = FillBrushEndPoint };
+            return GenerateVirtualElem(new TranslateTransform() { X = elemIndex * (50 + 35) }, viewModel, initPoinerLen);
+        }
 
-            var lengthenAnims = new List<AnimationTimeline> { preArrowIn };
-            lengthenAnims.AddRange(preItem.next.LengthenOrShorten(35 * 2 + 50));
-
-            MainStoryboard.AddAsyncAnimations(lengthenAnims);
-
-            var newItemViewModel = new LinkedListItemViewModel()
-            {
-                Value = value,
-                EditType = DataItemEditType.New,
-                Color = new SolidColorBrush(new Color() { ScA = 1.0F, R = 255, G = 152, B = 0 })
-            };
-
-            var newItem = new LinkedListItemUserControl(25)
+        private LinkedListItemUserControl GenerateVirtualElem(TranslateTransform axis, DataItemViewModelBase viewModel, double initPoinerLen = 35)
+        {
+            var virtualElem = new LinkedListItemUserControl(initPoinerLen)
             {
                 Margin = new Thickness(8),
                 VerticalAlignment = VerticalAlignment.Center,
-                RenderTransform = new TranslateTransform() { X = toIndex * (50 + 35) + 50 + 35, Y = 80 },
+                RenderTransform = axis,
                 Visibility = Visibility.Hidden,
-                DataContext = newItemViewModel
+                DataContext = viewModel
             };
-            Canvas.Children.Add(newItem);
+            Canvas.Children.Add(virtualElem);
+
+            return virtualElem;
+        }
+
+        public void RemoveElemInLinkedList(int elemIndex)
+        {
+            ++elemIndex;
+            var preItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, elemIndex - 1);
+            var rmvItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, elemIndex);
+
+            var virtualPrePointer = GenerateVirtualElem(elemIndex - 1, new LinkedListItemViewModel()
+            {
+                EditType = DataItemEditType.None,
+            });
+
+            var virtualRmvItem = GenerateVirtualElem(elemIndex, rmvItem.DataContext as LinkedListItemViewModel);
+
+            var towardNextOfNextAnims = virtualPrePointer.next.TowardNextOfNext(() =>
+            {
+                preItem.next.Visibility = Visibility.Hidden;
+                rmvItem.Visibility = Visibility.Hidden;
+                virtualPrePointer.OnlyShowPointer();
+                virtualRmvItem.Visibility = Visibility.Visible;
+            });
+            foreach (var anims in towardNextOfNextAnims)
+            {
+                MainStoryboard.AddAsyncAnimations(anims);
+            }
+
+            RemoveElem(elemIndex, virtualRmvItem, true, null, () => { Canvas.Children.Remove(virtualRmvItem); });
+
+            var preLine2MoveUpAnim = virtualPrePointer.next.GetMoveLineSegmentAnimation(2, 50, Direction.Up);
+            var preLine1ShortenAnim = virtualPrePointer.next.LengthenOrShortenLineSegment(1, 0);
+            var preLine3ShortenAnim = virtualPrePointer.next.LengthenOrShortenLineSegment(3, 0);
+
+            MainStoryboard.AddAsyncAnimations(new List<AnimationTimeline> { preLine1ShortenAnim, preLine2MoveUpAnim, preLine3ShortenAnim },
+            () =>
+            {
+                virtualPrePointer.next.FlipDirectionOfLine(3, Direction.Up);
+            },
+            () =>
+            {
+                preItem.next.Length = 120;
+                preItem.next.Visibility = Visibility.Visible;
+                rmvItem.Visibility = Visibility.Collapsed;
+                Canvas.Children.Remove(virtualPrePointer);
+            });
+
+            MainStoryboard.AddAsyncAnimations(preItem.next.LengthenOrShorten(35));
+        }
+
+        public void InsertElem(int toIndex, int addValue)
+        {
+            ++toIndex;
+            var preItem = Comm.GetItemFromItemsControlByIndex<LinkedListItemUserControl>(Container, toIndex - 1);
+
+            MainStoryboard.AddAsyncAnimations(preItem.next.LengthenOrShorten(35 * 2 + 50));
+
+            var newItemViewModel = new LinkedListItemViewModel()
+            {
+                Value = addValue,
+                EditType = DataItemEditType.New,
+                Color = new SolidColorBrush(ThemeHelper.NewColor)
+            };
+
+            var newItem = GenerateVirtualElem(new TranslateTransform() { X = toIndex * (50 + 35), Y = 80 }, newItemViewModel, 25);
+
+            table.Insert(toIndex, count + newValues.Count);
+            newValues.Add(count + newValues.Count, addValue);
+            NewElem(newItem, () => { newItem.Visibility = Visibility.Visible; });
 
             var newToNextAnims = newItem.next.NewItemNextPointerTowardNextItem();
-            MainStoryboard.AddAsyncAnimations(newToNextAnims[0], () => { newItem.Visibility = Visibility.Visible; });
-            for (int i = 1; i < newToNextAnims.Count; i++)
+            for (int i = 0; i < newToNextAnims.Count; i++)
             {
                 MainStoryboard.AddAsyncAnimations(newToNextAnims[i]);
             }
 
-
-            //var virtualPointerViewModel = new LinkedListItemViewModel()
-            //{
-            //    EditType = DataItemEditType.None,
-            //};
-            //var virtualPointer = new LinkedListItemUserControl(35 * 2 + 50) // 
-            //{
-            //    Margin = new Thickness(8),
-            //    VerticalAlignment = VerticalAlignment.Center,
-            //    RenderTransform = new TranslateTransform() { X = toIndex * (50 + 35) },
-            //    Visibility = Visibility.Hidden,
-            //    DataContext = virtualPointerViewModel,
-            //};
-
-            //Canvas.Children.Add(virtualPointer);
-
-
             Point curEndPoint = preItem.next.endPoint;
-            var preToNewAnims = preItem.next.PreItemNextPointerTowardNewItem();
-            
-            MainStoryboard.AddAsyncAnimations(preToNewAnims[0], () =>
-            {
-                preItem.next.FixCurrentWidth(curEndPoint);
-
-                //preItem.next.Visibility = Visibility.Hidden;
-
-                //virtualPointer.Visibility = Visibility.Visible;
-                //virtualPointer.border.Visibility = Visibility.Hidden;
-                //virtualPointer.bottom.Visibility = Visibility.Hidden;
-            });
-            for (int i = 1; i < preToNewAnims.Count; i++)
+            var preToNewAnims = preItem.next.PreItemNextPointerTowardNewItem(() => { preItem.next.FixCurrentWidth(curEndPoint); });
+            for (int i = 0; i < preToNewAnims.Count; i++)
             {
                 MainStoryboard.AddAsyncAnimations(preToNewAnims[i]);
             }
 
 
-            var preArrowMoveUpAnim = new SimulatedDoubleAnimation(by: -80f, time: 500) { TargetControl = preItem.next.arrow, TargetParam = "(Geometry.Transform).(TransformGroup.Children)[1].(TranslateTransform.Y)", TargetName = "arrow_" + Comm.GetUniqueString() };
-            var preLineMoveUpAnim = new SimulatedDoubleAnimation(by: -80f, time: 500) { TargetControl = preItem.next.Lines[2], TargetParam = "(Geometry.Transform).(TransformGroup.Children)[1].(TranslateTransform.Y)", TargetName = "line_" + Comm.GetUniqueString() };
+            var preArrowMoveUpAnim = preItem.next.GetMoveArrowAnimation(80, Direction.Up);
+            var preLineMoveUpAnim = preItem.next.GetMoveLineSegmentAnimation(2, 80, Direction.Up);
             var newItemMoveUpAnim = new SimulatedDoubleAnimation(by: -80f, time: 500) { TargetControl = newItem, TargetParam = AnimationHelper.VerticallyMoveParam };
-            var newLineMoveDownAnim = new SimulatedDoubleAnimation(by: 80f, time: 500) { TargetControl = newItem.next.Lines[2], TargetParam = "(Geometry.Transform).(TransformGroup.Children)[1].(TranslateTransform.Y)", TargetName = "line_" + Comm.GetUniqueString() };
-            var newArrowMoveDownAnim = new SimulatedDoubleAnimation(by: 80f, time: 500) { TargetControl = newItem.next.arrow, TargetParam = "(Geometry.Transform).(TransformGroup.Children)[1].(TranslateTransform.Y)", TargetName = "arrow_" + Comm.GetUniqueString() };
-
-            var newLineShortenAnim = newItem.next.LengthenOrShortenLine(newItem.next.Lines[1], 0);
-            var preLineShortenAnim = preItem.next.LengthenOrShortenLine(preItem.next.Lines[1], 0);
+            var newLineMoveDownAnim = newItem.next.GetMoveLineSegmentAnimation(2, 80, Direction.Down);
+            var newArrowMoveDownAnim = newItem.next.GetMoveArrowAnimation(80, Direction.Down);
+            var newLineShortenAnim = newItem.next.LengthenOrShortenLineSegment(1, 0);
+            var preLineShortenAnim = preItem.next.LengthenOrShortenLineSegment(1, 0);
             var returnNewAnims = new List<AnimationTimeline>
             {
                 preArrowMoveUpAnim,
@@ -187,9 +187,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 newArrowMoveDownAnim
             };
             MainStoryboard.AddAsyncAnimations(returnNewAnims);
-            dataOperations.Add(() => 
+
+            endOperations.Add(() =>
             {
-                Values.Insert(toIndex, value);
                 Canvas.Children.Remove(newItem);
             });
         }

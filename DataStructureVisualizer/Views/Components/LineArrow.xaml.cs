@@ -26,6 +26,9 @@ namespace DataStructureVisualizer.Views.Components
     /// </summary>
     public partial class LineArrow : UserControl
     {
+        private const string GeometryHorizontallyMoveParam = "(Geometry.Transform).(TransformGroup.Children)[1].(TranslateTransform.X)";
+        private const string GeometryVerticallyMoveParam = "(Geometry.Transform).(TransformGroup.Children)[1].(TranslateTransform.Y)";
+
         private const double arrowOutLength = 8;
         private const double arrowLength = 9;
         private const double arrowHalfWidth = 4;
@@ -49,6 +52,7 @@ namespace DataStructureVisualizer.Views.Components
 
         private double length = arrowOutLength;
 
+        // 当前只有一条线段才可修改
         public double Length
         {
             get { return length; }
@@ -81,11 +85,11 @@ namespace DataStructureVisualizer.Views.Components
             Lines = new List<RectangleGeometry> { line };
         }
 
-        public List<AnimationTimeline> LengthenOrShorten(double toLen)
+        public List<AnimationTimeline> LengthenOrShorten(double toLen, Action? before = null, Action? after = null)
         {
             double toLineLen = toLen - arrowOutLength;
 
-            var lineAnimation = new SimulatedRectAnimation(to: new Rect(0, 3, toLineLen, 2), time: 500)
+            var lineAnimation = new SimulatedRectAnimation(to: new Rect(0, 3, toLineLen, 2), time: 500, before: before, after: after)
             {
                 TargetControl = line,
                 TargetParam = RectangleGeometry.RectProperty,
@@ -106,14 +110,32 @@ namespace DataStructureVisualizer.Views.Components
             return new List<AnimationTimeline> { lineAnimation, arrowAnimation };
         }
 
-        public SimulatedRectAnimation LengthenOrShortenLine(RectangleGeometry line, double toLen)
+        public SimulatedRectAnimation LengthenOrShortenLineSegment(int lineIndex, double toLen)
         {
             return new SimulatedRectAnimation(to: new Rect(0, 3, toLen, 2), time: 500)
             {
-                TargetControl = line,
+                TargetControl = Lines[lineIndex],
                 TargetParam = RectangleGeometry.RectProperty,
                 TargetName = "line_" + Comm.GetUniqueString()
             };
+        }
+
+        public SimulatedDoubleAnimation GetMoveLineSegmentAnimation(int lineIndex, float by, Direction direction)
+        {
+            if (!direction.IsPositive())
+                by = -by;
+            var param = direction.IsHorizontal() ? GeometryHorizontallyMoveParam : GeometryVerticallyMoveParam;
+
+            return new SimulatedDoubleAnimation(by: by, time: 500) { TargetControl = Lines[lineIndex], TargetParam = param, TargetName = "line_" + Comm.GetUniqueString() };
+        }
+
+        public SimulatedDoubleAnimation GetMoveArrowAnimation(float by, Direction direction)
+        {
+            if (!direction.IsPositive())
+                by = -by;
+            var param = direction.IsHorizontal() ? GeometryHorizontallyMoveParam : GeometryVerticallyMoveParam;
+
+            return new SimulatedDoubleAnimation(by: by, time: 500) { TargetControl = arrow, TargetParam = param, TargetName = "arrow_" + Comm.GetUniqueString() };
         }
 
         public List<List<AnimationTimeline>> NewItemNextPointerTowardNextItem()
@@ -132,13 +154,13 @@ namespace DataStructureVisualizer.Views.Components
             };
         }
 
-        public List<List<AnimationTimeline>> PreItemNextPointerTowardNewItem()
+        public List<List<AnimationTimeline>> PreItemNextPointerTowardNewItem(Action? before = null, Action? after = null)
         {
-            var arrowShortenAnims = LengthenOrShorten(25);
+            var arrowShortenAnims = LengthenOrShorten(25, before, null);
             var arrowTowardDownAnim = GetRotatoArrowAnimation(Direction.Down);
             var arrowMoveDownAnims = GetMoveArrowAnimations(Direction.Down, 80);
             var arrowTowardRightAnim = GetRotatoArrowAnimation(Direction.Right);
-            var arrowMoveRightAnims = GetMoveArrowAnimations(Direction.Right, 10);
+            var arrowMoveRightAnims = GetMoveArrowAnimations(Direction.Right, 10, null, after);
 
             return new List<List<AnimationTimeline>>
             {
@@ -150,16 +172,35 @@ namespace DataStructureVisualizer.Views.Components
             };
         }
 
+        public List<List<AnimationTimeline>> TowardNextOfNext(Action? before = null, Action? after = null)
+        {
+            var arrowShortenAnims = LengthenOrShorten(25, before, null);
+            var arrowTowardDownAnim = GetRotatoArrowAnimation(Direction.Down);
+            var arrowMoveDownAnims = GetMoveArrowAnimations(Direction.Down, 50);
+            var arrowTowardRightAnim = GetRotatoArrowAnimation(Direction.Right);
+            var arrowMoveRightAnims = GetMoveArrowAnimations(Direction.Right, 18 + 50 + 17);
+            var arrowTowardUpAnim = GetRotatoArrowAnimation(Direction.Up);
+            var arrowMoveUpAnims = GetMoveArrowAnimations(Direction.Up, 50);
+            var arrowTowardRight2Anim = GetRotatoArrowAnimation(Direction.Right);
+            var arrowMoveRight2Anims = GetMoveArrowAnimations(Direction.Right, 10, null, after);
+
+            return new List<List<AnimationTimeline>>
+            {
+                arrowShortenAnims,
+                new List<AnimationTimeline> { arrowTowardDownAnim },
+                arrowMoveDownAnims,
+                new List<AnimationTimeline> { arrowTowardRightAnim },
+                arrowMoveRightAnims,
+                new List<AnimationTimeline> { arrowTowardUpAnim },
+                arrowMoveUpAnims,
+                new List<AnimationTimeline> { arrowTowardRight2Anim },
+                arrowMoveRight2Anims
+            };
+        }
+
         public void FixCurrentWidth(Point curEndPoint)
         {
             geometryGroup.Children.Add(new RectangleGeometry(new Rect(curEndPoint.X, curEndPoint.Y, 0, 0)));
-        }
-
-        private Rect GetToRect(Rect rect, double len)
-        {
-            var newRect = rect;
-            newRect.Width = len;
-            return newRect;
         }
 
         private void CorrectLineTranslate(ref TranslateTransform tt, Direction direction)
@@ -198,7 +239,17 @@ namespace DataStructureVisualizer.Views.Components
             };
         }
 
-        private List<AnimationTimeline> GetMoveArrowAnimations(Direction direction, double toLength)
+        public void FlipDirectionOfLine(int index, Direction originalDirection)
+        {
+            var line = Lines[index];
+            double dist = line.Rect.Width + 2;
+
+            ((line.Transform as TransformGroup).Children[1] as TranslateTransform).Y += originalDirection == Direction.Up ? -dist : dist;
+
+            ((line.Transform as TransformGroup).Children[0] as RotateTransform).Angle += 180;
+        }
+
+        private List<AnimationTimeline> GetMoveArrowAnimations(Direction direction, double toLength, Action? before = null, Action? after = null)
         {
             var line = new RectangleGeometry(new Rect(0, 3, 0, 2));
             var tg = new TransformGroup();
@@ -217,7 +268,7 @@ namespace DataStructureVisualizer.Views.Components
             geometryGroup.Children.Add(line);
             Lines.Add(line);
 
-            var lineAnimation = new SimulatedRectAnimation(to: new Rect(0, 3, toLength, 2), time: 500)
+            var lineAnimation = new SimulatedRectAnimation(to: new Rect(0, 3, toLength, 2), time: 500, before: before, after: after)
             {
                 TargetControl = line,
                 TargetParam = RectangleGeometry.RectProperty,

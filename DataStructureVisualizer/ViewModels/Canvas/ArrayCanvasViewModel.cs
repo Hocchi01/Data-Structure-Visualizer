@@ -52,7 +52,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// </summary>
         /// <param name="message"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public override void Receive(LoadAddAnimationMessage message)
+        public async override void Receive(LoadAddAnimationMessage message)
         {
             int addIndex = message.Index;
             int addVal = message.Value;
@@ -69,8 +69,15 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
 
+
             // TODO 01: 在数组末尾添加一个“空项”
             DataItems.Add(new ArrayItemViewModel() { Index = count });
+
+            // 等待前台尾部 UI 元素追加完毕
+            await Task.Delay(100);
+            var lastItem = Comm.GetItemFromItemsControlByIndex<ArrayItemUserControl>(container, DataItems.Count - 1);
+            (lastItem.valueItem.RenderTransform as TranslateTransform).X += (addIndex - count) * AnimationHelper.StepLen;
+            lastItem.valueItem.Opacity = 0;
 
             var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
 
@@ -80,7 +87,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                 saf.MoveElem(i, i + 1);
             }
             // TODO 03: 写入添加的元素
-            saf.FinallyWriteElem(addIndex, addVal);
+            saf.WriteElem(addIndex, addVal);
 
             MainStoryboard.Begin_Ex(canvas, true);
         }
@@ -94,7 +101,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard = new MyStoryboard();
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
-            
+
             SortFactory sf = null;
 
             switch (message.Type)
@@ -155,7 +162,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
-            
+
             var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
 
             // TODO 01: 删除元素

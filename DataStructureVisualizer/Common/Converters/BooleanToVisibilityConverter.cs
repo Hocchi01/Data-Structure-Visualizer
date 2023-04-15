@@ -11,9 +11,9 @@ namespace DataStructureVisualizer.Common.Converters
         {
             if ((string)parameter == "reverse")
             {
-                return (bool)value ? Visibility.Collapsed : Visibility.Visible;
+                return (bool)value ? Visibility.Hidden : Visibility.Visible;
             }
-            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+            return (bool)value ? Visibility.Visible : Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

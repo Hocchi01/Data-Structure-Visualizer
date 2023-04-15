@@ -197,6 +197,14 @@ namespace DataStructureVisualizer.Common.AnimationLib
             AddSyncAnimation(animation, animation.TargetControl, animation.TargetParam, animation.TargetName);
         }
 
+        public void AddSyncAnimation<T>(T animation, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
+        {
+            animation.SetActions(before, after);
+            AddSyncAnimation(animation, animation.TargetControl, animation.TargetParam, animation.TargetName);
+        }
+
+
+
         public void InsertAction(Action action)
         {
             int count = Children.Count;
@@ -225,7 +233,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
                 }
             };
 
-            Duration = TimeSpan.FromMilliseconds(offset); // 最终暂停 1s
+            Duration = TimeSpan.FromMilliseconds(offset + 500); // 最终暂停 0.5s
             Begin(containingObject, isControllable);
             WeakReferenceMessenger.Default.Send(new BeginAnyAnimationMessage());
         }

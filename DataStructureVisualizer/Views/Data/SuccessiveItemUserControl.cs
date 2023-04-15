@@ -25,5 +25,7 @@ namespace DataStructureVisualizer.Views.Data
         {
             return MoveValueItem(by * (float)AnimationHelper.StepLen, before, after);
         }
+
+
     }
 }

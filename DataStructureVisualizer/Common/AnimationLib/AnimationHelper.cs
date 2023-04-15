@@ -16,6 +16,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
         public const string VerticallyMoveParam = "(UIElement.RenderTransform).(TranslateTransform.Y)";
 
         public const string VerticallyScaleParam = "(UIElement.RenderTransform).(ScaleTransform.ScaleY)";
+        public const string HorizontallyScaleParam = "(UIElement.RenderTransform).(ScaleTransform.ScaleX)";
 
         //public const string VerticallyMoveParam = "(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.Y)";
         //public const string HorizontallyMoveParam = "(UIElement.RenderTransform).(TransformGroup.Children)[0].(TranslateTransform.X)";
