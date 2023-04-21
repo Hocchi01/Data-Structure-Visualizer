@@ -21,23 +21,9 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         [ObservableProperty]
         private ObservableCollection<LinkedListItemViewModel> dataItems;
 
-        public override void UpdateDataItems()
+        public LinkedListCanvasViewModel()
         {
-            DataItems = new ObservableCollection<LinkedListItemViewModel>();
-
-            List<Color> colors = Comm.GetColorGradientByValues(Values);
-
-            DataItems.Add(new LinkedListItemViewModel() { Type = LinkedListItemType.Head });
-            for (int i = 0; i < Values.Count; i++)
-            {
-                DataItems.Add(new LinkedListItemViewModel()
-                {
-                    Value = Values[i],
-                    Index = i,
-                    Color = new SolidColorBrush(colors[i]),
-                });
-            }
-            DataItems.Add(new LinkedListItemViewModel() { Type = LinkedListItemType.Tail });
+            Type = DS_SecondaryType.LinkedList;
         }
 
         /// <summary>
@@ -82,9 +68,23 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard.Begin_Ex(canvas, true);
         }
 
-        public LinkedListCanvasViewModel()
+        public override void UpdateDataItems()
         {
-            Type = DS_SecondaryType.LinkedList;
+            DataItems = new ObservableCollection<LinkedListItemViewModel>();
+
+            List<Color> colors = Comm.GetColorGradientByValues(Values);
+
+            DataItems.Add(new LinkedListItemViewModel() { Type = LinkedListItemType.Head });
+            for (int i = 0; i < Values.Count; i++)
+            {
+                DataItems.Add(new LinkedListItemViewModel()
+                {
+                    Value = Values[i],
+                    Index = i,
+                    Color = new SolidColorBrush(colors[i]),
+                });
+            }
+            DataItems.Add(new LinkedListItemViewModel() { Type = LinkedListItemType.Tail });
         }
     }
 }

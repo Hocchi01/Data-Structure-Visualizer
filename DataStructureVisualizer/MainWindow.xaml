@@ -12,6 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rules="clr-namespace:DataStructureVisualizer.Common.Rules"
     xmlns:tb="clr-namespace:DataStructureVisualizer.Views.Toolboxes"
+    xmlns:view="clr-namespace:DataStructureVisualizer.Views"
     xmlns:vm="clr-namespace:DataStructureVisualizer.ViewModels"
     Title="MainWindow"
     Width="1000"
@@ -30,34 +31,6 @@
     <Window.Resources>
         <ctrl:BooleanToVisibilityConverter x:Key="b2vCvtr" />
         <cvtr:AnimationStateToBooleanConverter x:Key="as2bCvtr" />
-
-        <!--  控制【动画控制面板】升降  -->
-        <Storyboard x:Key="downStoryboard">
-            <DoubleAnimation
-                AccelerationRatio="0.5"
-                DecelerationRatio="0.5"
-                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                To="70"
-                Duration="0:0:0.5" />
-        </Storyboard>
-        <Storyboard x:Key="upStoryboard">
-            <DoubleAnimation
-                AccelerationRatio="0.5"
-                DecelerationRatio="0.5"
-                Storyboard.TargetProperty="RenderTransform.(TranslateTransform.Y)"
-                To="0"
-                Duration="0:0:0.5" />
-        </Storyboard>
-
-        <!--  控制【动画控制面板】中【播放/暂停按钮】图标切换  -->
-        <Style x:Key="playOrPauseBtnStyle" TargetType="materialDesign:PackIcon">
-            <Setter Property="Kind" Value="Play" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding AnimationControlPanel.State}" Value="{x:Static enum:AnimationState.Running}">
-                    <Setter Property="Kind" Value="Pause" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
 
         <!--  控制【控制台】升降  -->
         <Style x:Key="upOrDownConsoleStyle" TargetType="Grid">
@@ -188,60 +161,19 @@
             <ContentControl Grid.Row="1" Content="{Binding CurrentCanvasView}" />
 
             <!--  动画控制器  -->
-            <Grid
-                x:Name="animationControlPanel"
+            <view:AnimationControlPanelUserControl
                 Grid.Row="1"
-                Height="70"
                 VerticalAlignment="Bottom"
-                Background="White">
-                <Grid.Style>
-                    <Style TargetType="Grid">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding AnimationControlPanel.State}" Value="{x:Static enum:AnimationState.Stopped}">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard Storyboard="{StaticResource downStoryboard}" />
-                                </DataTrigger.EnterActions>
-                                <DataTrigger.ExitActions>
-                                    <BeginStoryboard Storyboard="{StaticResource upStoryboard}" />
-                                </DataTrigger.ExitActions>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Grid.Style>
-                <Grid.RenderTransform>
-                    <TranslateTransform Y="70" />
-                </Grid.RenderTransform>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <ProgressBar IsIndeterminate="{Binding AnimationControlPanel.State, Converter={StaticResource as2bCvtr}, ConverterParameter=IsRunning}" />
-                <StackPanel
-                    Grid.Row="1"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal">
-                    <Button Style="{StaticResource MaterialDesignIconButton}">
-                        <materialDesign:PackIcon Kind="ChevronDoubleLeft" />
-                    </Button>
-                    <Button
-                        Margin="10,0"
-                        Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
-                        Command="{Binding AnimationControlPanel.PlayOrPauseCommand}"
-                        Style="{StaticResource MaterialDesignIconButton}">
-                        <materialDesign:PackIcon Style="{StaticResource playOrPauseBtnStyle}" />
-                    </Button>
-                    <Button Style="{StaticResource MaterialDesignIconButton}">
-                        <materialDesign:PackIcon Kind="ChevronDoubleRight" />
-                    </Button>
-                </StackPanel>
-            </Grid>
-
+                DataContext="{Binding AnimationControlPanel}" />
         </Grid>
 
-        <Grid Grid.Column="2"/>
+        <Grid Grid.Column="2" />
 
         <!--  工具栏  -->
-        <Grid Grid.Column="3" MinWidth="230" Margin="3,0">
+        <Grid
+            Grid.Column="3"
+            MinWidth="230"
+            Margin="3,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
@@ -253,8 +185,9 @@
                     Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
                     Text="Toolbox" />
             </Grid>-->
-            
-            <tb:ArrayToolboxUserControl Grid.Row="1" DataContext="{Binding Toolbox}" />
+
+            <!--<tb:ArrayToolboxUserControl Grid.Row="1" DataContext="{Binding Toolbox}" />-->
+            <ContentControl Content="{Binding CurrentToolboxView}" />
         </Grid>
 
         <!--  控制台  -->
@@ -277,7 +210,60 @@
                 ItemsSource="{Binding LogPanel.LogItems}">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Content}" />
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Visibility="{Binding IsHasCondition, Converter={StaticResource b2vCvtr}}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Margin="0,0,5,0"
+                                        Foreground="{DynamicResource PrimaryHueLightBrush}"
+                                        Text="{Binding Condition}" />
+                                    <Path
+                                        Grid.Column="1"
+                                        Margin="0,0,5,0"
+                                        VerticalAlignment="Center"
+                                        Fill="#81D4FA">
+                                        <Path.Data>
+                                            <PathGeometry>
+                                                <PathGeometry.Figures>
+                                                    <PathFigure IsClosed="True" StartPoint="0,0">
+                                                        <PathFigure.Segments>
+                                                            <LineSegment Point="10,5" />
+                                                            <LineSegment Point="0,10" />
+                                                        </PathFigure.Segments>
+                                                    </PathFigure>
+                                                </PathGeometry.Figures>
+                                            </PathGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                </Grid>
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Foreground="{DynamicResource SecondaryHueMidBrush}"
+                                    Text="{Binding Action}" />
+                            </Grid>
+                            <ListView
+                                Grid.Row="1"
+                                Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                                ItemsSource="{Binding Codes}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock FontFamily="JetBrains Mono" Text="{Binding}" />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

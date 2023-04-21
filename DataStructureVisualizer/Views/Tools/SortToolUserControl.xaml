@@ -9,37 +9,37 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rules="clr-namespace:DataStructureVisualizer.Common.Rules"
+    x:Name="userControl"
     d:Background="White"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
-        <GroupBox
-            Margin="0,0,0,10"
-            materialDesign:ColorZoneAssist.Mode="PrimaryLight"
-            Header="Sort">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <ComboBox
-                    materialDesign:HintAssist.Hint="Type"
-                    DisplayMemberPath="Name"
-                    ItemsSource="{Binding Sorts}"
-                    SelectedItem="{Binding SelectedSort}"
-                    Style="{StaticResource MaterialDesignOutlinedComboBox}" />
-                <Button
-                    Grid.Column="1"
-                    Margin="5,0,-5,0"
-                    Command="{Binding ExecuteFuncCommand}"
-                    Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Kind="PlayCircle" />
-                </Button>
-            </Grid>
-        </GroupBox>
-    </Grid>
+    <local:ToolBaseUserControl Title="Sort">
+        <local:ToolBaseUserControl.MainTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Type"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding DataContext.Sorts, ElementName=userControl}"
+                        SelectedItem="{Binding DataContext.SelectedSort, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+                    <Button
+                        Grid.Column="1"
+                        Margin="5,0,-5,0"
+                        Command="{Binding DataContext.ExecuteFuncCommand, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                        <materialDesign:PackIcon Kind="PlayCircle" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.MainTemplate>
+    </local:ToolBaseUserControl>
 </UserControl>

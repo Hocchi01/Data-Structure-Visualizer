@@ -1,4 +1,5 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
+using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
 using DataStructureVisualizer.Views.Data;
 using System;
@@ -18,7 +19,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         {
         }
 
-        protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, float by, Action? before, Action? after, bool noActivate = false)
+        protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, float by, Action? before, Action? after, LogViewModel? log, bool noActivate = false)
         {
             int elemRealIndex = table[elemIndex];
 
@@ -29,12 +30,12 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
 
-            return elem.MoveValueItem(by, beforeActions, afterActions);
+            return elem.MoveValueItem(by, beforeActions, afterActions, log);
         }
 
-        protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, int toIndex, Action? before, Action? after, bool noActivate = false)
+        protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, int toIndex, Action? before, Action? after, LogViewModel? log, bool noActivate = false)
         {
-            return GetElemMovementAnimation(elemIndex, (toIndex - elemIndex) * (float)AnimationHelper.StepLen, before, after, noActivate);
+            return GetElemMovementAnimation(elemIndex, (toIndex - elemIndex) * (float)AnimationHelper.StepLen, before, after, log, noActivate);
         }
 
         /// <summary>
@@ -45,11 +46,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="before"></param>
         /// <param name="after"></param>
         /// <param name="isChangeTable"></param>
-        public void MoveElem(int elemIndex, int toIndex, Action? before = null, Action? after = null, bool isChangeTable = true)
+        public void MoveElem(int elemIndex, int toIndex, Action? before = null, Action? after = null, LogViewModel? log = null, bool isChangeTable = true)
         {
             if (elemIndex == toIndex) return;
 
-            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, toIndex, before, after));
+            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, toIndex, before, after, log));
 
             if (isChangeTable) SwapElemsInTable(elemIndex, toIndex);
         }
@@ -61,7 +62,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="by"></param>
         public void MoveElem(int elemIndex, float by, Action? before = null, Action? after = null)
         {
-            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, by, before, after));
+            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, by, before, after, null));
         }
 
         /// <summary>
@@ -73,8 +74,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="after"></param>
         public void SwapElems(int index1, int index2, Action? before = null, Action? after = null)
         {
-            var elem1Move = GetElemMovementAnimation(index1, index2, null, null, true);
-            var elem2Move = GetElemMovementAnimation(index2, index1, null, null, true);
+            var elem1Move = GetElemMovementAnimation(index1, index2, null, null, null, true);
+            var elem2Move = GetElemMovementAnimation(index2, index1, null, null, null, true);
             MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { elem1Move, elem2Move }, before, after);
 
             SwapElemsInTable(index1, index2);

@@ -15,6 +15,7 @@ namespace DataStructureVisualizer.ViewModels
         public DS_SecondaryType Type { get; set; }
         public Type CanvasViewModelType { get; set; }
         public Type CanvasViewType { get; set; }
+        public Type ToolboxViewType { get; set; }
 
         public NavigationChildItemViewModel()
         {

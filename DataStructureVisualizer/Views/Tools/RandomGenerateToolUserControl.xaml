@@ -9,75 +9,38 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:rules="clr-namespace:DataStructureVisualizer.Common.Rules"
+    x:Name="userControl"
     d:Background="White"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <ctrl:BooleanToVisibilityConverter x:Key="b2vCvtr" />
-    </UserControl.Resources>
-    <Grid>
-        <GroupBox
-            Margin="0,0,0,10"
-            materialDesign:ColorZoneAssist.Mode="PrimaryLight"
-            Header="Random Generate">
-            <GroupBox.HeaderTemplate>
-                <DataTemplate>
-                    <DockPanel>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="{Binding}" />
-                        <Button
-                            Width="25"
-                            Height="25"
-                            Margin="10,0,-5,0"
-                            HorizontalAlignment="Right"
-                            Command="{Binding DataContext.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                            DockPanel.Dock="Right"
-                            Style="{StaticResource MaterialDesignIconForegroundButton}">
-                            <materialDesign:PackIcon
-                                Width="20"
-                                Height="20"
-                                Kind="Menu" />
-                        </Button>
-                    </DockPanel>
-                </DataTemplate>
-            </GroupBox.HeaderTemplate>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+    <local:ToolBaseUserControl Title="Random Generate" DetailHeight="40">
+        <local:ToolBaseUserControl.MainTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <TextBox
-                    materialDesign:HintAssist.Hint="Amount"
-                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                    TextAlignment="Center">
-                    <TextBox.Text>
-                        <Binding Path="Amount" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <rules:IntRangeValidationRule Max="100" Min="0" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Button
-                    Grid.Column="1"
-                    Margin="5,0,-5,0"
-                    Command="{Binding ExecuteFuncCommand}"
-                    Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Kind="Refresh" />
-                </Button>
-                <Grid
-                    x:Name="rg_MoreSetting"
-                    Grid.Row="1"
-                    Grid.ColumnSpan="2"
-                    Visibility="{Binding IsShowMoreSetting, Converter={StaticResource b2vCvtr}}">
+                    <TextBox
+                        materialDesign:HintAssist.Hint="Amount"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        Text="{Binding DataContext.Amount, ElementName=userControl, UpdateSourceTrigger=PropertyChanged}"
+                        TextAlignment="Center" />
+                    <Button
+                        Grid.Column="1"
+                        Margin="5,0,-5,0"
+                        Command="{Binding DataContext.ExecuteFuncCommand, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                        <materialDesign:PackIcon Kind="Refresh" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.MainTemplate>
+        <local:ToolBaseUserControl.DetailTemplate>
+            <DataTemplate>
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="5" />
@@ -85,7 +48,10 @@
                     </Grid.ColumnDefinitions>
                     <TextBox materialDesign:HintAssist.Hint="Min" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                         <TextBox.Text>
-                            <Binding Path="Min" UpdateSourceTrigger="PropertyChanged">
+                            <Binding
+                                ElementName="userControl"
+                                Path="DataContext.Min"
+                                UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <rules:IntRangeValidationRule Max="999" Min="-999" />
                                 </Binding.ValidationRules>
@@ -97,7 +63,10 @@
                         materialDesign:HintAssist.Hint="Max"
                         Style="{StaticResource MaterialDesignFloatingHintTextBox}">
                         <TextBox.Text>
-                            <Binding Path="Max" UpdateSourceTrigger="PropertyChanged">
+                            <Binding
+                                ElementName="userControl"
+                                Path="DataContext.Max"
+                                UpdateSourceTrigger="PropertyChanged">
                                 <Binding.ValidationRules>
                                     <rules:IntRangeValidationRule Max="999" Min="-999" />
                                 </Binding.ValidationRules>
@@ -105,7 +74,7 @@
                         </TextBox.Text>
                     </TextBox>
                 </Grid>
-            </Grid>
-        </GroupBox>
-    </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.DetailTemplate>
+    </local:ToolBaseUserControl>
 </UserControl>

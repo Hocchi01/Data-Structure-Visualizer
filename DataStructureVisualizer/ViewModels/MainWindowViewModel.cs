@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.ViewModels.Canvas;
 using System;
 using System.Collections.Generic;
@@ -25,12 +26,15 @@ namespace DataStructureVisualizer.ViewModels
 
         public CanvasViewModelBase? CurrentCanvas { get; set; }
 
+        [ObservableProperty]
+        private UserControl? currentToolboxView;
+
         public MainWindowViewModel() 
         {
             IsActive = true;
             Navigation = new NavigationViewModel();
             Toolbox = new ToolboxViewModel();
-            AnimationControlPanel = new AnimationControlPanelViewModel();
+            AnimationControlPanel = AnimationControlPanelViewModel.Instance;
             LogPanel = new LogPanelViewModel();
         }
 
@@ -40,13 +44,22 @@ namespace DataStructureVisualizer.ViewModels
         /// <param name="message"></param>
         public void Receive(PropertyChangedMessage<NavigationChildItemViewModel> message)
         {
-            CurrentCanvasView = Activator.CreateInstance(message.NewValue.CanvasViewType) as UserControl;
-
             if (CurrentCanvas != null)
             {
                 // 注销旧 ViewModel 注册的消息监听，否则该 ViewModel 不会被垃圾回收
                 CurrentCanvas.IsActive = false;
             }
+
+            if (message.NewValue.Type == DS_SecondaryType.Undefined)
+            {
+                CurrentCanvasView = null;
+                CurrentToolboxView = null;
+                CurrentCanvas = null;
+                return;
+            }
+
+            CurrentCanvasView = Activator.CreateInstance(message.NewValue.CanvasViewType) as UserControl;
+            CurrentToolboxView = Activator.CreateInstance(message.NewValue.ToolboxViewType) as UserControl;
             CurrentCanvas = Activator.CreateInstance(message.NewValue.CanvasViewModelType) as CanvasViewModelBase;
 
             if (CurrentCanvasView != null)

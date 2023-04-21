@@ -6,43 +6,40 @@
     xmlns:local="clr-namespace:DataStructureVisualizer.Views.Tools"
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="userControl"
     d:Background="White"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
-        <GroupBox
-            Margin="0,0,0,10"
-            materialDesign:ColorZoneAssist.Mode="PrimaryLight"
-            Header="Remove">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <ComboBox
-                    materialDesign:HintAssist.Hint="Index"
-                    ItemsSource="{Binding Indices}"
-                    SelectedItem="{Binding Index}"
-                    Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
-                </ComboBox>
+    <local:ToolBaseUserControl Title="Remove">
+        <local:ToolBaseUserControl.MainTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Index"
+                        ItemsSource="{Binding DataContext.Indices, ElementName=userControl}"
+                        SelectedItem="{Binding DataContext.Index, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
 
-                <Button
-                    Grid.Column="1"
-                    Margin="5,0,-5,0"
-                    Command="{Binding ExecuteFuncCommand}"
-                    Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Kind="MinusBox" />
-                </Button>
-            </Grid>
-        </GroupBox>
-    </Grid>
+                    <Button
+                        Grid.Column="1"
+                        Margin="5,0,-5,0"
+                        Command="{Binding DataContext.ExecuteFuncCommand, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                        <materialDesign:PackIcon Kind="MinusBox" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.MainTemplate>
+    </local:ToolBaseUserControl>
 </UserControl>

@@ -84,7 +84,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             for (int i = count - 1; i >= addIndex; i--)
             {
                 // TODO 02: 依次后移元素
-                saf.MoveElem(i, i + 1);
+                saf.MoveElem(elemIndex: i, toIndex: i + 1, log: new LogViewModel("test condition", "right move elem", $"a[{i+1}] = a[{i}];"));
             }
             // TODO 03: 写入添加的元素
             saf.WriteElem(addIndex, addVal);

@@ -200,7 +200,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             };
 
             MainStoryboard.AddAsyncAnimations(animations, () => { ActivateElem(elemRealIndex); });
-            MoveElem(elemIndex, toIndex, null, null, false);
+            MoveElem(elemIndex, toIndex, null, null, null, false);
         }
 
         /// <summary>

@@ -16,8 +16,39 @@ namespace DataStructureVisualizer.ViewModels
         IRecipient<BeginAnyAnimationMessage>,
         IRecipient<EndAnyAnimationMessage>
     {
+        private static AnimationControlPanelViewModel instance = null;
+        private static readonly object padlock = new object();
+
+        private AnimationControlPanelViewModel()
+        {
+            IsActive = true;
+        }
+
+        public static AnimationControlPanelViewModel Instance
+        {
+            get
+            {
+                lock (padlock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new AnimationControlPanelViewModel();
+                    }
+                    return instance;
+                }
+            }
+        }
+
         [ObservableProperty]
         private AnimationState state = AnimationState.Stopped;
+
+        [ObservableProperty]
+        private double speedRatio = 1.0;
+
+        partial void OnSpeedRatioChanged(double value)
+        {
+            WeakReferenceMessenger.Default.Send(new StoryboradSpeedRadioChangedMessage(value));
+        }
 
         [RelayCommand]
         private void PlayOrPause()
@@ -36,13 +67,11 @@ namespace DataStructureVisualizer.ViewModels
             }
         }
 
-        public AnimationControlPanelViewModel()
-        {
-            IsActive = true;
-        }
+        
 
         public void Receive(BeginAnyAnimationMessage message)
         {
+            SpeedRatio = 1.0;
             State = AnimationState.Running;
         }
 

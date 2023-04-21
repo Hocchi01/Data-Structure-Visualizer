@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
 using DataStructureVisualizer.Common.Messages;
+using DataStructureVisualizer.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,8 +79,20 @@ namespace DataStructureVisualizer.Common.AnimationLib
             offset += animations[maxTimePos].Duration.TimeSpan.TotalMilliseconds;
         }
 
-        public void AddAsyncAnimations(List<AnimationTimeline> animations, Action? before = null, Action? after = null)
+        /// <summary>
+        /// 添加多个异步动画：每个动画类型可不同
+        /// </summary>
+        /// <param name="animations"></param>
+        /// <param name="before"></param>
+        /// <param name="after"></param>
+        /// <param name="log"></param>
+        public void AddAsyncAnimations(List<AnimationTimeline> animations, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
+            if (log != null)
+            {
+                animations[0].SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
+            }
+
             // 为持续时间最长的动画追加动作
             int maxTimePos = 0;
             for (int i = 0; i < animations.Count; i++)
@@ -117,7 +131,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
         /// <param name="before"></param>
         /// <param name="after"></param>
         /// <param name="targetNames"></param>
-        public void AddAsyncAnimations<T>(T animation, List<DependencyObject> targetControls, object targetParams, Action? before = null, Action? after = null, List<string>? targetNames = null) where T : AnimationTimeline, ILinkableAnimation
+        public void AddAsyncAnimations<T>(T animation, List<DependencyObject> targetControls, object targetParams, Action? before = null, Action? after = null, List<string>? targetNames = null, LogViewModel? log = null) where T : AnimationTimeline, ILinkableAnimation
         {
             var animations = new List<T>();
             for (int i = 0; i < targetControls.Count; i++)
@@ -132,18 +146,23 @@ namespace DataStructureVisualizer.Common.AnimationLib
                 animations.Add(anim);
             }
 
-            AddAsyncAnimations(animations, before, after);
+            AddAsyncAnimations(animations, before, after, log);
         }
 
         /// <summary>
-        /// 添加多个异步动画：每个动画可不同
+        /// 添加多个异步动画：同类动画，每个动画参数可不同
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="animations"></param>
         /// <param name="before"></param>
         /// <param name="after"></param>
-        public void AddAsyncAnimations<T>(List<T> animations, Action? before = null, Action? after = null) where T : AnimationTimeline, ILinkableAnimation
+        public void AddAsyncAnimations<T>(List<T> animations, Action? before = null, Action? after = null, LogViewModel? log = null) where T : AnimationTimeline, ILinkableAnimation
         {
+            if (log != null)
+            {
+                animations[0].SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
+            }
+
             // 为持续时间最长的动画追加动作
             int maxTimePos = 0;
             for (int i = 0; i < animations.Count; i++)

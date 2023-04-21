@@ -23,7 +23,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         IRecipient<LoadAddAnimationMessage>,
         IRecipient<PauseAnyAnimationMessage>,
         IRecipient<ResumeAnyAnimationMessage>,
-        IRecipient<LoadRemoveAnimationMessage>
+        IRecipient<LoadRemoveAnimationMessage>,
+        IRecipient<StoryboradSpeedRadioChangedMessage>
     {
         protected DS_SecondaryType Type;
 
@@ -109,5 +110,15 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// </summary>
         /// <param name="message"></param>
         public abstract void Receive(LoadRemoveAnimationMessage message);
+
+        /// <summary>
+        /// 响应动画播放速率修改的消息
+        /// </summary>
+        /// <param name="message"></param>
+        public void Receive(StoryboradSpeedRadioChangedMessage message)
+        {
+            var canvas = GetCanvas() as FrameworkElement;
+            MainStoryboard.SetSpeedRatio(canvas, message.SpeedRatio);
+        }
     }
 }

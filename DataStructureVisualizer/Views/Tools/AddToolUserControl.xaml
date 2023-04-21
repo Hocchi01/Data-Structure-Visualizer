@@ -1,4 +1,5 @@
 ﻿<UserControl
+    x:Name="userControl"
     x:Class="DataStructureVisualizer.Views.Tools.AddToolUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,83 +14,48 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
-        <GroupBox
-            Margin="0,0,0,10"
-            materialDesign:ColorZoneAssist.Mode="PrimaryLight"
-            Header="Add">
-            <GroupBox.HeaderTemplate>
-                <DataTemplate>
-                    <DockPanel>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            DockPanel.Dock="Left"
-                            Text="Add" />
-                        <Button
-                            Width="25"
-                            Height="25"
-                            Margin="10,0,-5,0"
-                            HorizontalAlignment="Right"
-                            Command="{Binding DataContext.SwitchMoreSettingVisibilityCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}}"
-                            CommandParameter="Add"
-                            DockPanel.Dock="Right"
-                            Style="{StaticResource MaterialDesignIconForegroundButton}">
-                            <materialDesign:PackIcon
-                                Width="20"
-                                Height="20"
-                                Kind="Menu" />
-                        </Button>
-                    </DockPanel>
-                </DataTemplate>
-            </GroupBox.HeaderTemplate>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="5" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
+    <local:ToolBaseUserControl Title="Add" DetailHeight="100">
+        <local:ToolBaseUserControl.MainTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="5" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <ComboBox
-                    materialDesign:HintAssist.Hint="Index"
-                    ItemsSource="{Binding Indices}"
-                    SelectedItem="{Binding Index}"
-                    Style="{StaticResource MaterialDesignOutlinedComboBox}">
-                    <ComboBox.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <VirtualizingStackPanel />
-                        </ItemsPanelTemplate>
-                    </ComboBox.ItemsPanel>
-                </ComboBox>
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Index"
+                        ItemsSource="{Binding DataContext.Indices, ElementName=userControl}"
+                        SelectedItem="{Binding DataContext.Index, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignOutlinedComboBox}">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                    </ComboBox>
+
+                    <TextBox
+                        Grid.Column="2"
+                        materialDesign:HintAssist.Hint="Value"
+                        Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                        TextAlignment="Center"
+                        Text="{Binding DataContext.Value, ElementName=userControl}">
+                    </TextBox>
+                    <Button
+                        Grid.Column="4"
+                        Margin="0,0,-5,0"
+                        Command="{Binding DataContext.ExecuteFuncCommand, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                        <materialDesign:PackIcon Kind="PlusBox" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.MainTemplate>
+    </local:ToolBaseUserControl>
 
 
-                <TextBox
-                    Grid.Column="2"
-                    materialDesign:HintAssist.Hint="Value"
-                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                    TextAlignment="Center">
-                    <TextBox.Text>
-                        <Binding Path="Value" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <rules:IntRangeValidationRule Max="999" Min="-999" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <Button
-                    x:Name="addToolBtn"
-                    Grid.Column="4"
-                    Margin="0,0,-5,0"
-                    Command="{Binding ExecuteFuncCommand}"
-                    Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Kind="PlusBox" />
-                </Button>
-            </Grid>
-        </GroupBox>
-    </Grid>
 </UserControl>

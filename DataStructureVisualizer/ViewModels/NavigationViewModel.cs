@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.ViewModels.Canvas;
 using DataStructureVisualizer.Views.Canvas;
+using DataStructureVisualizer.Views.Toolboxes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,12 +16,14 @@ namespace DataStructureVisualizer.ViewModels
 {
     internal partial class NavigationViewModel : ObservableObject
     {
+        private readonly NavigationChildItemViewModel undefined = new NavigationChildItemViewModel()
+        {
+            Type = DS_SecondaryType.Undefined,
+        };
+
         public NavigationViewModel() 
         {
-            selected_DS = new NavigationChildItemViewModel()
-            {
-                Type = DS_SecondaryType.Undefined,
-            };
+            selected_DS = undefined;
             LoadNavigation(); 
         }
 
@@ -33,13 +36,7 @@ namespace DataStructureVisualizer.ViewModels
         /// <param name="value">新值</param>
         partial void OnSelected_DSChanging(NavigationChildItemViewModel value)
         {
-            //DS_SecondaryType oldType = Selected_DS == null ? DS_SecondaryType.Undefined : Selected_DS.Type;
-            //UserControl oldCanvasView = Selected_DS == null ? new UserControl() : Selected_DS.CanvasView;
-
-            //WeakReferenceMessenger.Default.Send(new PropertyChangedMessage<DS_SecondaryType>(this, null, oldType, value.Type));
-            //WeakReferenceMessenger.Default.Send(new PropertyChangedMessage<UserControl>(this, null, oldCanvasView, value.CanvasView));
-
-            WeakReferenceMessenger.Default.Send(new PropertyChangedMessage<NavigationChildItemViewModel>(this, null, selected_DS, value));
+            WeakReferenceMessenger.Default.Send(new PropertyChangedMessage<NavigationChildItemViewModel>(this, null, selected_DS, value ?? undefined));
         }
 
         public List<NavigationItemViewModel> MainItems { get; set; }
@@ -57,22 +54,24 @@ namespace DataStructureVisualizer.ViewModels
                     IconKind = "ViewColumnOutline",
                     Children = new List<NavigationChildItemViewModel>()
                     {
-                        new NavigationChildItemViewModel() { Name="Array", Type=DS_SecondaryType.Array, CanvasViewModelType=typeof(ArrayCanvasViewModel), CanvasViewType=typeof(ArrayCanvasUserControl) },
+                        new NavigationChildItemViewModel() { Name="Array", Type=DS_SecondaryType.Array, CanvasViewModelType=typeof(ArrayCanvasViewModel), CanvasViewType=typeof(ArrayCanvasUserControl), ToolboxViewType=typeof(ArrayToolboxUserControl) },
 
-                        new NavigationChildItemViewModel() { Name="Linked List", Type=DS_SecondaryType.LinkedList, CanvasViewModelType=typeof(LinkedListCanvasViewModel), CanvasViewType=typeof(LinkedListCanvasUserControl) },
+                        new NavigationChildItemViewModel() { Name="Linked List", Type=DS_SecondaryType.LinkedList, CanvasViewModelType=typeof(LinkedListCanvasViewModel), CanvasViewType=typeof(LinkedListCanvasUserControl), ToolboxViewType=typeof(LinkedListToolboxUserControl) },
 
                         new NavigationChildItemViewModel() { Name="Queue", Type=DS_SecondaryType.Queue }
                     }
                 },
+
                 new NavigationItemViewModel()
                 {
                     Name = "Tree",
                     IconKind = "GraphOutline",
                     Children = new List<NavigationChildItemViewModel>()
                     {
-                        new NavigationChildItemViewModel() { Name="BinaryTree", Type=DS_SecondaryType.BinaryTree },
+                        new NavigationChildItemViewModel() { Name="BinaryTree", Type=DS_SecondaryType.BinaryTree, CanvasViewModelType=typeof(BinaryTreeCanvasViewModel), CanvasViewType=typeof(BinaryTreeCanvasUserControl), ToolboxViewType=typeof(BinaryTreeToolboxUserControl) },
                     }
                 },
+
                 new NavigationItemViewModel()
                 {
                     Name = "Graph",

@@ -43,10 +43,7 @@
     </UserControl.Resources>
     <Grid>
         <!--  画板  -->
-        <Grid
-            x:Name="canvas"
-            Grid.Row="1"
-            Background="#EDE7F6">
+        <Grid x:Name="canvas" Background="#EDE7F6">
 
             <ItemsControl
                 x:Name="arrItemsControl"
@@ -164,15 +161,15 @@
                     Height="50"
                     Margin="1,1,1,0"
                     Padding="3"
-                    BorderThickness="3" >
+                    BorderThickness="3">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="#FF5722" Offset="0" />
-                            <GradientStop Color="#FF5722" Offset="0.25" />
-                            <GradientStop Color="Transparent" Offset="0.25" />
-                            <GradientStop Color="Transparent" Offset="0.75" />
-                            <GradientStop Color="#FF5722" Offset="0.75" />
-                            <GradientStop Color="#FF5722" Offset="1" />
+                            <GradientStop Offset="0" Color="#FF5722" />
+                            <GradientStop Offset="0.25" Color="#FF5722" />
+                            <GradientStop Offset="0.25" Color="Transparent" />
+                            <GradientStop Offset="0.75" Color="Transparent" />
+                            <GradientStop Offset="0.75" Color="#FF5722" />
+                            <GradientStop Offset="1" Color="#FF5722" />
                         </LinearGradientBrush>
                     </Border.BorderBrush>
                 </Border>
@@ -207,15 +204,15 @@
                     Height="50"
                     Margin="1,1,1,0"
                     Padding="3"
-                    BorderThickness="3" >
+                    BorderThickness="3">
                     <Border.BorderBrush>
                         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                            <GradientStop Color="Transparent" Offset="0" />
-                            <GradientStop Color="Transparent" Offset="0.25" />
-                            <GradientStop Color="#03A9F4" Offset="0.25" />
-                            <GradientStop Color="#03A9F4" Offset="0.75" />
-                            <GradientStop Color="Transparent" Offset="0.75" />
-                            <GradientStop Color="Transparent" Offset="1" />
+                            <GradientStop Offset="0" Color="Transparent" />
+                            <GradientStop Offset="0.25" Color="Transparent" />
+                            <GradientStop Offset="0.25" Color="#03A9F4" />
+                            <GradientStop Offset="0.75" Color="#03A9F4" />
+                            <GradientStop Offset="0.75" Color="Transparent" />
+                            <GradientStop Offset="1" Color="Transparent" />
                         </LinearGradientBrush>
                     </Border.BorderBrush>
                 </Border>

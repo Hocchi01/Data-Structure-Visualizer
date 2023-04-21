@@ -91,6 +91,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             var writeAnim = new SimulatedDoubleAnimation(from: 0, to: 1, time: 1000, before: () =>
             {
+                DeactivateElem();
                 DataItems[elemRealIndex].Value = elemVal;
                 DataItems[elemRealIndex].Color = new SolidColorBrush(ThemeHelper.NewColor);
             }, after: null)
