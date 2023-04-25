@@ -1,7 +1,9 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
+using DataStructureVisualizer.Common.Structs;
 using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using MaterialDesignThemes.Wpf;
 using System;
 using System.Collections.Generic;
@@ -17,12 +19,35 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     internal class SelectionSortFactory : SortFactory
     {
+        private Dictionary<string, CodeInfo> codeInfos = new Dictionary<string, CodeInfo>();
         private int minIndex = 0;
 
         public UIElement Iterator { get; set; }
 
-        public SelectionSortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
+        public SelectionSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
+            CodeBlock = 
+                "for (int i = 0; i < n - 1; i++)\\" +
+                "{\\" +
+                "   int minIndex = i;\\" +
+                "   for (int j = i + 1; j < n; j++)\\" +
+                "   {\\" +
+                "       if (a[j] < a[minIndex])\\" +
+                "       {\\" +
+                "           minIndex = j;\\" +
+                "       }\\" +
+                "   }\\" +
+                "   int tmp = a[i];\\" +
+                "   a[i] = a[minIndex];\\" +
+                "   a[minIndex] = tmp;\\" +
+                "}\\";
+
+            codeInfos.Add("for1", new CodeInfo(0));
+            codeInfos.Add("initMin", new CodeInfo(2));
+            codeInfos.Add("for2", new CodeInfo(3));
+            codeInfos.Add("if", new CodeInfo(5));
+            codeInfos.Add("recdMin", new CodeInfo(7));
+            codeInfos.Add("swap", new CodeInfo(10, 3));
         }
 
         public override void Execute()
@@ -57,6 +82,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 Finish();
             });
             MainStoryboard.Begin_Ex(Canvas, true);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView, true);
         }
 
         /// <summary>
@@ -66,6 +92,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="minIndex"></param>
         private void ElemSwap(int leftIndex, int minIndex, LogViewModel log)
         {
+            CodeBlockPanel.AddAnimation(codeInfos["swap"], MainStoryboard.Offset);
             SwapElems(leftIndex, minIndex, null, () =>
             {
                 DataItems[minIndex].State = DataItemState.Normal;
@@ -81,6 +108,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="isLess"></param>
         private void IterNext(int toIndex, int minIndex, bool isLess, LogViewModel log)
         {
+            CodeBlockPanel.AddAnimation(codeInfos["for2"], MainStoryboard.Offset);
+
             int toRealIndex = table[toIndex];
 
             MoveIter(iter: Iterator, toIndex: toIndex, log: log, after: () =>
@@ -92,8 +121,12 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 }
             });
 
+            CodeBlockPanel.AddAnimation(codeInfos["if"], MainStoryboard.Offset);
+            MainStoryboard.Delay(300);
+
             if (isLess)
             {
+                CodeBlockPanel.AddAnimation(codeInfos["recdMin"]);
                 MainStoryboard.InsertLog(new LogViewModel($"a[{toIndex}] < a[{minIndex}]", "Record min elem", $"minIndex = {toIndex};"));
             }
         }
@@ -104,6 +137,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="toIndex"></param>
         private void IterReturn(int toIndex, LogViewModel log)
         {
+            CodeBlockPanel.AddAnimation(codeInfos["for1"], MainStoryboard.Offset);
+
             int toRealIndex = table[toIndex];
 
             MoveIter(iter: Iterator, toIndex: toIndex, log: log, after: () =>
@@ -111,6 +146,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 ActivateElem(toRealIndex);
                 DataItems[toIndex].State = DataItemState.Min;
             });
+
+            CodeBlockPanel.AddAnimation(codeInfos["initMin"], MainStoryboard.Offset);
+            MainStoryboard.Delay(300);
         }
 
         protected override void Init()

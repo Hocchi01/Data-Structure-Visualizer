@@ -1,4 +1,6 @@
-﻿using DataStructureVisualizer.ViewModels;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging.Messages;
+using DataStructureVisualizer.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +26,14 @@ namespace DataStructureVisualizer
         public MainWindow()
         {
             InitializeComponent();
+            WeakReferenceMessenger.Default.Register<RequestMessage<UIElement>, string>(this, "codeBlockPanel", (_, m) =>
+            {
+                m.Reply((UIElement)FindName("codeBlockPanel"));
+            });
+
             DataContext = new MainWindowViewModel();
+
+            
         }
 
         /// <summary>

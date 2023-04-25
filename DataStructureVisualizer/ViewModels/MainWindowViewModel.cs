@@ -14,12 +14,13 @@ using System.Windows.Controls;
 
 namespace DataStructureVisualizer.ViewModels
 {
-    internal partial class MainWindowViewModel : ObservableRecipient, IRecipient<PropertyChangedMessage<NavigationChildItemViewModel>>, IRecipient<RequestMessage<UIElement>>
+    internal partial class MainWindowViewModel : ObservableRecipient, IRecipient<PropertyChangedMessage<NavigationChildItemViewModel>>
     {
         public NavigationViewModel Navigation { get; }
         public ToolboxViewModel Toolbox { get; }
         public AnimationControlPanelViewModel AnimationControlPanel { get; }
         public LogPanelViewModel LogPanel { get; }
+        public CodeBlockPanelViewModel CodeBlockPanel { get; }
 
         [ObservableProperty]
         private UserControl? currentCanvasView;
@@ -36,6 +37,12 @@ namespace DataStructureVisualizer.ViewModels
             Toolbox = new ToolboxViewModel();
             AnimationControlPanel = AnimationControlPanelViewModel.Instance;
             LogPanel = new LogPanelViewModel();
+            CodeBlockPanel = CodeBlockPanelViewModel.Instance;
+
+            WeakReferenceMessenger.Default.Register<RequestMessage<UIElement>, string>(this, "canvas", (_, m) =>
+            {
+                m.Reply((UIElement)CurrentCanvasView.FindName("canvas"));
+            });
         }
 
         /// <summary>
@@ -72,10 +79,10 @@ namespace DataStructureVisualizer.ViewModels
         /// 响应 “获取 canvas 控件” 的请求消息
         /// </summary>
         /// <param name="message"></param>
-        public void Receive(RequestMessage<UIElement> message)
-        {
-            message.Reply((UIElement)CurrentCanvasView.FindName("canvas"));
-        }
+        //public void Receive(RequestMessage<UIElement> message)
+        //{
+        //    message.Reply((UIElement)CurrentCanvasView.FindName("canvas"));
+        //}
     }
 
 

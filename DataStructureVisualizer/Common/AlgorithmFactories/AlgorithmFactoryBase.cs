@@ -16,11 +16,16 @@ using System.Windows;
 using System.Windows.Documents;
 using DataStructureVisualizer.Common.Theme;
 using DataStructureVisualizer.ViewModels;
+using DataStructureVisualizer.Views;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     internal class AlgorithmFactoryBase
     {
+        protected CodeBlockPanelViewModel CodeBlockPanel { get; set; }
+
+        public string CodeBlock { get; set; }
+
         protected Dictionary<int, int> newValues = new Dictionary<int, int>();
         // protected List<int?> vals;
         protected List<int> table; // 用于记录当前元素实际位置
@@ -33,12 +38,20 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         protected AnimationTimeline lastAnimation = null;
 
         public Grid Canvas { get; set; }
+        public CodeBlockPanelUserControl CodeBlockPanelView { get; set; }
         public ItemsControl Container { get; set; }
         public MyStoryboard MainStoryboard { get; set; }
         public ObservableCollection<DataItemViewModelBase> DataItems { get; set; }
 
+        public AlgorithmFactoryBase(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : this(canvas, container, myStoryboard, dataItems)
+        {
+            CodeBlockPanelView = codeBlockPanelView;
+        }
+
         public AlgorithmFactoryBase(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems)
         {
+            CodeBlockPanel = CodeBlockPanelViewModel.Instance;
+
             Canvas = canvas;
             Container = container;
             MainStoryboard = myStoryboard;

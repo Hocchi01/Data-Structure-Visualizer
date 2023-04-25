@@ -100,7 +100,10 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         {
             MainStoryboard = new MyStoryboard();
             Grid canvas = (Grid)GetCanvas();
+            var codeBlockPanelView = GetCodeBlockPanelView();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
             SortFactory sf = null;
 
@@ -108,7 +111,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             {
                 case SortType.SelectionSort:
                     var selectionIterator = canvas.FindName("iterator") as Grid;
-                    sf = new SelectionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = selectionIterator };
+                    sf = new SelectionSortFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems()) { Iterator = selectionIterator };
                     break;
 
                 case SortType.QuickSort:
@@ -140,6 +143,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     break;
             }
 
+            codeBlockPanel.SetCodeBlock(sf.CodeBlock);
             sf?.Execute();
         }
 

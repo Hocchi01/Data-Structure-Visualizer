@@ -1,6 +1,7 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using DataStructureVisualizer.Views.Data;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
     {
         public SuccessiveAlgorithmFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
         {
+        }
+
+        public SuccessiveAlgorithmFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
+        {
+
         }
 
         protected SimulatedDoubleAnimation GetElemMovementAnimation(int elemIndex, float by, Action? before, Action? after, LogViewModel? log, bool noActivate = false)

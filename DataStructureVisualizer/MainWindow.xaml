@@ -39,7 +39,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
-            <ColumnDefinition Width="0" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
@@ -137,7 +137,9 @@
                 DataContext="{Binding AnimationControlPanel}" />
         </Grid>
 
-        <Grid Grid.Column="2" />
+        <Grid Grid.Column="2">
+            <view:CodeBlockPanelUserControl x:Name="codeBlockPanel"/>
+        </Grid>
 
         <!--  工具栏  -->
         <Grid

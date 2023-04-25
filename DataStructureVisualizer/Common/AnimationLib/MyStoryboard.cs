@@ -15,6 +15,13 @@ namespace DataStructureVisualizer.Common.AnimationLib
     public class MyStoryboard : Storyboard
     {
         private double offset = 0;
+        public double Offset
+        {
+            get { return offset; }
+            set { offset = value; }
+        }
+
+
         public List<KeyValuePair<string, DependencyObject>> RegisterTable { get; set; }
 
         /// <summary>

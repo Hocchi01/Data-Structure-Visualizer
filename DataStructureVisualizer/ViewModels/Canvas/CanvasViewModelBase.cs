@@ -5,6 +5,7 @@ using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -43,7 +44,14 @@ namespace DataStructureVisualizer.ViewModels.Canvas
 
         protected UIElement GetCanvas()
         {
-            return WeakReferenceMessenger.Default.Send(new RequestMessage<UIElement>());
+            //return WeakReferenceMessenger.Default.Send(new RequestMessage<UIElement>());
+            return WeakReferenceMessenger.Default.Send(new RequestMessage<UIElement>(), "canvas");
+        }
+
+        protected CodeBlockPanelUserControl GetCodeBlockPanelView()
+        {
+            //return WeakReferenceMessenger.Default.Send(new RequestMessage<UIElement>());
+            return (CodeBlockPanelUserControl)WeakReferenceMessenger.Default.Send(new RequestMessage<UIElement>(), "codeBlockPanel");
         }
 
         public CanvasViewModelBase()
@@ -81,12 +89,19 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// <exception cref="NotImplementedException"></exception>
         public abstract void Receive(LoadAddAnimationMessage message);
 
-
+        /// <summary>
+        /// 响应【暂停动画】的消息
+        /// </summary>
+        /// <param name="message"></param>
         public void Receive(PauseAnyAnimationMessage message)
         {
             MainStoryboard.Pause((Panel)GetCanvas());
         }
 
+        /// <summary>
+        /// 响应【恢复动画】的消息
+        /// </summary>
+        /// <param name="message"></param>
         public void Receive(ResumeAnyAnimationMessage message)
         {
             if (MainStoryboard.GetIsPaused((Panel)GetCanvas()))

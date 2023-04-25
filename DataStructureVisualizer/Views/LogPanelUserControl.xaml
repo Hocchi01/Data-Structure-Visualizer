@@ -99,7 +99,7 @@
                                     Margin="0,0,5,0"
                                     VerticalAlignment="Center"
                                     Fill="{DynamicResource PrimaryHueLightBrush}">
-                                    <!-- #81D4FA -->
+                                    <!--  #81D4FA  -->
                                     <Path.Data>
                                         <PathGeometry>
                                             <PathGeometry.Figures>
@@ -124,9 +124,7 @@
                             FontFamily="JetBrains Mono"
                             Foreground="{DynamicResource MaterialDesignDarkForeground}"
                             Text="{Binding Codes}" />-->
-                        <ItemsControl
-                            Grid.Row="2"
-                            ItemsSource="{Binding Codes}">
+                        <ItemsControl Grid.Row="2" ItemsSource="{Binding Codes}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Vertical" />
@@ -134,7 +132,11 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock FontSize="12" FontFamily="JetBrains Mono" Text="{Binding}" Foreground="{DynamicResource MaterialDesignDarkForeground}" />
+                                    <TextBlock
+                                        FontFamily="JetBrains Mono"
+                                        FontSize="12"
+                                        Foreground="{DynamicResource MaterialDesignDarkForeground}"
+                                        Text="{Binding}" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>

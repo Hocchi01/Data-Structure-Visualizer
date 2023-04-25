@@ -1,6 +1,7 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using DataStructureVisualizer.Views.Data;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,15 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         private int maxStateIndex = 0;
         private int minStateIndex = 0;
+
+        public SortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
+        {
+            vals = new int[count];
+            for (int i = 0; i < count; i++)
+            {
+                vals[i] = DataItems[i].Value ?? 0;
+            }
+        }
 
         public SortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
         {
