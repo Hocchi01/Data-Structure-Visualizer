@@ -1,4 +1,5 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
+using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
 using DataStructureVisualizer.Views.Data;
 using System;
@@ -36,35 +37,35 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             }
             else if (lowIndex == highIndex)
             {
-                ItersReturn(lowIndex, highIndex);
+                ItersReturn(lowIndex, highIndex, new LogViewModel("Only one elem in range", "Do nothing", ""));
             }
         }
 
         int Partition(int lowIndex, int highIndex)
         {
-            ItersReturn(lowIndex, highIndex);
+            ItersReturn(lowIndex, highIndex, new LogViewModel($"Partition range[{lowIndex}, {highIndex}]", $"lowIndex = {lowIndex}; highIndex = {highIndex};"));
 
             int pivot = DataItems[table[lowIndex]].Value ?? 0; // 将当前表中第一个元素设为枢轴值，对表进行划分
-            TmpStorePivotElem(lowIndex);
+            TmpStorePivotElem(lowIndex, new LogViewModel("Record pivot elem", $"pivot = a[{lowIndex}];"));
 
             while (lowIndex < highIndex)
             {
                 while (lowIndex < highIndex && DataItems[table[highIndex]].Value >= pivot)
                 {
                     --highIndex;
-                    IterNext(HighIterator, highIndex);
+                    IterNext(HighIterator, highIndex, new LogViewModel("Left shift highIndex", "highIndex--;"));
                 }
-                MoveElem(highIndex, lowIndex); // 将比枢轴值小的元素移动到左端
+                MoveElem(highIndex, lowIndex, log: lowIndex < highIndex ? new LogViewModel($"a[{highIndex}] < pivot", "Left shift less elem", $"a[{lowIndex}] = a[{highIndex}];") : null); // 将比枢轴值小的元素移动到左端
 
                 while (lowIndex < highIndex && DataItems[table[lowIndex]].Value <= pivot)
                 {
                     ++lowIndex;
-                    IterNext(LowIterator, lowIndex);
+                    IterNext(LowIterator, lowIndex, new LogViewModel("Right shift lowIndex", "lowIndex++;"));
                 }
-                MoveElem(lowIndex, highIndex); // 将比枢轴值大的元素移动到右端
+                MoveElem(lowIndex, highIndex, log: lowIndex < highIndex ? new LogViewModel($"a[{lowIndex}] > pivot", "Right shift greater elem", $"a[{highIndex}] = a[{lowIndex}];") : null); // 将比枢轴值大的元素移动到右端
             }
 
-            ReturnPivotElem(lowIndex);
+            ReturnPivotElem(lowIndex, new LogViewModel("Rewrite pivot elem", $"a[{lowIndex}] = pivot;"));
             return lowIndex;
         }
 
@@ -103,10 +104,10 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// </summary>
         /// <param name="iter"></param>
         /// <param name="toIndex"></param>
-        private void IterNext(UIElement iter, int toIndex)
+        private void IterNext(UIElement iter, int toIndex, LogViewModel log)
         {
             int toRealIndex = table[toIndex];
-            MoveIter(iter, toIndex, null, () => { ActivateElem(toRealIndex); }, offset);
+            MoveIter(iter, toIndex, null, () => { ActivateElem(toRealIndex); }, offset, log);
         }
 
         /// <summary>
@@ -137,32 +138,22 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// 将当前趟的 pivot 暂存到外部
         /// </summary>
         /// <param name="elemIndex"></param>
-        private void TmpStorePivotElem(int elemIndex)
+        private void TmpStorePivotElem(int elemIndex, LogViewModel log)
         {
-            //int elemRealIndex = table[elemIndex];
-            //var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
-
             float by = -(float)(AnimationHelper.StepLen * elemIndex + offset);
 
-            //MainStoryboard.AddSyncAnimation(elem.MoveValueItem(by, () => { ActivateElem(elemRealIndex); }));
-
-            MoveElem(elemIndex, by);
+            MoveElem(elemIndex: elemIndex, by: by, log: log);
         }
 
         /// <summary>
         /// 将暂存在 pivot 中的元素挪回数组中
         /// </summary>
         /// <param name="toIndex"></param>
-        private void ReturnPivotElem(int toIndex)
+        private void ReturnPivotElem(int toIndex, LogViewModel log)
         {
-            //int elemRealIndex = table[toIndex];
-            //var elem = Comm.GetItemFromItemsControlByIndex<SuccessiveItemUserControl>(Container, elemRealIndex);
-
             float by = (float)(AnimationHelper.StepLen * toIndex + offset);
 
-            //MainStoryboard.AddSyncAnimation(elem.MoveValueItem(by, () => { ActivateElem(elemRealIndex); }, () => { SetElemSorted(toIndex); }));
-
-            MoveElem(toIndex, by, null, () => { SetElemSorted(toIndex); });
+            MoveElem(toIndex, by, null, () => { SetElemSorted(toIndex); }, log);
         }
 
         /// <summary>
@@ -170,7 +161,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// </summary>
         /// <param name="lowIndex"></param>
         /// <param name="highIndex"></param>
-        private void ItersReturn(int lowIndex, int highIndex)
+        private void ItersReturn(int lowIndex, int highIndex, LogViewModel log)
         {
             var lowIterMove = GetIterMovementAnimation(LowIterator, lowIndex, null, null, offset);
             var highIterMove = GetIterMovementAnimation(HighIterator, highIndex, null, null, offset);
@@ -182,7 +173,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 SetElemSorted(lowIndex); 
             };
 
-            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { lowIterMove, highIterMove }, null, after);
+            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { lowIterMove, highIterMove }, null, after, log);
         }
     }
 }

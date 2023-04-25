@@ -1,4 +1,6 @@
-﻿using DataStructureVisualizer.Common.Enums;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using DataStructureVisualizer.Common.Enums;
+using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -36,6 +38,14 @@ namespace DataStructureVisualizer.Common.AnimationLib
                         break;
                 }
             };
+        }
+
+        public static void AttachLog(this AnimationTimeline timeline, LogViewModel log)
+        {
+            timeline.SetActions(() =>
+            {
+                WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log));
+            }, null);
         }
     }
 }

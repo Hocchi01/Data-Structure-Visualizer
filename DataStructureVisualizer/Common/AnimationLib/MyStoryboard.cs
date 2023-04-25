@@ -90,7 +90,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
         {
             if (log != null)
             {
-                animations[0].SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
+                animations[0].AttachLog(log);
             }
 
             // 为持续时间最长的动画追加动作
@@ -160,7 +160,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
         {
             if (log != null)
             {
-                animations[0].SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
+                animations[0].AttachLog(log);
             }
 
             // 为持续时间最长的动画追加动作
@@ -222,8 +222,6 @@ namespace DataStructureVisualizer.Common.AnimationLib
             AddSyncAnimation(animation, animation.TargetControl, animation.TargetParam, animation.TargetName);
         }
 
-
-
         public void InsertAction(Action action)
         {
             int count = Children.Count;
@@ -234,6 +232,19 @@ namespace DataStructureVisualizer.Common.AnimationLib
             else
             {
                 (Children[count - 1] as AnimationTimeline).SetActions(null, action);
+            }
+        }
+
+        public void InsertLog(LogViewModel log)
+        {
+            int count = Children.Count;
+            if (count == 0)
+            {
+                WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log));
+            }
+            else
+            {
+                (Children[count - 1] as AnimationTimeline).AttachLog(log);
             }
         }
 

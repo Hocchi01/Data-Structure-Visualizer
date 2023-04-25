@@ -13,6 +13,9 @@ namespace DataStructureVisualizer.ViewModels
     internal partial class LogPanelViewModel : ObservableRecipient, IRecipient<AddAnyLogMessage>, IRecipient<BeginAnyAnimationMessage>
     {
         [ObservableProperty]
+        private int logItemsLastIndex = -1;
+
+        [ObservableProperty]
         private ObservableCollection<LogViewModel> logItems;
 
         public LogPanelViewModel()
@@ -24,11 +27,13 @@ namespace DataStructureVisualizer.ViewModels
         public void Receive(AddAnyLogMessage message)
         {
             LogItems.Add(message.Log);
+            LogItemsLastIndex++;
         }
 
         public void Receive(BeginAnyAnimationMessage message)
         {
             LogItems.Clear();
+            LogItemsLastIndex = -1;
         }
     }
 }

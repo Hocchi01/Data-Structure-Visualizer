@@ -32,37 +32,7 @@
         <ctrl:BooleanToVisibilityConverter x:Key="b2vCvtr" />
         <cvtr:AnimationStateToBooleanConverter x:Key="as2bCvtr" />
 
-        <!--  控制【控制台】升降  -->
-        <Style x:Key="upOrDownConsoleStyle" TargetType="Grid">
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding AnimationControlPanel.State, Converter={StaticResource as2bCvtr}, ConverterParameter=IsBegin}" Value="True">
-                    <DataTrigger.EnterActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation
-                                    AccelerationRatio="0.5"
-                                    DecelerationRatio="0.5"
-                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                    To="1"
-                                    Duration="0:0:0.5" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.EnterActions>
-                    <DataTrigger.ExitActions>
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation
-                                    AccelerationRatio="0.5"
-                                    DecelerationRatio="0.5"
-                                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                                    To="0"
-                                    Duration="0:0:0.5" />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </DataTrigger.ExitActions>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
+
 
     </Window.Resources>
     <Grid>
@@ -177,97 +147,14 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <!--<Grid Background="{DynamicResource PrimaryHueMidBrush}">
-                <TextBlock
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="20"
-                    Foreground="{DynamicResource PrimaryHueMidForegroundBrush}"
-                    Text="Toolbox" />
-            </Grid>-->
-
-            <!--<tb:ArrayToolboxUserControl Grid.Row="1" DataContext="{Binding Toolbox}" />-->
             <ContentControl Content="{Binding CurrentToolboxView}" />
         </Grid>
-
+        
         <!--  控制台  -->
-        <Grid
+        <view:LogPanelUserControl
             x:Name="logPanel"
             Grid.RowSpan="3"
-            Grid.Column="3"
-            MinWidth="230"
-            Background="{DynamicResource MaterialDesignDarkBackground}"
-            RenderTransformOrigin="0.5,1"
-            Style="{StaticResource upOrDownConsoleStyle}">
-            <Grid.RenderTransform>
-                <ScaleTransform x:Name="consoleScale" ScaleY="0" />
-            </Grid.RenderTransform>
-
-            <ListView
-                VerticalAlignment="Bottom"
-                FontSize="16"
-                Foreground="{DynamicResource MaterialDesignDarkForeground}"
-                ItemsSource="{Binding LogPanel.LogItems}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid Visibility="{Binding IsHasCondition, Converter={StaticResource b2vCvtr}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Margin="0,0,5,0"
-                                        Foreground="{DynamicResource PrimaryHueLightBrush}"
-                                        Text="{Binding Condition}" />
-                                    <Path
-                                        Grid.Column="1"
-                                        Margin="0,0,5,0"
-                                        VerticalAlignment="Center"
-                                        Fill="#81D4FA">
-                                        <Path.Data>
-                                            <PathGeometry>
-                                                <PathGeometry.Figures>
-                                                    <PathFigure IsClosed="True" StartPoint="0,0">
-                                                        <PathFigure.Segments>
-                                                            <LineSegment Point="10,5" />
-                                                            <LineSegment Point="0,10" />
-                                                        </PathFigure.Segments>
-                                                    </PathFigure>
-                                                </PathGeometry.Figures>
-                                            </PathGeometry>
-                                        </Path.Data>
-                                    </Path>
-                                </Grid>
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Foreground="{DynamicResource SecondaryHueMidBrush}"
-                                    Text="{Binding Action}" />
-                            </Grid>
-                            <ListView
-                                Grid.Row="1"
-                                Foreground="{DynamicResource MaterialDesignDarkForeground}"
-                                ItemsSource="{Binding Codes}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock FontFamily="JetBrains Mono" Text="{Binding}" />
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Grid>
+            Grid.Column="3" />
 
     </Grid>
 </Window>

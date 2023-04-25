@@ -60,9 +60,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// </summary>
         /// <param name="elemIndex"></param>
         /// <param name="by"></param>
-        public void MoveElem(int elemIndex, float by, Action? before = null, Action? after = null)
+        public void MoveElem(int elemIndex, float by, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
-            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, by, before, after, null));
+            MainStoryboard.AddSyncAnimation(GetElemMovementAnimation(elemIndex, by, before, after, log));
         }
 
         /// <summary>
@@ -72,24 +72,24 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="index2"></param>
         /// <param name="before"></param>
         /// <param name="after"></param>
-        public void SwapElems(int index1, int index2, Action? before = null, Action? after = null)
+        public void SwapElems(int index1, int index2, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
             var elem1Move = GetElemMovementAnimation(index1, index2, null, null, null, true);
             var elem2Move = GetElemMovementAnimation(index2, index1, null, null, null, true);
-            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { elem1Move, elem2Move }, before, after);
+            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { elem1Move, elem2Move }, before, after, log);
 
             SwapElemsInTable(index1, index2);
         }
 
 
 
-        protected SimulatedDoubleAnimation GetIterMovementAnimation(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0)
+        protected SimulatedDoubleAnimation GetIterMovementAnimation(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0, LogViewModel? log = null)
         {
             double start = AnimationHelper.ArrayStart;
             double step = AnimationHelper.StepLen;
             string param = AnimationHelper.HorizontallyMoveParam;
 
-            return new SimulatedDoubleAnimation(to: start + step * toIndex + offset, time: 500, before: before, after: after) { TargetControl = iter, TargetParam = param };
+            return new SimulatedDoubleAnimation(to: start + step * toIndex + offset, time: 500, before: before, after: after) { TargetControl = iter, TargetParam = param, Log = log };
         }
 
         /// <summary>
@@ -100,9 +100,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="before"></param>
         /// <param name="after"></param>
         /// <param name="offset"></param>
-        public void MoveIter(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0)
+        public void MoveIter(UIElement iter, int toIndex, Action? before = null, Action? after = null, double offset = 0, LogViewModel? log = null)
         {
-            MainStoryboard.AddSyncAnimation(GetIterMovementAnimation(iter, toIndex, before, after, offset));
+            MainStoryboard.AddSyncAnimation(GetIterMovementAnimation(iter, toIndex, before, after, offset, log));
         }
 
     }

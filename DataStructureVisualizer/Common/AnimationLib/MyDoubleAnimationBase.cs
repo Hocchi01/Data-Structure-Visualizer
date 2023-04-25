@@ -23,7 +23,7 @@ namespace DataStructureVisualizer.Common.AnimationLib
                 log = value;
                 if (log != null)
                 {
-                    this.SetActions(() => { WeakReferenceMessenger.Default.Send(new AddAnyLogMessage(log)); }, null);
+                    this.AttachLog(log);
                 }
             }
         }

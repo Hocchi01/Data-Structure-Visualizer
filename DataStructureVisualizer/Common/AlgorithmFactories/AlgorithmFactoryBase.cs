@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows;
 using System.Windows.Documents;
 using DataStructureVisualizer.Common.Theme;
+using DataStructureVisualizer.ViewModels;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
@@ -83,7 +84,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             RemoveElem(elemIndex, control, isChangeTable, before, after);
         }
 
-        public void WriteElem(int elemIndex, int elemVal) 
+        public void WriteElem(int elemIndex, int elemVal, LogViewModel log = null) 
         {
             int elemRealIndex = table[elemIndex];
 
@@ -95,7 +96,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 DataItems[elemRealIndex].Value = elemVal;
                 DataItems[elemRealIndex].Color = new SolidColorBrush(ThemeHelper.NewColor);
             }, after: null)
-            { TargetControl = control, TargetParam = UIElement.OpacityProperty };
+            { TargetControl = control, TargetParam = UIElement.OpacityProperty, Log = log };
 
             MainStoryboard.AddSyncAnimation(writeAnim);
         }
