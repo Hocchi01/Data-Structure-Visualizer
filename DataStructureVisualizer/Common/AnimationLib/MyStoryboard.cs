@@ -272,7 +272,11 @@ namespace DataStructureVisualizer.Common.AnimationLib
 
             Duration = TimeSpan.FromMilliseconds(offset + 500); // 最终暂停 0.5s
             Begin(containingObject, isControllable);
-            WeakReferenceMessenger.Default.Send(new BeginAnyAnimationMessage());
+
+            if (isControllable)
+            {
+                WeakReferenceMessenger.Default.Send(new BeginAnyAnimationMessage());
+            }
         }
 
         public void Delay(double millisecond)
@@ -280,14 +284,18 @@ namespace DataStructureVisualizer.Common.AnimationLib
             offset += millisecond;
         }
 
-        public MyStoryboard()
+        public MyStoryboard(bool isMain = true)
         {
             //// 添加一个空动画，便于插入事件动作
             //Children.Add(new DoubleAnimation() { Duration = TimeSpan.Zero });
-            Completed += (s, e) => 
-            { 
-                WeakReferenceMessenger.Default.Send(new EndAnyAnimationMessage());
-            };
+            if (isMain)
+            {
+                Completed += (s, e) =>
+                {
+                    WeakReferenceMessenger.Default.Send(new EndAnyAnimationMessage());
+                };
+            }
+            
 
             RegisterTable = new List<KeyValuePair<string, DependencyObject>>();
         }

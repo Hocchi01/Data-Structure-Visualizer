@@ -13,7 +13,7 @@
     <UserControl.Resources>
         <cvtr:AnimationStateToBooleanConverter x:Key="as2bCvtr" />
 
-        <!--  控制【控制台】升降  -->
+        <!--  控制【代码块面板】水平缩放  -->
         <Style x:Key="horizontallyScaleStyle" TargetType="Grid">
             <Style.Triggers>
                 <DataTrigger Binding="{Binding AnimationControlPanel.State, Converter={StaticResource as2bCvtr}, ConverterParameter=IsBegin}" Value="True">
@@ -47,7 +47,6 @@
     </UserControl.Resources>
     <Grid
         Background="{DynamicResource MaterialDesignDarkBackground}"
-        RenderTransformOrigin="0,0.5"
         Style="{StaticResource horizontallyScaleStyle}">
         <Grid.LayoutTransform>
             <ScaleTransform ScaleX="0" />
@@ -70,6 +69,7 @@
                 Grid.Row="1"
                 Padding="0,5"
                 BorderBrush="{DynamicResource PrimaryHueLightBrush}"
+                Background="{DynamicResource MaterialDesignDarkBackground}"
                 BorderThickness="3,0,3,3">
                 <Grid>
                     <Grid>

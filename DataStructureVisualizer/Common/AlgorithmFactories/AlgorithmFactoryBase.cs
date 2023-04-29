@@ -17,14 +17,15 @@ using System.Windows.Documents;
 using DataStructureVisualizer.Common.Theme;
 using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.Views;
+using DataStructureVisualizer.Common.Messages;
+using DataStructureVisualizer.Common.Structs;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     internal class AlgorithmFactoryBase
     {
+        protected Dictionary<string, CodeInfo> codeInfos = new Dictionary<string, CodeInfo>();
         protected CodeBlockPanelViewModel CodeBlockPanel { get; set; }
-
-        public string CodeBlock { get; set; }
 
         protected Dictionary<int, int> newValues = new Dictionary<int, int>();
         // protected List<int?> vals;
@@ -127,7 +128,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             table[index2] = tmp;
         }
 
-        protected void UpdateValues()
+        protected virtual void UpdateValues()
         {
             List<int> values = new List<int>();
             for (int i = 0; i < table.Count; i++)
@@ -142,7 +143,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 }
             }
 
-            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<int[]>(Comm.ListToArray(values)));
+            WeakReferenceMessenger.Default.Send(new GenerateDataMessage(Comm.ListToArray(values)));
         }
 
         protected void ActivateElem(int elemIndex)

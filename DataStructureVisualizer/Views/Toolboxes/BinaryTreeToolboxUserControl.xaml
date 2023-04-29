@@ -13,7 +13,8 @@
     mc:Ignorable="d">
     <ScrollViewer VerticalScrollBarVisibility="Hidden">
         <StackPanel ScrollViewer.VerticalScrollBarVisibility="Auto">
-            <tool:RandomGenerateToolUserControl DataContext="{Binding RandomGenerateTool}" />
+            <tool:BinaryTreeRandomGenerateToolUserControl DataContext="{Binding BinaryTreeRandomGenerateTool}" />
+            <tool:BinaryTreeTraverseToolUserControl DataContext="{Binding BinaryTreeTraverseTool}" />
             <!--<tool:AddToolUserControl DataContext="{Binding AddTool}" />
             <tool:RemoveToolUserControl DataContext="{Binding RemoveTool}" />-->
         </StackPanel>

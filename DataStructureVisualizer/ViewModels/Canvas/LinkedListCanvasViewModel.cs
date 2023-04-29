@@ -68,7 +68,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard.Begin_Ex(canvas, true);
         }
 
-        public override void UpdateDataItems()
+        public override void UpdateDataItems(GenerateDataMessage? message)
         {
             DataItems = new ObservableCollection<LinkedListItemViewModel>();
 

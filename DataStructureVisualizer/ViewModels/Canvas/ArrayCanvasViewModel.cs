@@ -30,7 +30,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         [ObservableProperty]
         private ObservableCollection<ArrayItemViewModel> dataItems;
 
-        public override void UpdateDataItems()
+        public override void UpdateDataItems(GenerateDataMessage? message)
         {
             DataItems = new ObservableCollection<ArrayItemViewModel>();
 
@@ -143,7 +143,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     break;
             }
 
-            codeBlockPanel.SetCodeBlock(sf.CodeBlock);
             sf?.Execute();
         }
 

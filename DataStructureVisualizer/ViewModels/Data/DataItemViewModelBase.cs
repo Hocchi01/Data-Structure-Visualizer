@@ -14,7 +14,6 @@ namespace DataStructureVisualizer.ViewModels.Data
     {
         [ObservableProperty]
         private int? value = null;
-        //public int? Value { get; set; } = null;
 
         public int? Index { get; set; } = null;
 
@@ -31,6 +30,7 @@ namespace DataStructureVisualizer.ViewModels.Data
         /// 根据当前数据值梯度计算出的原始颜色
         /// </summary>
         public SolidColorBrush? OriginalColor { set; get; } = null;
+
         /// <summary>
         /// 数据背景色
         /// </summary>

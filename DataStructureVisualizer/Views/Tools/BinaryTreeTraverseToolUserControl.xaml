@@ -1,0 +1,42 @@
+﻿<UserControl
+    x:Class="DataStructureVisualizer.Views.Tools.BinaryTreeTraverseToolUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:DataStructureVisualizer.Views.Tools"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="userControl"
+    d:Background="White"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <local:ToolBaseUserControl Title="Traverse">
+        <local:ToolBaseUserControl.MainTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ComboBox
+                        materialDesign:HintAssist.Hint="Mode"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{Binding DataContext.Modes, ElementName=userControl}"
+                        SelectedItem="{Binding DataContext.SelectedMode, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignOutlinedComboBox}" />
+                    <Button
+                        Grid.Column="1"
+                        Margin="5,0,-5,0"
+                        Command="{Binding DataContext.ExecuteFuncCommand, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                        <materialDesign:PackIcon Kind="PlayCircle" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.MainTemplate>
+    </local:ToolBaseUserControl>
+</UserControl>

@@ -25,7 +25,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         IRecipient<PauseAnyAnimationMessage>,
         IRecipient<ResumeAnyAnimationMessage>,
         IRecipient<LoadRemoveAnimationMessage>,
-        IRecipient<StoryboradSpeedRadioChangedMessage>
+        IRecipient<StoryboradSpeedRadioChangedMessage>,
+        IRecipient<GenerateDataMessage>
     {
         protected DS_SecondaryType Type;
 
@@ -37,7 +38,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
 
         partial void OnValuesChanged(ObservableCollection<int> value)
         {
-            ReloadValues();
+            // ReloadValues();
         }
 
         public MyStoryboard MainStoryboard { get; set; }
@@ -66,7 +67,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             };
         }
 
-        public abstract void UpdateDataItems();
+        public abstract void UpdateDataItems(GenerateDataMessage? message);
 
         /// <summary>
         /// 响应【随机生成工具】的消息
@@ -75,11 +76,12 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         /// <exception cref="NotImplementedException"></exception>
         public void Receive(ValueChangedMessage<int[]> message)
         {
-            Values = new ObservableCollection<int>(message.Value);
-            Values.CollectionChanged += (s, e) =>
-            {
-                ReloadValues();
-            };
+            //Values = new ObservableCollection<int>(message.Value);
+            //Values.CollectionChanged += (s, e) =>
+            //{
+            //    ReloadValues();
+            //};
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -112,7 +114,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
 
         private void ReloadValues()
         {
-            UpdateDataItems();
+            UpdateDataItems(null);
 
             /* 
              * 1. 通知工具改变索引值选取的范围 
@@ -134,6 +136,21 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         {
             var canvas = GetCanvas() as FrameworkElement;
             MainStoryboard.SetSpeedRatio(canvas, message.SpeedRatio);
+        }
+
+        /// <summary>
+        /// 响应【随机生成工具】的消息
+        /// </summary>
+        /// <param name="message"></param>
+        public void Receive(GenerateDataMessage message)
+        {
+            Values = new ObservableCollection<int>(message.Values);
+            WeakReferenceMessenger.Default.Send(new DataSourceChangedMessage(Values));
+            Values.CollectionChanged += (s, e) =>
+            {
+                ReloadValues();
+            };
+            UpdateDataItems(message);
         }
     }
 }

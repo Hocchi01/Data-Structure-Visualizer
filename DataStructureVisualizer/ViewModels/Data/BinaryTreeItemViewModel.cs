@@ -53,7 +53,7 @@ namespace DataStructureVisualizer.ViewModels.Data
         }
 
         public double LeftMargin { get; set; }
-        public int ParentIndex { get; set; }
+        public int ParentIndex { get; set; } // 根结点的父索引标记为 -1
         public double RightMargin { get; set; }
 
         public void OffsetRightLine()

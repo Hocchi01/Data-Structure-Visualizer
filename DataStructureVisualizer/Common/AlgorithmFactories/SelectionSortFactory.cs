@@ -19,14 +19,13 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     internal class SelectionSortFactory : SortFactory
     {
-        private Dictionary<string, CodeInfo> codeInfos = new Dictionary<string, CodeInfo>();
         private int minIndex = 0;
 
         public UIElement Iterator { get; set; }
 
         public SelectionSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
-            CodeBlock = 
+            string codeBlock = 
                 "for (int i = 0; i < n - 1; i++)\\" +
                 "{\\" +
                 "   int minIndex = i;\\" +
@@ -41,6 +40,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 "   a[i] = a[minIndex];\\" +
                 "   a[minIndex] = tmp;\\" +
                 "}\\";
+            CodeBlockPanel.SetCodeBlock(codeBlock);
 
             codeInfos.Add("for1", new CodeInfo(0));
             codeInfos.Add("initMin", new CodeInfo(2));

@@ -36,7 +36,7 @@ namespace DataStructureVisualizer.ViewModels.Tools
         }
     }
 
-    class Sort
+    struct Sort
     {
         public string Name { get; set; }
         public SortType Type { get; set; }

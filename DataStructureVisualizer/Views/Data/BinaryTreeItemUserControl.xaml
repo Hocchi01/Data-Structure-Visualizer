@@ -12,36 +12,98 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <cvtr:ChildIndexToLineY2Converter x:Key="childIndexToLineY2Converter" />
+        <cvtr:DataItemStateToSolidColorBrushConverter x:Key="dataItemStateToSolidColorBrushConverter" />
+        <cvtr:TwoDoubleToPointConverter x:Key="twoDoubleToPointConverter" />
     </UserControl.Resources>
     <Grid>
+        <!--<Line X1="50" Y1="0" X2="1" Y2="50" StrokeThickness="10" x:Name="test">
+            <Line.Stroke>
+                <LinearGradientBrush StartPoint="{Binding X1}" MappingMode="Absolute">
+                    <GradientStop Offset="0" Color="#FF8BC34A"/>
+                    <GradientStop Offset="0.5" Color="#FF8BC34A"/>
+                    <GradientStop Offset="0.5" Color="#FF673AB7"/>
+                    <GradientStop Offset="1" Color="#FF673AB7"/>
+                </LinearGradientBrush>
+            </Line.Stroke>
+        </Line>-->
         <Line
-            Stroke="{DynamicResource PrimaryHueMidBrush}"
             StrokeThickness="2"
             X1="{Binding LeftLineX1}"
             X2="{Binding LeftLineX2}"
             Y1="{Binding LeftLineY1}"
-            Y2="{Binding LeftLineY2}" />
+            Y2="{Binding LeftLineY2}">
+            <Line.Stroke>
+                <LinearGradientBrush MappingMode="Absolute">
+                    <LinearGradientBrush.StartPoint>
+                        <MultiBinding Converter="{StaticResource twoDoubleToPointConverter}">
+                            <Binding Path="LeftLineX1" />
+                            <Binding Path="LeftLineY1" />
+                        </MultiBinding>
+                    </LinearGradientBrush.StartPoint>
+                    <LinearGradientBrush.EndPoint>
+                        <MultiBinding Converter="{StaticResource twoDoubleToPointConverter}">
+                            <Binding Path="LeftLineX2" />
+                            <Binding Path="LeftLineY2" />
+                        </MultiBinding>
+                    </LinearGradientBrush.EndPoint>
+                    <GradientStop Offset="0" Color="#FF8BC34A"/>
+                    <GradientStop x:Name="left1" Offset="0" Color="#FF8BC34A"/>
+                    <GradientStop x:Name="left2" Offset="0" Color="#FF673AB7"/>
+                    <GradientStop Offset="1" Color="#FF673AB7"/>
+                </LinearGradientBrush>
+            </Line.Stroke>
+        </Line>
         <Line
-            Stroke="{DynamicResource PrimaryHueMidBrush}"
             StrokeThickness="2"
             X1="{Binding RightLineX1}"
             X2="{Binding RightLineX2}"
             Y1="{Binding RightLineY1}"
-            Y2="{Binding RightLineY2}" />
+            Y2="{Binding RightLineY2}" >
+            <Line.Stroke>
+                <LinearGradientBrush MappingMode="Absolute">
+                    <LinearGradientBrush.StartPoint>
+                        <MultiBinding Converter="{StaticResource twoDoubleToPointConverter}">
+                            <Binding Path="RightLineX1" />
+                            <Binding Path="RightLineY1" />
+                        </MultiBinding>
+                    </LinearGradientBrush.StartPoint>
+                    <LinearGradientBrush.EndPoint>
+                        <MultiBinding Converter="{StaticResource twoDoubleToPointConverter}">
+                            <Binding Path="RightLineX2" />
+                            <Binding Path="RightLineY2" />
+                        </MultiBinding>
+                    </LinearGradientBrush.EndPoint>
+                    <GradientStop Offset="0" Color="#FF8BC34A"/>
+                    <GradientStop x:Name="right1" Offset="0" Color="#FF8BC34A"/>
+                    <GradientStop x:Name="right2" Offset="0" Color="#FF673AB7"/>
+                    <GradientStop Offset="1" Color="#FF673AB7"/>
+                </LinearGradientBrush>
+            </Line.Stroke>
+        </Line>
         <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Border
+                x:Name="border"
                 Width="50"
                 Height="50"
                 Padding="3"
-                BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+                BorderBrush="{Binding State, Converter={StaticResource dataItemStateToSolidColorBrushConverter}, ConverterParameter=Graph}"
                 BorderThickness="2"
                 CornerRadius="30">
                 <Grid x:Name="valueItem">
-                    <Ellipse x:Name="ellipse" Fill="{Binding Color}" />
+                    <Ellipse x:Name="ellipse">
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Offset="0" Color="#FF9800"/>
+                                <GradientStop x:Name="elps1" Offset="0" Color="#FF9800"/>
+                                <GradientStop x:Name="elps2" Offset="0" Color="{Binding Color.Color}"/>
+                                <GradientStop Offset="1" Color="{Binding Color.Color}"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
                     <TextBlock
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"

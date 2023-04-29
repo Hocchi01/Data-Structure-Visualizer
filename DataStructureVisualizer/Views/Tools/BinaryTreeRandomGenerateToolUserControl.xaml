@@ -1,0 +1,129 @@
+﻿<UserControl
+    x:Class="DataStructureVisualizer.Views.Tools.BinaryTreeRandomGenerateToolUserControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:enum="clr-namespace:DataStructureVisualizer.Common.Enums"
+    xmlns:local="clr-namespace:DataStructureVisualizer.Views.Tools"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:rules="clr-namespace:DataStructureVisualizer.Common.Rules"
+    x:Name="userControl"
+    d:Background="White"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+
+        <Style
+            x:Key="amountTextBoxStyle"
+            BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
+            TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.SelectedType.Type, ElementName=userControl}" Value="{x:Static enum:TreeType.FullBinaryTree}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  这里只写第一条（控件默认 Hidden）会导致控件无法显示  -->
+        <Style
+            x:Key="depthTextBoxStyle"
+            BasedOn="{StaticResource MaterialDesignOutlinedTextBox}"
+            TargetType="TextBox">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.SelectedType.Type, ElementName=userControl}" Value="{x:Static enum:TreeType.FullBinaryTree}">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.SelectedType.Type, ElementName=userControl}" Value="{x:Static enum:TreeType.NormalBinaryTree}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.SelectedType.Type, ElementName=userControl}" Value="{x:Static enum:TreeType.CompleteBinaryTree}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+    <local:ToolBaseUserControl Title="Random Generate">
+        <local:ToolBaseUserControl.MainTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        materialDesign:HintAssist.Hint="Depth"
+                        Style="{StaticResource depthTextBoxStyle}"
+                        Text="{Binding DataContext.Depth, ElementName=userControl, UpdateSourceTrigger=PropertyChanged}"
+                        TextAlignment="Center" />
+
+                    <TextBox
+                        materialDesign:HintAssist.Hint="Amount"
+                        Style="{StaticResource amountTextBoxStyle}"
+                        Text="{Binding DataContext.Amount, ElementName=userControl, UpdateSourceTrigger=PropertyChanged}"
+                        TextAlignment="Center" />
+
+                    <Button
+                        Grid.Column="1"
+                        Margin="5,0,-5,0"
+                        Command="{Binding DataContext.ExecuteFuncCommand, ElementName=userControl}"
+                        Style="{StaticResource MaterialDesignIconButton}">
+                        <materialDesign:PackIcon Kind="Refresh" />
+                    </Button>
+                </Grid>
+            </DataTemplate>
+        </local:ToolBaseUserControl.MainTemplate>
+        <local:ToolBaseUserControl.DetailTemplate>
+            <DataTemplate>
+                <StackPanel Orientation="Vertical">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="5" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox materialDesign:HintAssist.Hint="Min" Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                            <TextBox.Text>
+                                <Binding
+                                    ElementName="userControl"
+                                    Path="DataContext.Min"
+                                    UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <rules:IntRangeValidationRule Max="999" Min="-999" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <TextBox
+                            Grid.Column="2"
+                            materialDesign:HintAssist.Hint="Max"
+                            Style="{StaticResource MaterialDesignFloatingHintTextBox}">
+                            <TextBox.Text>
+                                <Binding
+                                    ElementName="userControl"
+                                    Path="DataContext.Max"
+                                    UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <rules:IntRangeValidationRule Max="999" Min="-999" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                    <Grid>
+                        <ComboBox
+                            materialDesign:HintAssist.Hint="Type"
+                            materialDesign:HintAssist.IsFloating="True"
+                            DisplayMemberPath="Name"
+                            ItemsSource="{Binding DataContext.Types, ElementName=userControl}"
+                            SelectedItem="{Binding DataContext.SelectedType, ElementName=userControl}" />
+                    </Grid>
+                </StackPanel>
+
+            </DataTemplate>
+        </local:ToolBaseUserControl.DetailTemplate>
+    </local:ToolBaseUserControl>
+</UserControl>

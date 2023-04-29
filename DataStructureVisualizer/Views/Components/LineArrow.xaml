@@ -1,19 +1,22 @@
-﻿<UserControl x:Class="DataStructureVisualizer.Views.Components.LineArrow"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:DataStructureVisualizer.Views.Components"
-             xmlns:cvtr="clr-namespace:DataStructureVisualizer.Common.Converters"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" d:Background="White">
+﻿<UserControl
+    x:Class="DataStructureVisualizer.Views.Components.LineArrow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cvtr="clr-namespace:DataStructureVisualizer.Common.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:DataStructureVisualizer.Views.Components"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:Background="White"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <cvtr:DataItemEditTypeToColorConverter x:Key="dataItemEditTypeToColorConverter" />
     </UserControl.Resources>
     <Grid>
         <Path x:Name="main">
             <Path.RenderTransform>
-                <RotateTransform Angle="0"/>
+                <RotateTransform Angle="0" />
             </Path.RenderTransform>
             <Path.Fill>
                 <LinearGradientBrush x:Name="brush" StartPoint="0,0" EndPoint="0,0">
@@ -24,16 +27,16 @@
             </Path.Fill>
             <Path.Data>
                 <GeometryGroup x:Name="geometryGroup" FillRule="Nonzero">
-                    <RectangleGeometry x:Name="line" Rect="0,3,0,2"/>
+                    <RectangleGeometry x:Name="line" Rect="0,3,0,2" />
                     <PathGeometry x:Name="arrow">
                         <PathGeometry.Transform>
                             <TransformGroup>
-                                <RotateTransform x:Name="arrowRotate" CenterX="-1" CenterY="4"/>
-                                <TranslateTransform x:Name="arrowTranslate" X="0"/>
+                                <RotateTransform x:Name="arrowRotate" CenterX="-1" CenterY="4" />
+                                <TranslateTransform x:Name="arrowTranslate" X="0" />
                             </TransformGroup>
                         </PathGeometry.Transform>
                         <PathGeometry.Figures>
-                            <PathFigure StartPoint="-1,3" IsClosed="True">
+                            <PathFigure IsClosed="True" StartPoint="-1,3">
                                 <PathFigure.Segments>
                                     <LineSegment Point="1,3" />
                                     <LineSegment Point="1,0" />

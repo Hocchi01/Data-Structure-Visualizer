@@ -10,16 +10,21 @@ namespace DataStructureVisualizer.ViewModels
     internal class ToolboxViewModel
     {
         public RandomGenerateToolViewModel RandomGenerateTool { get; set; }
+        public BinaryTreeRandomGenerateToolViewModel BinaryTreeRandomGenerateTool { get; set; }
         public AddToolViewModel AddTool { get; set; }
         public SortToolViewModel SortTool { get; set; }
         public RemoveToolViewModel RemoveTool { get; set; }
 
+        public BinaryTreeTraverseToolViewModel BinaryTreeTraverseTool { get; set; }
+
         public ToolboxViewModel() 
         { 
             RandomGenerateTool = new RandomGenerateToolViewModel();
+            BinaryTreeRandomGenerateTool = new BinaryTreeRandomGenerateToolViewModel();
             AddTool = new AddToolViewModel();
             SortTool = new SortToolViewModel();
             RemoveTool = new RemoveToolViewModel();
+            BinaryTreeTraverseTool = new BinaryTreeTraverseToolViewModel();
         }
     }
 }

@@ -1,5 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using DataStructureVisualizer.Common;
+using DataStructureVisualizer.Common.AlgorithmFactories;
+using DataStructureVisualizer.Common.AnimationLib;
+using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.ViewModels.Data;
 using System;
@@ -9,11 +13,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
-    partial class BinaryTreeCanvasViewModel : CanvasViewModelBase
+    partial class BinaryTreeCanvasViewModel : CanvasViewModelBase, IRecipient<LoadBinaryTreeTraverseAnimationMessage>
     {
         private const double halfWidth = 0;
         private const double layerHeight = 125;
@@ -37,13 +42,34 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             throw new NotImplementedException();
         }
 
-        public override void UpdateDataItems()
+        /// <summary>
+        /// 响应【遍历工具】消息
+        /// </summary>
+        /// <param name="message"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        public void Receive(LoadBinaryTreeTraverseAnimationMessage message)
+        {
+            MainStoryboard = new MyStoryboard();
+            Grid canvas = (Grid)GetCanvas();
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            var container = canvas.FindName("binaryTreeItemsControl") as ItemsControl;
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+
+            var btaf = new BinaryTreeAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
+
+            btaf.Traverse(message.Mode);
+        }
+
+        public override void UpdateDataItems(GenerateDataMessage? message)
         {
             if (Values.Count == 0) return;
 
+            var type = message == null ? TreeType.NormalBinaryTree : message.TreeType; 
+
             List<Color> colors = Comm.GetColorGradientByValues(Values);
 
-            DataItems = new ObservableCollection<BinaryTreeItemViewModel> { new BinaryTreeItemViewModel() { Value = Values[0], Color = new SolidColorBrush(colors[0]), OriginalColor = new SolidColorBrush(colors[0]) } };
+            DataItems = new ObservableCollection<BinaryTreeItemViewModel> { new BinaryTreeItemViewModel() { Value = Values[0], Color = new SolidColorBrush(colors[0]), OriginalColor = new SolidColorBrush(colors[0]), ParentIndex = -1 } };
 
             // var leaves = new List<int> { 0 };
             var accessList = new List<Access>
@@ -55,7 +81,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Random r = new Random();
             for (int i = 1; i < Values.Count; i++)
             {
-                int accessIndex = r.Next(0, accessList.Count - 1);
+                int accessIndex = type == TreeType.NormalBinaryTree ? r.Next(0, accessList.Count - 1) : 0;
                 Access access = accessList[accessIndex];
 
                 DataItems[access.index].Children[access.child] = i;

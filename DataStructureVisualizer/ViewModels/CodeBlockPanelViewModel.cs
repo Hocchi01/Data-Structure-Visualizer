@@ -70,19 +70,12 @@ namespace DataStructureVisualizer.ViewModels
             double begin = (double)info.LineNum / CodeBlock.Count;
             double end = (double)(info.LineNum + info.Height) / CodeBlock.Count;
 
-            //var begin1Anim = new SimulatedDoubleAnimation(to: begin, time: time) { TargetControl = codeBlockPanelView.active, TargetParam = "(ListView.OpacityMask).(LinearGradientBrush.Children)[1].(GradientStop.Offset)", TargetName = "gs_" + Comm.GetUniqueString() };
-            //var begin2Anim = new SimulatedDoubleAnimation(to: begin, time: time) { TargetControl = codeBlockPanelView.active, TargetParam = "(ListView.OpacityMask).(LinearGradientBrush.Children)[2].(GradientStop.Offset)", TargetName = "gs_" + Comm.GetUniqueString() };
-            //var end1Anim = new SimulatedDoubleAnimation(to: end, time: time) { TargetControl = codeBlockPanelView.active, TargetParam = "(ListView.OpacityMask).(LinearGradientBrush.Children)[3].(GradientStop.Offset)", TargetName = "gs_" + Comm.GetUniqueString() };
-            //var end2Anim = new SimulatedDoubleAnimation(to: end, time: time) { TargetControl = codeBlockPanelView.active, TargetParam = "(ListView.OpacityMask).(LinearGradientBrush.Children)[4].(GradientStop.Offset)", TargetName = "gs_" + Comm.GetUniqueString() };
 
             var begin1Anim = new SimulatedDoubleAnimation(to: begin, time: time) { TargetControl = codeBlockPanelView.begin1, TargetParam = GradientStop.OffsetProperty, TargetName = "gs_" + Comm.GetUniqueString() };
             var begin2Anim = new SimulatedDoubleAnimation(to: begin, time: time) { TargetControl = codeBlockPanelView.begin2, TargetParam = GradientStop.OffsetProperty, TargetName = "gs_" + Comm.GetUniqueString() };
             var end1Anim = new SimulatedDoubleAnimation(to: end, time: time) { TargetControl = codeBlockPanelView.end1, TargetParam = GradientStop.OffsetProperty, TargetName = "gs_" + Comm.GetUniqueString() };
             var end2Anim = new SimulatedDoubleAnimation(to: end, time: time) { TargetControl = codeBlockPanelView.end2, TargetParam = GradientStop.OffsetProperty, TargetName = "gs_" + Comm.GetUniqueString() };
 
-            //CodeBlockStoryboard.AddAsyncAnimations(beginAnim, new List<DependencyObject> { codeBlockPanelView.begin1, codeBlockPanelView.begin2 }, GradientStop.OffsetProperty);
-
-            //CodeBlockStoryboard.AddAsyncAnimations(endAnim, new List<DependencyObject> { codeBlockPanelView.end1, codeBlockPanelView.end2 }, GradientStop.OffsetProperty);
 
             if (offset != null)
             {

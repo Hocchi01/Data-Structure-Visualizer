@@ -6,15 +6,10 @@ using System.Threading.Tasks;
 
 namespace DataStructureVisualizer.Common.Enums
 {
-    enum DataItemState
+    enum BinaryTreeTraverseMode
     {
-        Normal,
-        Sorted,
-        Min,
-        Max,
-        Actived,
-        Group1,
-        Group2,
-        Visited
+        PreOrder,
+        InOrder,
+        PostOrder
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Messaging.Messages;
+using DataStructureVisualizer.Common.Messages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace DataStructureVisualizer.ViewModels.Tools
                 values[i] = r.Next(Min, Max);
             }
 
-            WeakReferenceMessenger.Default.Send(new ValueChangedMessage<int[]>(values));
+            WeakReferenceMessenger.Default.Send(new GenerateDataMessage(values));
         }
     }
 }
