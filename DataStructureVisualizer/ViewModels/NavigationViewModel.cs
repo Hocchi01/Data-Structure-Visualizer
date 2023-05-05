@@ -68,7 +68,8 @@ namespace DataStructureVisualizer.ViewModels
                     IconKind = "GraphOutline",
                     Children = new List<NavigationChildItemViewModel>()
                     {
-                        new NavigationChildItemViewModel() { Name="BinaryTree", Type=DS_SecondaryType.BinaryTree, CanvasViewModelType=typeof(BinaryTreeCanvasViewModel), CanvasViewType=typeof(BinaryTreeCanvasUserControl), ToolboxViewType=typeof(BinaryTreeToolboxUserControl) },
+                        new NavigationChildItemViewModel() { Name="Binary Tree", Type=DS_SecondaryType.BinaryTree, CanvasViewModelType=typeof(BinaryTreeCanvasViewModel), CanvasViewType=typeof(BinaryTreeCanvasUserControl), ToolboxViewType=typeof(BinaryTreeToolboxUserControl) },
+                        new NavigationChildItemViewModel() { Name="Binary Search Tree", Type=DS_SecondaryType.BinarySearchTree, CanvasViewModelType=typeof(BinarySearchTreeCanvasViewModel), CanvasViewType=typeof(BinarySearchTreeCanvasUserControl), ToolboxViewType=typeof(BinarySearchTreeToolboxUserControl) },
                     }
                 },
 

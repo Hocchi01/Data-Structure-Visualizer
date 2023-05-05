@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -109,6 +110,10 @@ namespace DataStructureVisualizer.Common
         {
             return GetColorGradientByValues(ObservableCollectionToArray(values));
         }
+        public static List<Color> GetColorGradientByValues(List<int> values)
+        {
+            return GetColorGradientByValues(ListToArray(values));
+        }
 
 
         public static int[] ObservableCollectionToArray(ObservableCollection<int> list)
@@ -163,35 +168,105 @@ namespace DataStructureVisualizer.Common
             return item.ContentTemplate.FindName(name, item) as DataItemUserControlBase;
         }
 
-        public static object DeepCopy(object obj)
+        public static T DeepCopy<T>(T obj) where T : class
         {
+            if (obj == null) return null;
+
             Type type = obj.GetType();
-            object newObj = Activator.CreateInstance(type);
-            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (PropertyInfo propertyInfo in propertyInfos)
+
+            // 如果是值类型或字符串类型，直接返回
+            if (type.IsValueType || type == typeof(string))
             {
-                if (propertyInfo.CanWrite)
-                {
-                    if (propertyInfo.PropertyType.IsValueType || propertyInfo.PropertyType == typeof(string))
-                    {
-                        propertyInfo.SetValue(newObj, propertyInfo.GetValue(obj));
-                    }
-                    else
-                    {
-                        object childObj = propertyInfo.GetValue(obj);
-                        if (childObj == null)
-                        {
-                            propertyInfo.SetValue(newObj, null);
-                        }
-                        else
-                        {
-                            propertyInfo.SetValue(newObj, DeepCopy(childObj));
-                        }
-                    }
-                }
+                return obj;
             }
-            return newObj;
+
+            // 如果是数组类型，创建一个新的数组并递归拷贝每个元素
+            if (type.IsArray)
+            {
+                var elementType = Type.GetType(
+                    type.FullName.Replace("[]", string.Empty));
+                var array = obj as Array;
+                var copied = Array.CreateInstance(elementType, array.Length);
+                for (int i = 0; i < array.Length; i++)
+                {
+                    copied.SetValue(DeepCopy(array.GetValue(i)), i);
+                }
+                return (T)(object)copied;
+            }
+
+            // 如果是集合类型，创建一个新的集合并递归拷贝每个元素
+            if (obj is IEnumerable)
+            {
+                var elementType = type.GetGenericArguments()[0];
+                var collection = Activator.CreateInstance(type);
+                foreach (var item in obj as IEnumerable)
+                {
+                    var copied = DeepCopy(item);
+                    type.GetMethod("Add").Invoke(collection, new[] { copied });
+                }
+                return (T)collection;
+            }
+
+            // 如果是自定义类型，递归拷贝每个属性
+            var newObj = Activator.CreateInstance(type);
+            foreach (var field in type.GetFields(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                var fieldValue = field.GetValue(obj);
+                var copied = DeepCopy(fieldValue);
+                field.SetValue(newObj, copied);
+            }
+            foreach (var property in type.GetProperties(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                if (!property.CanWrite) continue;
+                var propertyValue = property.GetValue(obj);
+                var copied = DeepCopy(propertyValue);
+                property.SetValue(newObj, copied);
+            }
+            return (T)newObj;
         }
+
+        //public static T DeepCopy2<T>(T obj)
+        //{
+        //    using (var stream = new MemoryStream())
+        //    {
+        //        var formatter = new BinaryFormatter();
+        //        formatter.Serialize(stream, obj);
+        //        stream.Seek(0, SeekOrigin.Begin);
+        //        return (T)formatter.Deserialize(stream);
+        //    }
+        //}
+
+        //public static object DeepCopy(object obj)
+        //{
+        //    Type type = obj.GetType();
+        //    object newObj = Activator.CreateInstance(type);
+        //    PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        //    foreach (PropertyInfo propertyInfo in propertyInfos)
+        //    {
+        //        if (propertyInfo.CanWrite)
+        //        {
+        //            if (propertyInfo.PropertyType.IsValueType || propertyInfo.PropertyType == typeof(string))
+        //            {
+        //                propertyInfo.SetValue(newObj, propertyInfo.GetValue(obj));
+        //            }
+        //            else
+        //            {
+        //                object childObj = propertyInfo.GetValue(obj);
+        //                if (childObj == null)
+        //                {
+        //                    propertyInfo.SetValue(newObj, null);
+        //                }
+        //                else
+        //                {
+        //                    propertyInfo.SetValue(newObj, DeepCopy(childObj));
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return newObj;
+        //}
 
         // public static Guid guid = new Guid();
 

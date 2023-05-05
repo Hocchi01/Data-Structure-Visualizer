@@ -20,6 +20,8 @@ namespace DataStructureVisualizer.Common.Converters
                         return new SolidColorBrush(ThemeHelper.GetTheme().PrimaryMid.Color);
                     case DataItemState.Visited:
                         return new SolidColorBrush(ThemeHelper.NewColor);
+                    case DataItemState.Matched:
+                        return new SolidColorBrush(ThemeHelper.CorrectColor);
                 }
             }
             else

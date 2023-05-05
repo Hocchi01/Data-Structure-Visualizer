@@ -20,7 +20,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
 {
     partial class BinaryTreeCanvasViewModel : CanvasViewModelBase, IRecipient<LoadBinaryTreeTraverseAnimationMessage>
     {
-        private const double halfWidth = 0;
         private const double layerHeight = 125;
         private const double margin = 50;
         [ObservableProperty]
@@ -61,46 +60,75 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             btaf.Traverse(message.Mode);
         }
 
+        protected void UpdateDataItemsByNewDataItems(ObservableCollection<DataItemViewModelBase>? newDataItems)
+        {
+            if (newDataItems == null) return;
+
+            List<int> vals = new List<int>();
+            foreach (var item in newDataItems)
+            {
+                vals.Add(item.Value ?? 0);
+            }
+            List<Color> colors = Comm.GetColorGradientByValues(vals);
+            DataItems = new ObservableCollection<BinaryTreeItemViewModel>();
+            for (int i = 0; i < newDataItems.Count; i++)
+            {
+                var item = newDataItems[i] as BinaryTreeItemViewModel;
+                DataItems.Add(new BinaryTreeItemViewModel()
+                {
+                    Value = vals[i],
+                    Color = new SolidColorBrush(colors[i]),
+                    OriginalColor = new SolidColorBrush(colors[i]),
+                    ParentIndex = item.ParentIndex,
+                    Children = item.Children
+                }) ;
+            }
+        }
+
         public override void UpdateDataItems(GenerateDataMessage? message)
         {
             if (Values.Count == 0) return;
-
-            var type = message == null ? TreeType.NormalBinaryTree : message.TreeType; 
-
-            List<Color> colors = Comm.GetColorGradientByValues(Values);
-
-            DataItems = new ObservableCollection<BinaryTreeItemViewModel> { new BinaryTreeItemViewModel() { Value = Values[0], Color = new SolidColorBrush(colors[0]), OriginalColor = new SolidColorBrush(colors[0]), ParentIndex = -1 } };
-
-            // var leaves = new List<int> { 0 };
-            var accessList = new List<Access>
+            if (message != null && message.DataItems != null)
             {
-                new Access(0, 0),
-                new Access(0, 1)
-            };
-
-            Random r = new Random();
-            for (int i = 1; i < Values.Count; i++)
-            {
-                int accessIndex = type == TreeType.NormalBinaryTree ? r.Next(0, accessList.Count - 1) : 0;
-                Access access = accessList[accessIndex];
-
-                DataItems[access.index].Children[access.child] = i;
-                accessList.RemoveAt(accessIndex);
-
-                DataItems.Add(new BinaryTreeItemViewModel() { Value = Values[i], Color = new SolidColorBrush(colors[i]), OriginalColor = new SolidColorBrush(colors[i]), ParentIndex = access.index });
-
-                accessList.Add(new Access(i, 0));
-                accessList.Add(new Access(i, 1));
+                UpdateDataItemsByNewDataItems(message.DataItems);
             }
+            else
+            {
+                var type = message == null ? TreeType.NormalBinaryTree : message.TreeType;
 
+                List<Color> colors = Comm.GetColorGradientByValues(Values);
+
+                DataItems = new ObservableCollection<BinaryTreeItemViewModel> { new BinaryTreeItemViewModel() { Value = Values[0], Color = new SolidColorBrush(colors[0]), OriginalColor = new SolidColorBrush(colors[0]), ParentIndex = -1 } };
+
+                // var leaves = new List<int> { 0 };
+                var accessList = new List<Access>
+                {
+                    new Access(0, 0),
+                    new Access(0, 1)
+                };
+
+                Random r = new Random();
+                for (int i = 1; i < Values.Count; i++)
+                {
+                    int accessIndex = type == TreeType.NormalBinaryTree ? r.Next(0, accessList.Count - 1) : 0;
+                    Access access = accessList[accessIndex];
+
+                    DataItems[access.index].Children[access.child] = i;
+                    accessList.RemoveAt(accessIndex);
+
+                    DataItems.Add(new BinaryTreeItemViewModel() { Value = Values[i], Color = new SolidColorBrush(colors[i]), OriginalColor = new SolidColorBrush(colors[i]), ParentIndex = access.index });
+
+                    accessList.Add(new Access(i, 0));
+                    accessList.Add(new Access(i, 1));
+                }
+            }
 
             CalcHeight(0, 0);
             CalcMargin(0);
             CalcPostion(0);
-
         }
 
-        private void CalcHeight(int? index, int layer)
+        protected void CalcHeight(int? index, int layer)
         {
             if (index == null) return;
             int i = index ?? -1;
@@ -119,7 +147,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             CalcHeight(rightIndex, layer + 1);
         }
 
-        private double CalcMargin(int? index)
+        protected double CalcMargin(int? index)
         {
             if (index == null) return margin;
             int i = index ?? -1;
@@ -127,13 +155,13 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             int? leftIndex = DataItems[i].Children[0];
             int? rightIndex = DataItems[i].Children[1];
 
-            DataItems[i].LeftMargin = CalcMargin(leftIndex) + halfWidth;
-            DataItems[i].RightMargin = CalcMargin(rightIndex) + halfWidth;
+            DataItems[i].LeftMargin = CalcMargin(leftIndex);
+            DataItems[i].RightMargin = CalcMargin(rightIndex);
 
             return DataItems[i].LeftMargin + DataItems[i].RightMargin;
         }
 
-        private void CalcPostion(int? index)
+        protected void CalcPostion(int? index)
         {
             if (index == null) return;
             int i = index ?? -1;

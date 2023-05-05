@@ -17,6 +17,7 @@ namespace DataStructureVisualizer.Common.Enums
 
         // 树
         BinaryTree,
+        BinarySearchTree,
 
         // 图
         DirectedGraph,

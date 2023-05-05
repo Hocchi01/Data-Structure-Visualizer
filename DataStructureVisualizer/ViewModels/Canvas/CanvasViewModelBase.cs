@@ -139,7 +139,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         }
 
         /// <summary>
-        /// 响应【随机生成工具】的消息
+        /// 响应【随机生成工具】及其他 “生成数据” 的消息
         /// </summary>
         /// <param name="message"></param>
         public void Receive(GenerateDataMessage message)

@@ -15,6 +15,7 @@ namespace DataStructureVisualizer.Common.Enums
         Actived,
         Group1,
         Group2,
-        Visited
+        Visited,
+        Matched
     }
 }

@@ -14,6 +14,7 @@
         <cvtr:ChildIndexToLineY2Converter x:Key="childIndexToLineY2Converter" />
         <cvtr:DataItemStateToSolidColorBrushConverter x:Key="dataItemStateToSolidColorBrushConverter" />
         <cvtr:TwoDoubleToPointConverter x:Key="twoDoubleToPointConverter" />
+        <cvtr:DataItemStateToColorConverter x:Key="dataItemStateToColorConverter" />
     </UserControl.Resources>
     <Grid>
         <!--<Line X1="50" Y1="0" X2="1" Y2="50" StrokeThickness="10" x:Name="test">
@@ -27,6 +28,7 @@
             </Line.Stroke>
         </Line>-->
         <Line
+            x:Name="left"
             StrokeThickness="2"
             X1="{Binding LeftLineX1}"
             X2="{Binding LeftLineX2}"
@@ -54,6 +56,7 @@
             </Line.Stroke>
         </Line>
         <Line
+            x:Name="right"
             StrokeThickness="2"
             X1="{Binding RightLineX1}"
             X2="{Binding RightLineX2}"
@@ -97,8 +100,8 @@
                     <Ellipse x:Name="ellipse">
                         <Ellipse.Fill>
                             <RadialGradientBrush>
-                                <GradientStop Offset="0" Color="#FF9800"/>
-                                <GradientStop x:Name="elps1" Offset="0" Color="#FF9800"/>
+                                <GradientStop Offset="0" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
+                                <GradientStop x:Name="elps1" Offset="0" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
                                 <GradientStop x:Name="elps2" Offset="0" Color="{Binding Color.Color}"/>
                                 <GradientStop Offset="1" Color="{Binding Color.Color}"/>
                             </RadialGradientBrush>
@@ -127,6 +130,94 @@
                     DockPanel.Dock="Right"
                     FontSize="11"
                     Text="{Binding Index}"
+                    TextAlignment="Center" />
+            </DockPanel>
+        </Grid>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="leftChild">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <TranslateTransform X="-50" Y="125" />
+                    <ScaleTransform ScaleX="0" ScaleY="0" CenterX="-25" CenterY="150" />
+                </TransformGroup>
+            </Grid.RenderTransform>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border
+                Width="50"
+                Height="50"
+                Padding="3"
+                BorderBrush="#FF9800"
+                BorderThickness="2"
+                CornerRadius="30">
+                <Grid>
+                    <Ellipse Fill="#FF9800"/>
+                    <TextBlock
+                        x:Name="leftChildValue"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontWeight="Black"
+                        Foreground="White" />
+
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
+                </Grid>
+
+            </Border>
+            <DockPanel
+                Grid.Row="1"
+                Width="50">
+                <TextBlock
+                    Padding="8,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    FontSize="11"
+                    TextAlignment="Center" />
+            </DockPanel>
+        </Grid>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="rightChild">
+            <Grid.RenderTransform>
+                <TransformGroup>
+                    <TranslateTransform X="50" Y="125" />
+                    <ScaleTransform ScaleX="0" ScaleY="0" CenterX="75" CenterY="150" />
+                </TransformGroup>
+            </Grid.RenderTransform>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border
+                Width="50"
+                Height="50"
+                Padding="3"
+                BorderBrush="#FF9800"
+                BorderThickness="2"
+                CornerRadius="30">
+                <Grid>
+                    <Ellipse Fill="#FF9800"/>
+                    <TextBlock
+                        x:Name="rightChildValue"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontWeight="Black"
+                        Foreground="White" />
+
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
+                </Grid>
+
+            </Border>
+            <DockPanel
+                Grid.Row="1"
+                Width="50">
+                <TextBlock
+                    Padding="8,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    FontSize="11"
                     TextAlignment="Center" />
             </DockPanel>
         </Grid>

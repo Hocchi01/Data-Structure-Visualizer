@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using DataStructureVisualizer.Common.Enums;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,9 +10,14 @@ using System.Windows;
 
 namespace DataStructureVisualizer.ViewModels.Data
 {
+    [Serializable]
     partial class BinaryTreeItemViewModel : DataItemViewModelBase
     {
+        private const double layerHeight = 125;
         private const double radius = 25;
+        private static double baseDz = Math.Sqrt(Math.Pow(radius * 2, 2) + Math.Pow(layerHeight, 2));
+        public double BaseOffsetX = radius * radius * 2 / baseDz;
+        public double BaseOffsetY = radius * layerHeight / baseDz;
 
         [ObservableProperty]
         private double axisX = 0;
@@ -42,6 +48,9 @@ namespace DataStructureVisualizer.ViewModels.Data
 
         [ObservableProperty]
         private double rightLineY2 = radius;
+
+        [ObservableProperty]
+        private DataItemState foreState = DataItemState.Visited;
 
         //public int? LeftChildIndex { get; set; } = null;
         //public int? RightChildIndex { get; set; } = null;
@@ -84,6 +93,22 @@ namespace DataStructureVisualizer.ViewModels.Data
             LeftLineY1 += offsetY;
             LeftLineX2 -= offsetX;
             LeftLineY2 -= offsetY;
+        }
+
+        public void OffsetEmptyLeftLine()
+        {
+            LeftLineX1 -= BaseOffsetX;
+            LeftLineY1 += BaseOffsetY;
+            LeftLineX2 -= BaseOffsetX;
+            LeftLineY2 += BaseOffsetY;
+        }
+
+        public void OffsetEmptyRightLine()
+        {
+            RightLineX1 += BaseOffsetX;
+            RightLineY1 += BaseOffsetY;
+            RightLineX2 += BaseOffsetX;
+            RightLineY2 += BaseOffsetY;
         }
     }
 }

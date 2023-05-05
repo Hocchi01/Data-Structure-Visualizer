@@ -20,6 +20,17 @@ namespace DataStructureVisualizer.Views.Tools
     /// </summary>
     public partial class AddToolUserControl : UserControl
     {
+        public bool ShowIndex
+        {
+            get { return (bool)GetValue(ShowIndexProperty); }
+            set { SetValue(ShowIndexProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ShowIndex.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ShowIndexProperty =
+            DependencyProperty.Register("ShowIndex", typeof(bool), typeof(AddToolUserControl), new PropertyMetadata(true));
+
+
         public AddToolUserControl()
         {
             InitializeComponent();
