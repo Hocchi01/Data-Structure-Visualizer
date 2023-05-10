@@ -26,7 +26,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         IRecipient<ResumeAnyAnimationMessage>,
         IRecipient<LoadRemoveAnimationMessage>,
         IRecipient<StoryboradSpeedRadioChangedMessage>,
-        IRecipient<GenerateDataMessage>
+        IRecipient<GenerateDataMessage>,
+        IRecipient<SkipAnyAnimationMessage>
     {
         protected DS_SecondaryType Type;
 
@@ -151,6 +152,12 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                 ReloadValues();
             };
             UpdateDataItems(message);
+        }
+
+        public void Receive(SkipAnyAnimationMessage message)
+        {
+            var canvas = GetCanvas() as FrameworkElement;
+            MainStoryboard.SkipToFill(canvas);
         }
     }
 }

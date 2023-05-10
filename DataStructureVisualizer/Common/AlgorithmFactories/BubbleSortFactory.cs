@@ -1,6 +1,7 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,8 +18,13 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
     {
         public UIElement Iterator { get; set; }
 
-        public BubbleSortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
+        public BubbleSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
+        }
+
+        protected override void HiddenAllAuxiliaryControls()
+        {
+            Iterator.Visibility = Visibility.Hidden;
         }
 
         public override void Execute()
@@ -51,6 +57,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 Finish();
             });
             MainStoryboard.Begin_Ex(Canvas, true);
+            CodeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
 
         /// <summary>

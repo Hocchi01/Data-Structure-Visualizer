@@ -72,6 +72,32 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public ObservableCollection<BinaryTreeItemViewModel> DataItems { get; set; }
         public ObservableCollection<BinaryTreeItemViewModel> NewDataItems { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <remarks>
+        /// 调用前应确保处理好即将删除的结点的子结点 或 确保它是叶子结点
+        /// </remarks>
+        /// <param name="index"></param>
+        /// <param name="hasParent"></param>
+        protected void RemoveItemInNewDataItems(int index, bool hasParent = true)
+        {
+            int last = NewDataItems.Count - 1;
+
+            if (hasParent)
+            {
+                NewDataItems[NewDataItems[index].ParentIndex].Children[GetDirection(index)] = null;
+            }
+
+            NewDataItems[index] = NewDataItems[last];
+
+            var lastParent = NewDataItems[NewDataItems[last].ParentIndex];
+            lastParent.Children[GetDirection(last)] = index;
+            NewDataItems[last].TraverseChildrenWithAction((i) => { NewDataItems[i].ParentIndex = index; });
+
+            NewDataItems.RemoveAt(last);
+        }
+
         public void InOrderTraverse(int? index)
         {
             if (index == null) return;
@@ -279,6 +305,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             var anims = item.GetInsertToLeftAnimations(value);
             MainStoryboard.AddAsyncAnimations(anims[0]);
             MainStoryboard.AddAsyncAnimations(anims[1]);
+
+            NewDataItems.Add(new BinaryTreeItemViewModel() { Value = value, ParentIndex = index });
+            NewDataItems[index].Children[0] = NewDataItems.Count - 1;
         }
 
         protected void InsertToRight(int index, int value, LogViewModel? log = null)
@@ -289,6 +318,94 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             var anims = item.GetInsertToRightAnimations(value);
             MainStoryboard.AddAsyncAnimations(anims[0]);
             MainStoryboard.AddAsyncAnimations(anims[1]);
+
+            NewDataItems.Add(new BinaryTreeItemViewModel() { Value = value, ParentIndex = index });
+            NewDataItems[index].Children[1] = NewDataItems.Count - 1;
+        }
+
+        protected bool IsLeftChild(int index)
+        {
+            int parentIndex = NewDataItems[index].ParentIndex;
+            return NewDataItems[parentIndex].Children[0] == index;
+        }
+
+        protected int GetDirection(int index)
+        {
+            int parentIndex = NewDataItems[index].ParentIndex;
+            return NewDataItems[parentIndex].Children[0] == index ? 0 : 1;
+        }
+
+        protected void RemoveLeafElem(int index, LogViewModel? log = null)
+        {
+            var rmvItem = Comm.GetItemFromItemsControlByIndex<BinaryTreeItemUserControl>(Container, index);
+
+            int parentIndex = DataItems[index].ParentIndex;
+            var parentItem = Comm.GetItemFromItemsControlByIndex<BinaryTreeItemUserControl>(Container, parentIndex);
+
+            var lineAnims = DataItems[parentIndex].Children[0] == index ? parentItem.GetRemoveLeftLineAnimations(DataItems[parentIndex].LeftLineX1, DataItems[parentIndex].LeftLineY1) : parentItem.GetRemoveRightLineAnimations(DataItems[parentIndex].RightLineX1, DataItems[parentIndex].RightLineY1);
+
+            var nodeAnims = rmvItem.GetRemoveNodeAnimations();
+
+            var anims = lineAnims;
+            anims.AddRange(nodeAnims);
+
+            MainStoryboard.AddAsyncAnimations(anims);
+
+            RemoveItemInNewDataItems(index);
+        }
+
+        protected void TraverseSubtreeWithAction(int? index, Action<int> action)
+        {
+            if (index == null) return;
+            int i = index ?? -1;
+            action(i);
+            TraverseSubtreeWithAction(DataItems[i].Children[0], action);
+            TraverseSubtreeWithAction(DataItems[i].Children[1], action);
+        }
+
+        protected List<AnimationTimeline> GetMoveSubtreeAnimation(int rootIndex, double byX, double byY)
+        {
+            var anims = new List<AnimationTimeline>();
+            TraverseSubtreeWithAction(rootIndex, (index) =>
+            {
+                var item = Comm.GetItemFromItemsControlByIndex<BinaryTreeItemUserControl>(Container, index);
+                anims.AddRange(item.GetMoveElemAnimations(byX, byY));
+            });
+            return anims;
+        }
+
+        protected void RemoveSingleChildElem(int index, LogViewModel? log = null)
+        {
+            var rmvItem = Comm.GetItemFromItemsControlByIndex<BinaryTreeItemUserControl>(Container, index);
+
+            var rmvAnims = new List<AnimationTimeline>();
+            var moveAnims = new List<AnimationTimeline>();
+
+            rmvAnims.AddRange(rmvItem.GetRemoveNodeAnimations());
+            int direct = 0;
+            if (DataItems[index].Children[0] != null)
+            {
+                rmvAnims.AddRange(rmvItem.GetRemoveLeftLineAnimations(DataItems[index].LeftLineX1, DataItems[index].LeftLineY1));
+            }
+            else
+            {
+                direct = 1;
+                rmvAnims.AddRange(rmvItem.GetRemoveRightLineAnimations(DataItems[index].RightLineX1, DataItems[index].RightLineY1));
+            }
+
+            double dX = DataItems[index].AxisX - DataItems[DataItems[index].Children[direct] ?? -1].AxisX;
+            double dY = DataItems[index].AxisY - DataItems[DataItems[index].Children[direct] ?? -1].AxisY;
+
+            moveAnims.AddRange(GetMoveSubtreeAnimation(DataItems[index].Children[direct] ?? -1, dX, dY));
+
+            var anims = rmvAnims;
+            anims.AddRange(moveAnims);
+            MainStoryboard.AddAsyncAnimations(anims);
+
+            int parentDirect = IsLeftChild(index) ? 0 : 1;
+            NewDataItems[DataItems[index].ParentIndex].Children[parentDirect] = DataItems[index].Children[direct];
+            NewDataItems[DataItems[index].Children[direct] ?? -1].ParentIndex = DataItems[index].ParentIndex;
+            RemoveItemInNewDataItems(index, false);
         }
 
         protected override void UpdateValues()
@@ -388,6 +505,43 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.AddSyncAnimation(borderAnim);
         }
 
+        protected int FindInOrderSuccessor(int index)
+        {
+            GoToRight(index);
+            int i = DataItems[index].Children[1] ?? -1;
+            
+            while (DataItems[i].Children[0] != null)
+            {
+                Visit_Search(i);
+                GoToLeft(i);
+                i = DataItems[i].Children[0] ?? -1;
+            }
+
+            Visit_Search(i, true);
+            return i;
+        }
+
+        protected void CopyValue(int elemIndex, int toIndex)
+        {
+            var rmvAnim = GetRemoveElemAniamtion(toIndex);
+
+            var item = Comm.GetItemFromItemsControlByIndex<BinaryTreeItemUserControl>(Container, elemIndex);
+            double dX = DataItems[toIndex].AxisX - DataItems[elemIndex].AxisX;
+            double dY = DataItems[toIndex].AxisY - DataItems[elemIndex].AxisY;
+            var copyAnims = item.GetMoveCopyValueItemAnimations(dX, dY);
+
+            var anims = copyAnims;
+            anims.Add(rmvAnim);
+            MainStoryboard.AddAsyncAnimations(anims);
+
+            NewDataItems[toIndex].Value = NewDataItems[elemIndex].Value;
+        }
+
+        protected void Visit_Search(int index, bool isMatched = false)
+        {
+            Visit(index, () => { DataItems[index].ForeState = isMatched ? DataItemState.Matched : DataItemState.Visited; }, () => { DataItems[index].State = isMatched ? DataItemState.Matched : DataItemState.Visited; });
+        }
+
         private void GoToLeft(int index, BinaryTreeTraverseMode mode)
         {
             CodeBlockPanel.AddAnimation(codeInfos["left"], MainStoryboard.Offset);
@@ -426,5 +580,6 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             Visit(index, null, () => { DataItems[index].State = DataItemState.Visited; }, new LogViewModel("Visit Node", "visit(T);"));
         }
+
     }
 }

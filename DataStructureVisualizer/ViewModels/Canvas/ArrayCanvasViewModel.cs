@@ -68,6 +68,9 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
 
             // TODO 01: 在数组末尾添加一个“空项”
@@ -90,6 +93,9 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             saf.WriteElem(addIndex, addVal, new LogViewModel($"Write {addVal} to a[{addIndex}]", $"a[{addIndex}] = {addVal};"));
 
             MainStoryboard.Begin_Ex(canvas, true);
+            codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
+
         }
 
         /// <summary>
@@ -118,24 +124,24 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     var lowIterator = canvas.FindName("lowIterator") as Grid;
                     var highIterator = canvas.FindName("highIterator") as Grid;
                     var pivot = canvas.FindName("pivot") as Grid;
-                    sf = new QuickSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { LowIterator = lowIterator, HighIterator = highIterator, Pivot = pivot };
+                    sf = new QuickSortFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems()) { LowIterator = lowIterator, HighIterator = highIterator, Pivot = pivot };
                     break;
 
                 case SortType.BubbleSort:
                     var bubbleIterator = canvas.FindName("iterator") as Grid;
-                    sf = new BubbleSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = bubbleIterator };
+                    sf = new BubbleSortFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems()) { Iterator = bubbleIterator };
                     break;
 
                 case SortType.InsertionSort:
                     var insertionIterator = canvas.FindName("iterator") as Grid;
-                    sf = new InsertionSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Iterator = insertionIterator };
+                    sf = new InsertionSortFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems()) { Iterator = insertionIterator };
                     break;
 
                 case SortType.MergeSort:
-                    var group1Iterator = canvas.FindName("lowIterator") as Grid;
-                    var group2Iterator = canvas.FindName("highIterator") as Grid;
+                    var group1Iterator = canvas.FindName("iterator") as Grid;
+                    var group2Iterator = canvas.FindName("iterator2") as Grid;
                     var tmpArray = canvas.FindName("tmpArray") as ItemsControl;
-                    sf = new MergeSortFactory(canvas, container, MainStoryboard, DataItems.RevertElems()) { Group1Iterator = group1Iterator, Group2Iterator = group2Iterator, TmpArray = tmpArray };
+                    sf = new MergeSortFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems()) { Group1Iterator = group1Iterator, Group2Iterator = group2Iterator, TmpArray = tmpArray };
                     break;
 
                 case SortType.TEST:
@@ -165,6 +171,9 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("arrItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
             var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
 
@@ -177,6 +186,16 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             }
 
             MainStoryboard.Begin_Ex(canvas, true);
+
+            //var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            //var codeBlockPanelView = GetCodeBlockPanelView();
+            //codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+            //codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            //codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
+
+            //// 论文截图用
+            //AnimationControlPanelViewModel.Instance.State = AnimationState.Paused;
+            //WeakReferenceMessenger.Default.Send(new PauseAnyAnimationMessage());
         }
 
         public ArrayCanvasViewModel()
@@ -186,12 +205,4 @@ namespace DataStructureVisualizer.ViewModels.Canvas
 
 
     }
-
-    class ArrayAnimationHelper
-    {
-        public ObservableCollection<ArrayItemViewModel> DataItems { get; set; }
-
-    }
-
-
 }

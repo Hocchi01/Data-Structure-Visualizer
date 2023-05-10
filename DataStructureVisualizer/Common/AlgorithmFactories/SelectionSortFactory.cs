@@ -50,6 +50,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             codeInfos.Add("swap", new CodeInfo(10, 3));
         }
 
+        protected override void HiddenAllAuxiliaryControls()
+        {
+            Iterator.Visibility = Visibility.Hidden;
+        }
+
         public override void Execute()
         {
             bool isLess = false;

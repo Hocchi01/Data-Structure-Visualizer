@@ -88,17 +88,17 @@
                 HorizontalAlignment="Center"
                 Orientation="Horizontal">
                 <Button Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Kind="ChevronDoubleLeft" />
+                    <materialDesign:PackIcon Kind="SkipBackward" />
                 </Button>
                 <Button
                     Margin="10,0"
                     Background="{DynamicResource MaterialDesignTextFieldBoxBackground}"
                     Command="{Binding PlayOrPauseCommand}"
                     Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Style="{StaticResource playOrPauseBtnStyle}" />
+                    <materialDesign:PackIcon Style="{StaticResource playOrPauseBtnStyle}" Height="25" Width="25" />
                 </Button>
-                <Button Style="{StaticResource MaterialDesignIconButton}">
-                    <materialDesign:PackIcon Kind="ChevronDoubleRight" />
+                <Button Style="{StaticResource MaterialDesignIconButton}" Command="{Binding SkipCommand}">
+                    <materialDesign:PackIcon Kind="SkipForward" />
                 </Button>
             </StackPanel>
             <Slider

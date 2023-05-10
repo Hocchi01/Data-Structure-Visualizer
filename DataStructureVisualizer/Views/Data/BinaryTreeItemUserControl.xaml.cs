@@ -21,7 +21,7 @@ namespace DataStructureVisualizer.Views.Data
     /// <summary>
     /// Interaction logic for BinaryTreeItemUserControl.xaml
     /// </summary>
-    public partial class BinaryTreeItemUserControl : UserControl
+    public partial class BinaryTreeItemUserControl : DataItemUserControlBase
     {
         private const double layerHeight = 125;
         private const double radius = 25;
@@ -32,6 +32,7 @@ namespace DataStructureVisualizer.Views.Data
         public BinaryTreeItemUserControl()
         {
             InitializeComponent();
+            ValueItem = valueItem;
         }
 
         public List<List<AnimationTimeline>> GetInsertToLeftAnimations(int value)
@@ -124,6 +125,90 @@ namespace DataStructureVisualizer.Views.Data
                 new List<AnimationTimeline> { rightXAnim, rightYAnim },
                 new List<AnimationTimeline> { rightChildScaleXAnim, rightChildScaleYAnim, rightXAnim2, rightYAnim2 }
             };
+        }
+
+        public List<AnimationTimeline> GetRemoveLeftLineAnimations(double toX, double toY)
+        {
+            var xAnim = new SimulatedDoubleAnimation(to: toX, time: 500)
+            {
+                TargetControl = left,
+                TargetParam = Line.X2Property,
+                TargetName = "line_" + Comm.GetUniqueString()
+            };
+            var yAnim = new SimulatedDoubleAnimation(to: toY, time: 500)
+            {
+                TargetControl = left,
+                TargetParam = Line.Y2Property,
+                TargetName = "line_" + Comm.GetUniqueString()
+            };
+
+            return new List<AnimationTimeline> { xAnim, yAnim };
+        }
+
+        public List<AnimationTimeline> GetRemoveRightLineAnimations(double toX, double toY)
+        {
+            var xAnim = new SimulatedDoubleAnimation(to: toX, time: 500)
+            {
+                TargetControl = right,
+                TargetParam = Line.X2Property,
+                TargetName = "line_" + Comm.GetUniqueString()
+            };
+            var yAnim = new SimulatedDoubleAnimation(to: toY, time: 500)
+            {
+                TargetControl = right,
+                TargetParam = Line.Y2Property,
+                TargetName = "line_" + Comm.GetUniqueString()
+            };
+
+            return new List<AnimationTimeline> { xAnim, yAnim };
+        }
+
+        public List<AnimationTimeline> GetRemoveNodeAnimations()
+        {
+            var nodeScaleXAnim = new SimulatedDoubleAnimation(to: 0, time: 500)
+            {
+                TargetControl = node,
+                TargetParam = "(UIElement.RenderTransform).(ScaleTransform.ScaleX)"
+            };
+            var nodeScaleYAnim = new SimulatedDoubleAnimation(to: 0, time: 500)
+            {
+                TargetControl = node,
+                TargetParam = "(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+            };
+
+            return new List<AnimationTimeline> { nodeScaleXAnim, nodeScaleYAnim };
+        }
+
+        public List<AnimationTimeline> GetMoveElemAnimations(double byX, double byY)
+        {
+            var xAnim = new SimulatedDoubleAnimation(by: (float)byX, time: 500)
+            {
+                TargetControl = elem,
+                TargetParam = "(UIElement.RenderTransform).(TranslateTransform.X)"
+            };
+            var yAnim = new SimulatedDoubleAnimation(by: (float)byY, time: 500)
+            {
+                TargetControl = elem,
+                TargetParam = "(UIElement.RenderTransform).(TranslateTransform.Y)"
+            };
+
+            return new List<AnimationTimeline> { xAnim, yAnim };
+        }
+
+        public List<AnimationTimeline> GetMoveCopyValueItemAnimations(double byX, double byY)
+        {
+            var xAnim = new SimulatedDoubleAnimation(by: (float)byX, time: 500, before: () => { copyValueItem.Visibility = Visibility.Visible; }, after: null)
+            {
+                TargetControl = copyValueItem,
+                TargetParam = "(UIElement.RenderTransform).(TranslateTransform.X)"
+            };
+            var yAnim = new SimulatedDoubleAnimation(by: (float)byY, time: 500)
+            {
+                TargetControl = copyValueItem,
+                TargetParam = "(UIElement.RenderTransform).(TranslateTransform.Y)"
+            };
+
+            return new List<AnimationTimeline> { xAnim, yAnim };
         }
     }
 }

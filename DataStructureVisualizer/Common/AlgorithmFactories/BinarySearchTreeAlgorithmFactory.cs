@@ -43,8 +43,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                     else
                     {
                         InsertToLeft(j, value);
-                        NewDataItems.Add(new BinaryTreeItemViewModel() { Value = value, ParentIndex = j });
-                        NewDataItems[j].Children[0] = NewDataItems.Count - 1;
+                        
                         break;
                     }
                 }
@@ -58,8 +57,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                     else
                     {
                         InsertToRight(j, value);
-                        NewDataItems.Add(new BinaryTreeItemViewModel() { Value = value, ParentIndex = j });
-                        NewDataItems[j].Children[1] = NewDataItems.Count - 1;
+                        
                         break;
                     }
                 }
@@ -75,11 +73,13 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         {
             int? i = 0;
             int j;
+            bool isExist = false;
             while (i != null)
             {
                 j = i ?? -1;
                 if (value == DataItems[j].Value)
                 {
+                    isExist = true;
                     Visit_Search(j, true);
                     break;
                 }
@@ -102,9 +102,55 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
 
-        private void Visit_Search(int index, bool isMatched = false)
+        public void Remove(int value)
         {
-            Visit(index, () => { DataItems[index].ForeState = isMatched ? DataItemState.Matched : DataItemState.Visited; }, () => { DataItems[index].State = isMatched ? DataItemState.Matched : DataItemState.Visited; });
+            int? i = 0;
+            int j;
+            bool isExist = false;
+            while (i != null)
+            {
+                j = i ?? -1;
+                if (value == DataItems[j].Value)
+                {
+                    isExist = true;
+                    Visit_Search(j, true);
+                    if (DataItems[j].IsLeaf)
+                    {
+                        RemoveLeafElem(j);
+                    }
+                    else if (DataItems[j].GetChildrenCount() == 1)
+                    {
+                        RemoveSingleChildElem(j);
+                    }
+                    else
+                    {
+                        int successor = FindInOrderSuccessor(j);
+                        CopyValue(successor, j);
+                        i = successor;
+                        value = DataItems[successor].Value ?? -1;
+                        continue;
+                    }
+                    break;
+                }
+                Visit_Search(j);
+
+                if (value < DataItems[j].Value)
+                {
+                    GoToLeft(j);
+                    i = DataItems[j].Children[0];
+                }
+                else
+                {
+                    GoToRight(j);
+                    i = DataItems[j].Children[1];
+                }
+            }
+
+            MainStoryboard.Begin_Ex(Canvas);
+            CodeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
+
+
     }
 }

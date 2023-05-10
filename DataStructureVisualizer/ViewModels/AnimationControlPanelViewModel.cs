@@ -67,6 +67,16 @@ namespace DataStructureVisualizer.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void Skip()
+        {
+            if (State != AnimationState.Stopped)
+            {
+                WeakReferenceMessenger.Default.Send(new SkipAnyAnimationMessage());
+                State = AnimationState.Stopped;
+            }
+        }
+
         
 
         public void Receive(BeginAnyAnimationMessage message)

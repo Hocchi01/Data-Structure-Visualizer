@@ -1,6 +1,7 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using DataStructureVisualizer.Views.Data;
 using System;
 using System.Collections.Generic;
@@ -25,9 +26,15 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public UIElement Group2Iterator { get; set; }
         public ItemsControl TmpArray { get; set; }
 
-        public MergeSortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
+        public MergeSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
             mergedIndices = new int[count];
+        }
+
+        protected override void HiddenAllAuxiliaryControls()
+        {
+            Group1Iterator.Visibility = Visibility.Hidden;
+            Group2Iterator.Visibility = Visibility.Hidden;
         }
 
         private void MergeSort(int begIndex, int endIndex)
@@ -108,6 +115,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
 
             MainStoryboard.Begin_Ex(Canvas, true);
+            CodeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
 
         protected override void Init()

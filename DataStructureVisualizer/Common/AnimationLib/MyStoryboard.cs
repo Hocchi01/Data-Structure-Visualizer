@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Messaging;
+using DataStructureVisualizer.Common.Enums;
 using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.ViewModels;
 using System;
@@ -277,6 +278,8 @@ namespace DataStructureVisualizer.Common.AnimationLib
             {
                 WeakReferenceMessenger.Default.Send(new BeginAnyAnimationMessage());
             }
+
+            
         }
 
         public void Delay(double millisecond)

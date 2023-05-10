@@ -17,7 +17,7 @@
     </UserControl.Resources>
     <Grid>
         <!--  画板  -->
-        <Grid x:Name="canvas" Background="#EDE7F6">
+        <Grid x:Name="canvas" Background="White">
             <ItemsControl
                 x:Name="llItemsControl"
                 Margin="8"

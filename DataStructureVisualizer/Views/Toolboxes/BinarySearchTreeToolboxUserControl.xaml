@@ -16,6 +16,7 @@
             <tool:RandomGenerateToolUserControl DataContext="{Binding RandomGenerateTool}" />
             <tool:SearchToolUserControl DataContext="{Binding SearchTool}" />
             <tool:AddToolUserControl DataContext="{Binding AddTool}" ShowIndex="False" />
+            <tool:RemoveByValueToolUserControl DataContext="{Binding RemoveByValueTool}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

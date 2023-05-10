@@ -54,6 +54,20 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             bstaf.Insert(message.Value);
         }
 
+        public override void Receive(LoadRemoveAnimationMessage message)
+        {
+            MainStoryboard = new MyStoryboard();
+            Grid canvas = (Grid)GetCanvas();
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            var container = canvas.FindName("binarySearchTreeItemsControl") as ItemsControl;
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+
+            var bstaf = new BinarySearchTreeAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
+
+            bstaf.Remove(message.Value);
+        }
+
         public override void UpdateDataItems(GenerateDataMessage? message)
         {
             if (Values.Count == 0) return;

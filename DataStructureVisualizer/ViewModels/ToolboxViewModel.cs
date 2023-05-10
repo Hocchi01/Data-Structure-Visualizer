@@ -14,6 +14,7 @@ namespace DataStructureVisualizer.ViewModels
         public AddToolViewModel AddTool { get; set; }
         public SortToolViewModel SortTool { get; set; }
         public RemoveToolViewModel RemoveTool { get; set; }
+        public RemoveByValueToolViewModel RemoveByValueTool { get; set; }
 
         public BinaryTreeTraverseToolViewModel BinaryTreeTraverseTool { get; set; }
         public SearchToolViewModel SearchTool { get; set; }
@@ -27,6 +28,7 @@ namespace DataStructureVisualizer.ViewModels
             RemoveTool = new RemoveToolViewModel();
             BinaryTreeTraverseTool = new BinaryTreeTraverseToolViewModel();
             SearchTool = new SearchToolViewModel();
+            RemoveByValueTool = new RemoveByValueToolViewModel();
         }
     }
 }

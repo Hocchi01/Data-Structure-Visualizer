@@ -39,13 +39,18 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("llItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
-            var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems) { Values = Values };
+            var llaf = new LinkedListAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems) { Values = Values };
 
             llaf.FindElem(addIndex - 1);
             llaf.InsertElem(addIndex, addValue);
 
             MainStoryboard.Begin_Ex(canvas, true);
+            codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
         }
 
         /// <summary>
@@ -59,13 +64,18 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             Grid canvas = (Grid)GetCanvas();
             var container = canvas.FindName("llItemsControl") as ItemsControl;
             MainStoryboard = new MyStoryboard();
+            var codeBlockPanel = CodeBlockPanelViewModel.Instance;
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
-            var llaf = new LinkedListAlgorithmFactory(canvas, container, MainStoryboard, DataItems);
+            var llaf = new LinkedListAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
 
             llaf.FindElem(rmvIndex - 1);
             llaf.RemoveElemInLinkedList(rmvIndex);
 
             MainStoryboard.Begin_Ex(canvas, true);
+            codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
         }
 
         public override void UpdateDataItems(GenerateDataMessage? message)

@@ -20,7 +20,8 @@ namespace DataStructureVisualizer.ViewModels
 {
     internal partial class CodeBlockPanelViewModel : ObservableRecipient, IRecipient<StoryboradSpeedRadioChangedMessage>,
         IRecipient<PauseAnyAnimationMessage>,
-        IRecipient<ResumeAnyAnimationMessage>
+        IRecipient<ResumeAnyAnimationMessage>,
+        IRecipient<SkipAnyAnimationMessage>
     {
         // private CodeBlockPanelUserControl codeBlockPanelView;
 
@@ -124,6 +125,12 @@ namespace DataStructureVisualizer.ViewModels
             {
                 CodeBlockStoryboard.Resume(GetCodeBlockPanelView());
             }
+        }
+
+        public void Receive(SkipAnyAnimationMessage message)
+        {
+            var codeBlockPanelView = GetCodeBlockPanelView();
+            CodeBlockStoryboard.SkipToFill(codeBlockPanelView);
         }
     }
 }

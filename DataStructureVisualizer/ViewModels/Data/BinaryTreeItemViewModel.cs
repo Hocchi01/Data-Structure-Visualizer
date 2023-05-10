@@ -56,6 +56,16 @@ namespace DataStructureVisualizer.ViewModels.Data
         //public int? RightChildIndex { get; set; } = null;
         public BindingList<int?> Children { get; set; } = new BindingList<int?> { null, null };
 
+        public void TraverseChildrenWithAction(Action<int> action)
+        {
+            foreach (var item in Children)
+            {
+                if (item == null) continue;
+                int i = item ?? -1;
+                action(i);
+            }
+        }
+
         public bool IsLeaf
         {
             get => Children[0] == null && Children[1] == null;
@@ -64,6 +74,20 @@ namespace DataStructureVisualizer.ViewModels.Data
         public double LeftMargin { get; set; }
         public int ParentIndex { get; set; } // 根结点的父索引标记为 -1
         public double RightMargin { get; set; }
+
+        public int GetChildrenCount()
+        {
+            int cnt = 0;
+            if (Children[0] != null)
+            {
+                cnt++;
+            }
+            if (Children[1] != null)
+            {
+                cnt++;
+            }
+            return cnt;
+        }
 
         public void OffsetRightLine()
         {

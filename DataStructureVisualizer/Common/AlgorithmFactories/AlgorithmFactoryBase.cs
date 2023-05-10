@@ -19,6 +19,7 @@ using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.Views;
 using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.Common.Structs;
+using System.Diagnostics;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
@@ -74,7 +75,15 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                     op();
                 }
                 UpdateValues(); 
+                HiddenAllAuxiliaryControls();
             };
+        }
+
+        protected SimulatedDoubleAnimation GetRemoveElemAniamtion(int elemIndex, Action? before = null, Action? after = null)
+        {
+            int elemRealIndex = table[elemIndex];
+            var control = Comm.GetItemFromItemsControlByIndex(Container, elemRealIndex).ValueItem;
+            return new SimulatedDoubleAnimation(to: 0, time: 500, before: before, after: after) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
         }
 
         public void RemoveElem(int elemIndex, DependencyObject control, bool isChangeTable = true, Action? before = null, Action? after = null)
@@ -101,14 +110,14 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public void WriteElem(int elemIndex, int elemVal, LogViewModel log = null) 
         {
             int elemRealIndex = table[elemIndex];
+            DataItems[elemRealIndex].Value = elemVal;
+            DataItems[elemRealIndex].Color = new SolidColorBrush(ThemeHelper.NewColor);
 
             var control = Comm.GetItemFromItemsControlByIndex(Container, elemRealIndex).ValueItem;
 
             var writeAnim = new SimulatedDoubleAnimation(from: 0, to: 1, time: 1000, before: () =>
             {
                 DeactivateElem();
-                DataItems[elemRealIndex].Value = elemVal;
-                DataItems[elemRealIndex].Color = new SolidColorBrush(ThemeHelper.NewColor);
             }, after: null)
             { TargetControl = control, TargetParam = UIElement.OpacityProperty, Log = log };
 
@@ -143,7 +152,14 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 }
             }
 
+            Debug.WriteLine("#### updatevalues ####");
+
             WeakReferenceMessenger.Default.Send(new GenerateDataMessage(Comm.ListToArray(values)));
+        }
+
+        protected virtual void HiddenAllAuxiliaryControls()
+        {
+
         }
 
         protected void ActivateElem(int elemIndex)

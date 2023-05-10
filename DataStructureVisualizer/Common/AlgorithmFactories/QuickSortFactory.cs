@@ -1,6 +1,10 @@
-﻿using DataStructureVisualizer.Common.AnimationLib;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using DataStructureVisualizer.Common.AnimationLib;
+using DataStructureVisualizer.Common.Enums;
+using DataStructureVisualizer.Common.Messages;
 using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
+using DataStructureVisualizer.Views;
 using DataStructureVisualizer.Views.Data;
 using System;
 using System.Collections.Generic;
@@ -23,8 +27,15 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public UIElement HighIterator { get; set; }
         public UIElement Pivot { get; set; }
 
-        public QuickSortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
+        public QuickSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
+        }
+
+        protected override void HiddenAllAuxiliaryControls()
+        {
+            IterEnd(LowIterator);
+            IterEnd(HighIterator);
+            Pivot.Visibility = Visibility.Hidden;
         }
 
         void QuickSort(int lowIndex, int highIndex)
@@ -92,6 +103,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
 
             MainStoryboard.Begin_Ex(Canvas, true);
+
+            CodeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
 
         protected override void Init()

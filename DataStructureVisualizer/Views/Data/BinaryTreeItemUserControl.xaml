@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<local:DataItemUserControlBase
     x:Class="DataStructureVisualizer.Views.Data.BinaryTreeItemUserControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -16,7 +16,10 @@
         <cvtr:TwoDoubleToPointConverter x:Key="twoDoubleToPointConverter" />
         <cvtr:DataItemStateToColorConverter x:Key="dataItemStateToColorConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid x:Name="elem">
+        <Grid.RenderTransform>
+            <TranslateTransform X="0" Y="0" />
+        </Grid.RenderTransform>
         <!--<Line X1="50" Y1="0" X2="1" Y2="50" StrokeThickness="10" x:Name="test">
             <Line.Stroke>
                 <LinearGradientBrush StartPoint="{Binding X1}" MappingMode="Absolute">
@@ -83,7 +86,10 @@
                 </LinearGradientBrush>
             </Line.Stroke>
         </Line>
-        <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Grid x:Name="node" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid.RenderTransform>
+                <ScaleTransform ScaleX="1" ScaleY="1" CenterX="25" CenterY="25" />
+            </Grid.RenderTransform>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -130,6 +136,52 @@
                     DockPanel.Dock="Right"
                     FontSize="11"
                     Text="{Binding Index}"
+                    TextAlignment="Center" />
+            </DockPanel>
+        </Grid>
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Border
+                Width="50"
+                Height="50"
+                Padding="3"
+                BorderBrush="Transparent"
+                BorderThickness="2"
+                CornerRadius="30">
+                <Grid x:Name="copyValueItem" Visibility="Hidden">
+                    <Ellipse>
+                        <Ellipse.Fill>
+                            <RadialGradientBrush>
+                                <GradientStop Offset="0" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
+                                <GradientStop Offset="1" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
+                                <GradientStop Offset="1" Color="{Binding Color.Color}"/>
+                                <GradientStop Offset="1" Color="{Binding Color.Color}"/>
+                            </RadialGradientBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontWeight="Black"
+                        Foreground="White"
+                        Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid.RenderTransform>
+                        <TranslateTransform />
+                    </Grid.RenderTransform>
+                </Grid>
+
+            </Border>
+            <DockPanel
+                Grid.Row="1"
+                Width="50">
+                <TextBlock
+                    Padding="8,0"
+                    VerticalAlignment="Center"
+                    DockPanel.Dock="Right"
+                    FontSize="11"
                     TextAlignment="Center" />
             </DockPanel>
         </Grid>
@@ -223,4 +275,4 @@
         </Grid>
     </Grid>
 
-</UserControl>
+</local:DataItemUserControlBase>

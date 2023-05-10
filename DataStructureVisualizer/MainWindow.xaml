@@ -144,7 +144,7 @@
         <!--  工具栏  -->
         <Grid
             Grid.Column="3"
-            MinWidth="230"
+            MinWidth="250"
             Margin="3,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

@@ -18,6 +18,7 @@ using System.Windows.Media.Animation;
 using static System.Net.Mime.MediaTypeNames;
 using DataStructureVisualizer.Views.Components;
 using System.Net;
+using DataStructureVisualizer.Views;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
@@ -25,7 +26,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
     {
         public ObservableCollection<int> Values { get; set; }
 
-        public LinkedListAlgorithmFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<LinkedListItemViewModel> dataItems) : base(canvas, container, myStoryboard, dataItems.RevertElems())
+        public LinkedListAlgorithmFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<LinkedListItemViewModel> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems.RevertElems())
         {
             //table = new List<int>();
             //for (int i = 1; i < last; i++) // 忽略链表中非数据结点
@@ -133,6 +134,14 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             });
 
             MainStoryboard.AddAsyncAnimations(preItem.next.LengthenOrShorten(35));
+
+            endOperations.Add(() =>
+            {
+                if (Canvas.Children.Contains(virtualPrePointer))
+                    Canvas.Children.Remove(virtualPrePointer);
+                if (Canvas.Children.Contains(virtualRmvItem))
+                    Canvas.Children.Remove(virtualRmvItem);
+            });
         }
 
         public void InsertElem(int toIndex, int addValue)
