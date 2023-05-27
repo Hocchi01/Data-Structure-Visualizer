@@ -1,5 +1,7 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
+using DataStructureVisualizer.Common.Structs;
+using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
 using DataStructureVisualizer.Views;
 using System;
@@ -21,6 +23,28 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         public InsertionSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
+            string codeBlock =
+                "for (int i = 1; i < n; i++)\\" +
+                "{\\" +
+                "   for (int j = i - 1; j >= 0; j--)\\" +
+                "   {\\" +
+                "       if (a[j + 1] < a[j])\\" +
+                "       {\\" +
+                "           int tmp = a[j];\\" +
+                "           a[j] = a[j + 1];\\" +
+                "           a[j + 1] = tmp;\\" +
+                "       }\\" +
+                "       else break;\\" +
+                "   }\\" +
+                "}\\";
+
+            CodeBlockPanel.SetCodeBlock(codeBlock);
+
+            codeInfos.Add("for1", new CodeInfo(0));
+            codeInfos.Add("for2", new CodeInfo(2));
+            codeInfos.Add("if", new CodeInfo(4));
+            codeInfos.Add("swap", new CodeInfo(6, 3));
+            codeInfos.Add("else", new CodeInfo(10));
         }
 
         protected override void HiddenAllAuxiliaryControls()
@@ -40,20 +64,21 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 {
                     isLess = DataItems[table[j + 1]].Value < DataItems[table[j]].Value;
 
-                    IterNext(j);
+                    IterNext(j, new LogViewModel("Next elem", "j--;"));
 
-                    if (isLess) ElemSwap(j);
+                    CodeBlockPanel.AddAnimation(codeInfos["if"], MainStoryboard.Offset);
+                    MainStoryboard.Delay(300);
+                    if (isLess) ElemSwap(j, new LogViewModel($"a[{j+1}] < a[{j}]", "Swap adjacent elem", $"int tmp = a[{j}]; a[{j}] = a[{j + 1}]; a[{j + 1}] = tmp;"));
                     if (!isLess || j == 0) // 当迭代器到最左端时不能继续左移了，因此这里需要特判
                     {
-                        IterReturn(i + 1, j, isLess);
+                        IterReturn(i + 1, j, isLess, new LogViewModel("Return to front", "i++; j = i - 1;"));
                         break;
                     }
                 }
             }
 
             UnStick(() => { IterEnd(Iterator); Finish(); });
-            MainStoryboard.Begin_Ex(Canvas, true);
-            CodeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
+            MainStoryboard.Begin_Ex(Canvas);
             CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
 
@@ -61,22 +86,24 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// 交换两元素
         /// </summary>
         /// <param name="iterIndex"></param>
-        private void ElemSwap(int iterIndex)
+        private void ElemSwap(int iterIndex, LogViewModel log)
         {
+            CodeBlockPanel.AddAnimation(codeInfos["swap"], MainStoryboard.Offset);
             SwapElems(iterIndex, iterIndex + 1, null, () =>
             {
                 SetElemMin(iterIndex);
                 SetElemSorted(iterIndex + 1);
-            });
+            }, log);
         }
 
         /// <summary>
         /// 迭代器遍历下一个元素
         /// </summary>
         /// <param name="toIndex"></param>
-        private void IterNext(int toIndex)
+        private void IterNext(int toIndex, LogViewModel log)
         {
-            MoveIter(Iterator, toIndex, null, null);
+            CodeBlockPanel.AddAnimation(codeInfos["for2"], MainStoryboard.Offset);
+            MoveIter(Iterator, toIndex, null, null, log: log);
         }
 
         /// <summary>
@@ -85,8 +112,10 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="toIndex"></param>
         /// <param name="preIndex"></param>
         /// <param name="isLess"></param>
-        private void IterReturn(int toIndex, int preIndex, bool isLess)
+        private void IterReturn(int toIndex, int preIndex, bool isLess, LogViewModel log)
         {
+            CodeBlockPanel.AddAnimation(codeInfos["for1"], MainStoryboard.Offset);
+
             int sortedIndex = isLess ? preIndex : preIndex + 1;
             if (toIndex > last) return;
 
@@ -98,7 +127,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             {
                 ActivateElem(toRealIndex);
                 SetElemMin(toIndex);
-            });
+            }, log: log);
         }
 
         protected override void Init()

@@ -10,11 +10,33 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <Grid>
-        <Grid x:Name="canvas">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Slider
+                x:Name="scaleSlider"
+                Width="100"
+                Margin="5"
+                HorizontalAlignment="Left"
+                Maximum="1"
+                Minimum="0.3"
+                Value="1" />
+        </Grid>
+        <Grid x:Name="canvas" Grid.Row="1">
             <ItemsControl
                 x:Name="binarySearchTreeItemsControl"
+                Margin="10"
                 HorizontalAlignment="Center"
+                VerticalAlignment="Top"
                 ItemsSource="{Binding DataItems}">
+                <ItemsControl.LayoutTransform>
+                    <TransformGroup>
+                        <TranslateTransform X="-25" />
+                        <ScaleTransform x:Name="scale" ScaleX="{Binding Value, ElementName=scaleSlider}" ScaleY="{Binding Value, ElementName=scaleSlider}" />
+                    </TransformGroup>
+                </ItemsControl.LayoutTransform>
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas />

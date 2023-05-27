@@ -72,7 +72,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 {
                     isLess = DataItems[table[j]].Value < DataItems[table[minIndex]].Value;
 
-                    IterNext(j, minIndex, isLess, new LogViewModel("Next Elem", "j++;"));
+                    IterNext(j, minIndex, isLess, new LogViewModel("Next elem", "j++;"));
 
                     if (isLess) minIndex = j;
                 }

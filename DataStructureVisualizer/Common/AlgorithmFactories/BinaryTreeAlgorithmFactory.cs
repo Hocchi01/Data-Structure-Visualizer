@@ -48,7 +48,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             "}\\";
 
         private const string preOrderTraverseCodeBlock =
-                            "void PreOrderTraverse(BiTree T)\\" +
+            "void PreOrderTraverse(BiTree T)\\" +
             "{\\" +
             "   if (T != NULL)\\" +
             "   {\\" +
@@ -60,12 +60,6 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public BinaryTreeAlgorithmFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<BinaryTreeItemViewModel> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems.RevertElems())
         {
             DataItems = dataItems;
-            //NewDataItems = new ObservableCollection<BinaryTreeItemViewModel>();
-            //foreach (var item in DataItems)
-            //{
-            //    NewDataItems.Add(Comm.DeepCopy2(item));
-            //}
-
             NewDataItems = Comm.DeepCopy(DataItems);
         }
 
@@ -82,19 +76,23 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// <param name="hasParent"></param>
         protected void RemoveItemInNewDataItems(int index, bool hasParent = true)
         {
-            int last = NewDataItems.Count - 1;
-
             if (hasParent)
             {
                 NewDataItems[NewDataItems[index].ParentIndex].Children[GetDirection(index)] = null;
             }
 
-            NewDataItems[index] = NewDataItems[last];
+            int last = NewDataItems.Count - 1;
+            if (index == last)
+            {
+                NewDataItems.RemoveAt(index);
+                return;
+            }
 
             var lastParent = NewDataItems[NewDataItems[last].ParentIndex];
             lastParent.Children[GetDirection(last)] = index;
             NewDataItems[last].TraverseChildrenWithAction((i) => { NewDataItems[i].ParentIndex = index; });
 
+            NewDataItems[index] = NewDataItems[last];
             NewDataItems.RemoveAt(last);
         }
 
@@ -303,7 +301,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             DataItems[index].OffsetEmptyLeftLine();
             var anims = item.GetInsertToLeftAnimations(value);
-            MainStoryboard.AddAsyncAnimations(anims[0]);
+            MainStoryboard.AddAsyncAnimations(anims[0], log: log);
             MainStoryboard.AddAsyncAnimations(anims[1]);
 
             NewDataItems.Add(new BinaryTreeItemViewModel() { Value = value, ParentIndex = index });
@@ -316,7 +314,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             DataItems[index].OffsetEmptyRightLine();
             var anims = item.GetInsertToRightAnimations(value);
-            MainStoryboard.AddAsyncAnimations(anims[0]);
+            MainStoryboard.AddAsyncAnimations(anims[0], log: log);
             MainStoryboard.AddAsyncAnimations(anims[1]);
 
             NewDataItems.Add(new BinaryTreeItemViewModel() { Value = value, ParentIndex = index });
@@ -349,7 +347,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             var anims = lineAnims;
             anims.AddRange(nodeAnims);
 
-            MainStoryboard.AddAsyncAnimations(anims);
+            MainStoryboard.AddAsyncAnimations(anims, log: log);
 
             RemoveItemInNewDataItems(index);
         }
@@ -400,7 +398,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             var anims = rmvAnims;
             anims.AddRange(moveAnims);
-            MainStoryboard.AddAsyncAnimations(anims);
+            MainStoryboard.AddAsyncAnimations(anims, log: log);
 
             int parentDirect = IsLeftChild(index) ? 0 : 1;
             NewDataItems[DataItems[index].ParentIndex].Children[parentDirect] = DataItems[index].Children[direct];
@@ -425,6 +423,18 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 var elps2Anim = new SimulatedDoubleAnimation(to: 0, time: 1000)
                 {
                     TargetControl = item.elps2,
+                    TargetParam = GradientStop.OffsetProperty,
+                    TargetName = "gs_" + Comm.GetUniqueString()
+                };
+                var copyElps1Anim = new SimulatedDoubleAnimation(to: 0, time: 1000)
+                {
+                    TargetControl = item.copy_e1,
+                    TargetParam = GradientStop.OffsetProperty,
+                    TargetName = "gs_" + Comm.GetUniqueString()
+                };
+                var copyElps2Anim = new SimulatedDoubleAnimation(to: 0, time: 1000)
+                {
+                    TargetControl = item.copy_e2,
                     TargetParam = GradientStop.OffsetProperty,
                     TargetName = "gs_" + Comm.GetUniqueString()
                 };
@@ -454,6 +464,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 };
                 anims.Add(elps1Anim);
                 anims.Add(elps2Anim);
+                anims.Add(copyElps1Anim);
+                anims.Add(copyElps2Anim);
                 anims.Add(left1Anim);
                 anims.Add(left2Anim);
                 anims.Add(right1Anim);
@@ -521,7 +533,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             return i;
         }
 
-        protected void CopyValue(int elemIndex, int toIndex)
+        protected void CopyValue(int elemIndex, int toIndex, LogViewModel log)
         {
             var rmvAnim = GetRemoveElemAniamtion(toIndex);
 

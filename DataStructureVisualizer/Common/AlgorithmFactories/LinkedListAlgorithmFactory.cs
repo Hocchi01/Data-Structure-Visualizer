@@ -19,11 +19,32 @@ using static System.Net.Mime.MediaTypeNames;
 using DataStructureVisualizer.Views.Components;
 using System.Net;
 using DataStructureVisualizer.Views;
+using DataStructureVisualizer.ViewModels;
+using DataStructureVisualizer.Common.Structs;
 
 namespace DataStructureVisualizer.Common.AlgorithmFactories
 {
     class LinkedListAlgorithmFactory : AlgorithmFactoryBase
     {
+        private const string insertCodeBlock =
+            "LNode* p = head;\\" +
+            "int j = 0;\\" +
+            "while (j++ < toIndex - 1)\\" +
+            "   p = p -> next;\\" +
+            "LNode* newNode = (LNode*)malloc(sizeof(LNode));\\" +
+            "newNode -> data = addValue;\\" +
+            "newNode -> next = p -> next;\\" +
+            "p -> next = newNode;\\";
+
+        private const string removeCodeBlock =
+            "LNode* p = head;\\" +
+            "int j = 0;\\" +
+            "while (j++ < toIndex - 1)\\" +
+            "   p = p -> next;\\" +
+            "LNode* rmvNode = p -> next;\\" +
+            "p -> next = p -> next -> next;\\" +
+            "free(rmvNode);\\";
+
         public ObservableCollection<int> Values { get; set; }
 
         public LinkedListAlgorithmFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<LinkedListItemViewModel> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems.RevertElems())
@@ -42,7 +63,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             head.borderBrush.EndPoint = new Point(1, 0);
         }
 
-        public void PointerNext(int toIndex, Action? before = null, Action? after = null)
+        public void PointerNext(int toIndex, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
             ++toIndex;
             int preIndex = toIndex - 1;
@@ -55,17 +76,21 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             var preArrowOut = preItem.GetPointerOutAnimation(true);
             var toBorderIn = toItem.GetBorderInAnimation(true);
 
-            MainStoryboard.AddAsyncAnimations(new List<MyPointAnimationBase> { preBorderOut, preArrowIn }, before);
+            MainStoryboard.AddAsyncAnimations(new List<MyPointAnimationBase> { preBorderOut, preArrowIn }, before, log: log);
             MainStoryboard.AddAsyncAnimations(new List<MyPointAnimationBase> { preArrowOut, toBorderIn }, null, after);
             MainStoryboard.Delay(200);
         }
 
-        public void FindElem(int elemIndex)
+        public void FindElem(int elemIndex, CodeInfo w, CodeInfo next)
         {
             InitPointer();
+            CodeBlockPanel.AddAnimation(w);
             for (int i = 0; i <= elemIndex; i++)
             {
-                PointerNext(i);
+                CodeBlockPanel.AddAnimation(next, MainStoryboard.Offset);
+                PointerNext(i, log: new LogViewModel("Next elem", "p = p -> next;"));
+                CodeBlockPanel.AddAnimation(w, MainStoryboard.Offset);
+                MainStoryboard.Offset = CodeBlockPanel.CodeBlockStoryboard.Offset;
             }
         }
 
@@ -102,6 +127,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             var virtualRmvItem = GenerateVirtualElem(elemIndex, rmvItem.DataContext as LinkedListItemViewModel);
 
+            CodeBlockPanel.AddAnimation(codeInfos["op1"], MainStoryboard.Offset);
+            MainStoryboard.InsertLog(new LogViewModel("Pre-node next to successor", "p -> next = p -> next -> next;"));
             var towardNextOfNextAnims = virtualPrePointer.next.TowardNextOfNext(() =>
             {
                 preItem.next.Visibility = Visibility.Hidden;
@@ -114,7 +141,8 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 MainStoryboard.AddAsyncAnimations(anims);
             }
 
-            RemoveElem(elemIndex, virtualRmvItem, true, null, () => { Canvas.Children.Remove(virtualRmvItem); });
+            CodeBlockPanel.AddAnimation(codeInfos["op2"], MainStoryboard.Offset);
+            RemoveElem(elemIndex, virtualRmvItem, true, null, () => { Canvas.Children.Remove(virtualRmvItem); }, new LogViewModel("Remove node", "free(rmvNode);"));
 
             var preLine2MoveUpAnim = virtualPrePointer.next.GetMoveLineSegmentAnimation(2, 50, Direction.Up);
             var preLine1ShortenAnim = virtualPrePointer.next.LengthenOrShortenLineSegment(1, 0);
@@ -162,14 +190,20 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
             table.Insert(toIndex, count + newValues.Count);
             newValues.Add(count + newValues.Count, addValue);
-            NewElem(newItem, () => { newItem.Visibility = Visibility.Visible; });
 
+            CodeBlockPanel.AddAnimation(codeInfos["new"], MainStoryboard.Offset);
+            NewElem(newItem, () => { newItem.Visibility = Visibility.Visible; }, log: new LogViewModel("New node", "LNode* newNode = (LNode*)malloc(sizeof(LNode)); newNode -> data = addValue;"));
+
+            CodeBlockPanel.AddAnimation(codeInfos["op1"], MainStoryboard.Offset);
+            MainStoryboard.InsertLog(new LogViewModel("New node next to successor", "newNode -> next = p -> next;"));
             var newToNextAnims = newItem.next.NewItemNextPointerTowardNextItem();
             for (int i = 0; i < newToNextAnims.Count; i++)
             {
                 MainStoryboard.AddAsyncAnimations(newToNextAnims[i]);
             }
 
+            CodeBlockPanel.AddAnimation(codeInfos["op2"], MainStoryboard.Offset);
+            MainStoryboard.InsertLog(new LogViewModel("Pre-node next to new node", "p -> next = newNode;"));
             Point curEndPoint = preItem.next.endPoint;
             var preToNewAnims = preItem.next.PreItemNextPointerTowardNewItem(() => { preItem.next.FixCurrentWidth(curEndPoint); });
             for (int i = 0; i < preToNewAnims.Count; i++)
@@ -201,6 +235,37 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             {
                 Canvas.Children.Remove(newItem);
             });
+        }
+
+        public void InsertElemAlgorithm(int toIndex, int addValue)
+        {
+            CodeBlockPanel.SetCodeBlock(insertCodeBlock);
+            codeInfos.Add("while", new CodeInfo(2));
+            codeInfos.Add("next", new CodeInfo(3));
+            codeInfos.Add("new", new CodeInfo(4, 2));
+            codeInfos.Add("op1", new CodeInfo(6));
+            codeInfos.Add("op2", new CodeInfo(7));
+
+            FindElem(toIndex - 1, codeInfos["while"], codeInfos["next"]);
+            InsertElem(toIndex, addValue);
+
+            MainStoryboard.Begin_Ex(Canvas);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
+        }
+
+        public void RemoveElemAlgorithm(int toIndex)
+        {
+            CodeBlockPanel.SetCodeBlock(removeCodeBlock);
+            codeInfos.Add("while", new CodeInfo(2));
+            codeInfos.Add("next", new CodeInfo(3));
+            codeInfos.Add("op1", new CodeInfo(5));
+            codeInfos.Add("op2", new CodeInfo(6));
+
+            FindElem(toIndex - 1, codeInfos["while"], codeInfos["next"]);
+            RemoveElemInLinkedList(toIndex);
+
+            MainStoryboard.Begin_Ex(Canvas);
+            CodeBlockPanel.CodeBlockStoryboard.Begin_Ex(CodeBlockPanelView);
         }
     }
 }

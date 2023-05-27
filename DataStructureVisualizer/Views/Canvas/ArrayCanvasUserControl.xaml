@@ -43,7 +43,7 @@
     </UserControl.Resources>
     <Grid>
         <!--  画板 #EDE7F6 -->
-        <Grid x:Name="canvas" Background="White">
+        <Grid x:Name="canvas">
 
             <ItemsControl
                 x:Name="arrItemsControl"

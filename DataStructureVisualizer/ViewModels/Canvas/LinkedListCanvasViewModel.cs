@@ -41,16 +41,11 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard = new MyStoryboard();
             var codeBlockPanel = CodeBlockPanelViewModel.Instance;
             var codeBlockPanelView = GetCodeBlockPanelView();
-            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard(false);
 
             var llaf = new LinkedListAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems) { Values = Values };
 
-            llaf.FindElem(addIndex - 1);
-            llaf.InsertElem(addIndex, addValue);
-
-            MainStoryboard.Begin_Ex(canvas, true);
-            codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
-            codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
+            llaf.InsertElemAlgorithm(addIndex, addValue);
         }
 
         /// <summary>
@@ -66,16 +61,11 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             MainStoryboard = new MyStoryboard();
             var codeBlockPanel = CodeBlockPanelViewModel.Instance;
             var codeBlockPanelView = GetCodeBlockPanelView();
-            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard(false);
 
             var llaf = new LinkedListAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
 
-            llaf.FindElem(rmvIndex - 1);
-            llaf.RemoveElemInLinkedList(rmvIndex);
-
-            MainStoryboard.Begin_Ex(canvas, true);
-            codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
-            codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
+            llaf.RemoveElemAlgorithm(rmvIndex);
         }
 
         public override void UpdateDataItems(GenerateDataMessage? message)

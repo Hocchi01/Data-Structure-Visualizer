@@ -33,7 +33,12 @@ namespace DataStructureVisualizer.ViewModels.Tools
             Random r = new Random();
             for (int i = 0; i < Amount; i++)
             {
-                values[i] = r.Next(Min, Max);
+                int val = r.Next(Min, Max);
+                while (values.Contains(val))
+                {
+                    val = (val + 1) % (Max + 1);
+                }
+                values[i] = val;
             }
 
             WeakReferenceMessenger.Default.Send(new GenerateDataMessage(values));

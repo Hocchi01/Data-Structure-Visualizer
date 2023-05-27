@@ -34,14 +34,14 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             }
         }
 
-        public SortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
-        {
-            vals = new int[count];
-            for (int i = 0; i < count; i++)
-            {
-                vals[i] = DataItems[i].Value ?? 0;
-            }
-        }
+        //public SortFactory(Grid canvas, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, container, myStoryboard, dataItems)
+        //{
+        //    vals = new int[count];
+        //    for (int i = 0; i < count; i++)
+        //    {
+        //        vals[i] = DataItems[i].Value ?? 0;
+        //    }
+        //}
 
 
         public abstract void Execute();

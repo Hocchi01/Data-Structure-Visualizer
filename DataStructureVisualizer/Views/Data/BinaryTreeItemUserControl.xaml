@@ -156,8 +156,8 @@
                         <Ellipse.Fill>
                             <RadialGradientBrush>
                                 <GradientStop Offset="0" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
-                                <GradientStop Offset="1" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
-                                <GradientStop Offset="1" Color="{Binding Color.Color}"/>
+                                <GradientStop x:Name="copy_e1" Offset="1" Color="{Binding ForeState, Converter={StaticResource dataItemStateToColorConverter}}"/>
+                                <GradientStop x:Name="copy_e2" Offset="1" Color="{Binding Color.Color}"/>
                                 <GradientStop Offset="1" Color="{Binding Color.Color}"/>
                             </RadialGradientBrush>
                         </Ellipse.Fill>

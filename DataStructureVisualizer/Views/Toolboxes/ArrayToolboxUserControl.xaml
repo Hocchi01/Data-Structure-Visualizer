@@ -17,6 +17,7 @@
             <tool:AddToolUserControl DataContext="{Binding AddTool}" />
             <tool:RemoveToolUserControl DataContext="{Binding RemoveTool}" />
             <tool:SortToolUserControl DataContext="{Binding SortTool}" />
+            <tool:InputGenerateToolUserControl DataContext="{Binding InputGenerateTool}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

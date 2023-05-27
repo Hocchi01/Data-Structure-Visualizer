@@ -15,9 +15,9 @@
     xmlns:view="clr-namespace:DataStructureVisualizer.Views"
     xmlns:vm="clr-namespace:DataStructureVisualizer.ViewModels"
     Title="MainWindow"
-    Width="1000"
-    Height="450"
-    Background="{DynamicResource MaterialDesignPaper}"
+    Width="1200"
+    Height="600"
+    Background="White"
     FontFamily="{materialDesign:MaterialDesignFont}"
     MouseLeftButtonDown="Window_MouseLeftButtonDown"
     TextElement.FontSize="14"
@@ -25,6 +25,7 @@
     TextElement.Foreground="{DynamicResource MaterialDesignBody}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+    <!--  Background="{DynamicResource MaterialDesignPaper}"  -->
     <Window.DataContext>
         <vm:MainWindowViewModel />
     </Window.DataContext>
@@ -128,7 +129,10 @@
             </TabControl>
 
             <!--  主画板  -->
-            <ContentControl Grid.Row="1" Content="{Binding CurrentCanvasView}" />
+            <Grid Grid.Row="1" Background="#EDE7F6">
+                <ContentControl Grid.Row="1" Content="{Binding CurrentCanvasView}" />
+            </Grid>
+            
 
             <!--  动画控制器  -->
             <view:AnimationControlPanelUserControl
@@ -138,20 +142,21 @@
         </Grid>
 
         <Grid Grid.Column="2">
-            <view:CodeBlockPanelUserControl x:Name="codeBlockPanel"/>
+            <view:CodeBlockPanelUserControl x:Name="codeBlockPanel" />
         </Grid>
 
         <!--  工具栏  -->
         <Grid
             Grid.Column="3"
             MinWidth="250"
-            Margin="3,0">
+            Margin="3,0"
+            Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <ContentControl Content="{Binding CurrentToolboxView}" />
         </Grid>
-        
+
         <!--  控制台  -->
         <view:LogPanelUserControl
             x:Name="logPanel"

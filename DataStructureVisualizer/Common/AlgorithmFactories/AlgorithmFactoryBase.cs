@@ -86,13 +86,13 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             return new SimulatedDoubleAnimation(to: 0, time: 500, before: before, after: after) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
         }
 
-        public void RemoveElem(int elemIndex, DependencyObject control, bool isChangeTable = true, Action? before = null, Action? after = null)
+        public void RemoveElem(int elemIndex, DependencyObject control, bool isChangeTable = true, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
             int elemRealIndex = table[elemIndex];
             Action afterActions = () => { DataItems[elemRealIndex].Value = null; };
             afterActions += after;
 
-            var rmvAnim = new SimulatedDoubleAnimation(to: 0, time: 500, before: before, after: afterActions) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
+            var rmvAnim = new SimulatedDoubleAnimation(to: 0, time: 500, before: before, after: afterActions, log: log) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
 
             MainStoryboard.AddSyncAnimation(rmvAnim);
 
@@ -100,11 +100,11 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 table.RemoveAt(elemIndex);
         }
 
-        public void RemoveElem(int elemIndex, bool isChangeTable = false, Action? before = null, Action? after = null)
+        public void RemoveElem(int elemIndex, bool isChangeTable = false, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
             int elemRealIndex = table[elemIndex];
             var control = Comm.GetItemFromItemsControlByIndex(Container, elemRealIndex).ValueItem;
-            RemoveElem(elemIndex, control, isChangeTable, before, after);
+            RemoveElem(elemIndex, control, isChangeTable, before, after, log);
         }
 
         public void WriteElem(int elemIndex, int elemVal, LogViewModel log = null) 
@@ -124,9 +124,9 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             MainStoryboard.AddSyncAnimation(writeAnim);
         }
 
-        public void NewElem(DependencyObject control, Action? before = null, Action? after = null)
+        public void NewElem(DependencyObject control, Action? before = null, Action? after = null, LogViewModel? log = null)
         {
-            var newAnim = new SimulatedDoubleAnimation(from: 0, to: 1, time: 1000, before: before, after: after) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
+            var newAnim = new SimulatedDoubleAnimation(from: 0, to: 1, time: 1000, before: before, after: after, log: log) { TargetControl = control, TargetParam = UIElement.OpacityProperty };
             MainStoryboard.AddSyncAnimation(newAnim);
         }
 

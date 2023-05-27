@@ -10,6 +10,7 @@ namespace DataStructureVisualizer.ViewModels
     internal class ToolboxViewModel
     {
         public RandomGenerateToolViewModel RandomGenerateTool { get; set; }
+        public InputGenerateToolViewModel InputGenerateTool { get; set; }
         public BinaryTreeRandomGenerateToolViewModel BinaryTreeRandomGenerateTool { get; set; }
         public AddToolViewModel AddTool { get; set; }
         public SortToolViewModel SortTool { get; set; }
@@ -29,6 +30,7 @@ namespace DataStructureVisualizer.ViewModels
             BinaryTreeTraverseTool = new BinaryTreeTraverseToolViewModel();
             SearchTool = new SearchToolViewModel();
             RemoveByValueTool = new RemoveByValueToolViewModel();
+            InputGenerateTool = new InputGenerateToolViewModel();
         }
     }
 }

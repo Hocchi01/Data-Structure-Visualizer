@@ -14,7 +14,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <local:ToolBaseUserControl Title="Random Generate" DetailHeight="40">
+    <local:ToolBaseUserControl Title="Random Generate" >
         <local:ToolBaseUserControl.MainTemplate>
             <DataTemplate>
                 <Grid>

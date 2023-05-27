@@ -271,12 +271,15 @@ namespace DataStructureVisualizer.Common.AnimationLib
                 }
             };
 
-            Duration = TimeSpan.FromMilliseconds(offset + 500); // 最终暂停 0.5s
+            Duration = TimeSpan.FromMilliseconds(offset + 1000); // 最终暂停 1s
             Begin(containingObject, isControllable);
 
             if (isControllable)
             {
                 WeakReferenceMessenger.Default.Send(new BeginAnyAnimationMessage());
+
+                //AnimationControlPanelViewModel.Instance.State = AnimationState.Paused;
+                //WeakReferenceMessenger.Default.Send(new PauseAnyAnimationMessage());
             }
 
             

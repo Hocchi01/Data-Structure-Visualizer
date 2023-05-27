@@ -28,7 +28,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
         private int height = 0;
         public BinaryTreeCanvasViewModel()
         {
-            DataItems = new ObservableCollection<BinaryTreeItemViewModel> { new BinaryTreeItemViewModel() };
+            DataItems = new ObservableCollection<BinaryTreeItemViewModel>();
         }
 
         public override void Receive(LoadAddAnimationMessage message)
@@ -80,8 +80,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     Color = new SolidColorBrush(colors[i]),
                     OriginalColor = new SolidColorBrush(colors[i]),
                     ParentIndex = item.ParentIndex,
-                    Children = item.Children
-                }) ;
+                    Children = Comm.DeepCopy(item.Children)
+                });
             }
         }
 

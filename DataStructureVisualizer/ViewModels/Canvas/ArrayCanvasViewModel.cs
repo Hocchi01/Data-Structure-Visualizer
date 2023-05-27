@@ -22,6 +22,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DataStructureVisualizer.Common.AlgorithmFactories;
 using DataStructureVisualizer.Common.Extensions;
 using DataStructureVisualizer.Test;
+using System.ComponentModel;
 
 namespace DataStructureVisualizer.ViewModels.Canvas
 {
@@ -72,7 +73,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var codeBlockPanelView = GetCodeBlockPanelView();
             codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
-
             // TODO 01: 在数组末尾添加一个“空项”
             DataItems.Add(new ArrayItemViewModel() { Index = count });
 
@@ -82,20 +82,8 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             (lastItem.valueItem.RenderTransform as TranslateTransform).X += (addIndex - count) * AnimationHelper.StepLen;
             lastItem.valueItem.Opacity = 0;
 
-            var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
-
-            for (int i = count - 1; i >= addIndex; i--)
-            {
-                // TODO 02: 依次后移元素
-                saf.MoveElem(elemIndex: i, toIndex: i + 1, log: new LogViewModel( $"Right shift a[{i}]", $"a[{i+1}] = a[{i}];"));
-            }
-            // TODO 03: 写入添加的元素
-            saf.WriteElem(addIndex, addVal, new LogViewModel($"Write {addVal} to a[{addIndex}]", $"a[{addIndex}] = {addVal};"));
-
-            MainStoryboard.Begin_Ex(canvas, true);
-            codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
-            codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
-
+            var aaf = new ArrayAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems());
+            aaf.AddElem(addIndex, addVal);
         }
 
         /// <summary>
@@ -143,10 +131,6 @@ namespace DataStructureVisualizer.ViewModels.Canvas
                     var tmpArray = canvas.FindName("tmpArray") as ItemsControl;
                     sf = new MergeSortFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems()) { Group1Iterator = group1Iterator, Group2Iterator = group2Iterator, TmpArray = tmpArray };
                     break;
-
-                case SortType.TEST:
-                    sf = new TestSort(canvas, container, MainStoryboard, DataItems.RevertElems());
-                    break;
             }
 
             sf?.Execute();
@@ -175,27 +159,10 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var codeBlockPanelView = GetCodeBlockPanelView();
             codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
 
+            var aaf = new ArrayAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems.RevertElems());
+            aaf.RemoveElemAlgorithm(rmvIndex);
+
             var saf = new SuccessiveAlgorithmFactory(canvas, container, MainStoryboard, DataItems.RevertElems());
-
-            // TODO 01: 删除元素
-            saf.RemoveElem(rmvIndex);
-            for (int i = rmvIndex + 1; i < count; i++)
-            {
-                // TODO 02: 依次左移元素
-                saf.MoveElem(elemIndex: i, toIndex: i - 1, log: new LogViewModel($"Left shift a[{i}]", $"a[{i-1}] = a[{i}];"));
-            }
-
-            MainStoryboard.Begin_Ex(canvas, true);
-
-            //var codeBlockPanel = CodeBlockPanelViewModel.Instance;
-            //var codeBlockPanelView = GetCodeBlockPanelView();
-            //codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
-            //codeBlockPanel.CodeBlockStoryboard.Delay(MainStoryboard.Offset);
-            //codeBlockPanel.CodeBlockStoryboard.Begin_Ex(codeBlockPanelView);
-
-            //// 论文截图用
-            //AnimationControlPanelViewModel.Instance.State = AnimationState.Paused;
-            //WeakReferenceMessenger.Default.Send(new PauseAnyAnimationMessage());
         }
 
         public ArrayCanvasViewModel()

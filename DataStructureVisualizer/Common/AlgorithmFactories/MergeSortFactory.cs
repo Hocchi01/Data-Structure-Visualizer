@@ -1,5 +1,7 @@
 ﻿using DataStructureVisualizer.Common.AnimationLib;
 using DataStructureVisualizer.Common.Enums;
+using DataStructureVisualizer.Common.Structs;
+using DataStructureVisualizer.ViewModels;
 using DataStructureVisualizer.ViewModels.Data;
 using DataStructureVisualizer.Views;
 using DataStructureVisualizer.Views.Data;
@@ -29,6 +31,41 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         public MergeSortFactory(Grid canvas, CodeBlockPanelUserControl codeBlockPanelView, ItemsControl container, MyStoryboard myStoryboard, ObservableCollection<DataItemViewModelBase> dataItems) : base(canvas, codeBlockPanelView, container, myStoryboard, dataItems)
         {
             mergedIndices = new int[count];
+
+            string codeBlock =
+                "int* B = (int*)malloc((n+1) * sizeof(int));\\" +
+                "void MergeSort(int A[], int low, int high)\\" +
+                "{\\" +
+                "   if (low < high)\\" +
+                "   {\\" +
+                "       int mid = (low + high) / 2;\\" +
+                "       int i = low, j = mid + 1, k = 0;\\" +
+                "       MergeSort(A, low, mid);\\" +
+                "       MergeSort(A, mid+1, high);\\" +
+                "       while (i <= mid && j <= high)\\" +
+                "       {\\" +
+                "           if (A[i] <= A[j])\\" +
+                "               B[k++] = A[i++];\\" +
+                "           else\\" +
+                "               B[k++] = A[j++];\\" +
+                "       }\\" +
+                "       while (i <= mid)    B[k++] = A[i++];\\" +
+                "       while (j <= high)   B[k++] = A[j++];\\" +
+                "       for (int m = 0; m < k; m++)\\" +
+                "           A[low + m] = B[m];\\" +
+                "   }\\" +
+                "}\\";
+            CodeBlockPanel.SetCodeBlock(codeBlock);
+
+            codeInfos.Add("func", new CodeInfo(1));
+            codeInfos.Add("ms_l", new CodeInfo(7));
+            codeInfos.Add("ms_r", new CodeInfo(8));
+            codeInfos.Add("w1", new CodeInfo(9));
+            codeInfos.Add("g1", new CodeInfo(12));
+            codeInfos.Add("g2", new CodeInfo(14));
+            codeInfos.Add("w2", new CodeInfo(16));
+            codeInfos.Add("w3", new CodeInfo(17));
+            codeInfos.Add("copy", new CodeInfo(18, 2));
         }
 
         protected override void HiddenAllAuxiliaryControls()
@@ -39,57 +76,77 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
 
         private void MergeSort(int begIndex, int endIndex)
         {
+            //CodeBlockPanel.AddAnimation(codeInfos["func"], time: 250);
+            //CodeBlockPanel.CodeBlockStoryboard.Delay(150);
             if (begIndex >= endIndex) return;
 
             int midIndex = (begIndex + endIndex) / 2;
             int g1BegIndex = begIndex, g1EndIndex = midIndex;
             int g2BegIndex = midIndex + 1, g2EndIndex = endIndex;
 
+            //CodeBlockPanel.AddAnimation(codeInfos["ms_l"], time: 250);
             MergeSort(g1BegIndex, g1EndIndex);
+            //CodeBlockPanel.AddAnimation(codeInfos["ms_r"], time: 250);
             MergeSort(g2BegIndex, g2EndIndex);
 
             int iter = 0, g1Iter = g1BegIndex, g2Iter = g2BegIndex;
 
-            ItersReturn(g1BegIndex, g2BegIndex);
+            MainStoryboard.Offset = CodeBlockPanel.CodeBlockStoryboard.Offset;
+            ItersReturn(g1BegIndex, g2BegIndex, new LogViewModel($"Merge [{g1BegIndex}, {g1EndIndex}] and [{g2BegIndex}, {g2EndIndex}]", $"MergeSort({g1BegIndex}, {g2EndIndex})"));
             MainStoryboard.InsertAction(() => { DivideIntoGroups(g1BegIndex, g1EndIndex, g2BegIndex, g2EndIndex); });
             MainStoryboard.InsertAction(() => { GenerateTmpArray(endIndex - begIndex + 1); });
 
+            CodeBlockPanel.AddAnimation(codeInfos["w1"], MainStoryboard.Offset);
+            CodeBlockPanel.CodeBlockStoryboard.Delay(150);
             while (g1Iter <= g1EndIndex && g2Iter <= g2EndIndex)
             {
+                MainStoryboard.Offset = CodeBlockPanel.CodeBlockStoryboard.Offset;
+
                 if (DataItems[table[g1Iter]].Value <= DataItems[table[g2Iter]].Value)
                 {
-                    OperateGroup1(ref g1Iter, ref iter, g1EndIndex);
+                    CodeBlockPanel.AddAnimation(codeInfos["g1"]);
+                    OperateGroup1(ref g1Iter, ref iter, g1EndIndex, new LogViewModel($"a[{g1Iter}] <= a[{g2Iter}]", "Pop Group1", $"b[{iter}] = a[{g1Iter}];"));
                 }
                 else
                 {
-                    OperateGroup2(ref g2Iter, ref iter, g2EndIndex);
+                    CodeBlockPanel.AddAnimation(codeInfos["g2"]);
+                    OperateGroup2(ref g2Iter, ref iter, g2EndIndex, new LogViewModel($"a[{g1Iter}] > a[{g2Iter}]", "Pop Group2", $"b[{iter}] = a[{g2Iter}];"));
                 }
+
+                CodeBlockPanel.AddAnimation(codeInfos["w1"], MainStoryboard.Offset);
+                CodeBlockPanel.CodeBlockStoryboard.Delay(150);
             }
 
+            CodeBlockPanel.AddAnimation(codeInfos["w2"]);
+            MainStoryboard.Offset = CodeBlockPanel.CodeBlockStoryboard.Offset;
             while (g1Iter <= g1EndIndex)
             {
-                OperateGroup1(ref g1Iter, ref iter, g1EndIndex);
+                OperateGroup1(ref g1Iter, ref iter, g1EndIndex, new LogViewModel($"Group1 exists elem", "Pop Group1", $"b[{iter}] = a[{g1Iter}];"));
             }
 
+            CodeBlockPanel.AddAnimation(codeInfos["w3"], MainStoryboard.Offset);
             while (g2Iter <= g2EndIndex)
             {
-                OperateGroup2(ref g2Iter, ref iter, g2EndIndex);
+                OperateGroup2(ref g2Iter, ref iter, g2EndIndex, new LogViewModel($"Group2 exists elem", "Pop Group2", $"b[{iter}] = a[{g2Iter}];"));
             }
 
             MergeElemsInTable(begIndex, iter);
-            ElemsReturn(begIndex, endIndex);
+
+            CodeBlockPanel.AddAnimation(codeInfos["copy"], MainStoryboard.Offset);
+            ElemsReturn(begIndex, endIndex, new LogViewModel("Write-back merged sequence"));
+            CodeBlockPanel.CodeBlockStoryboard.Offset = MainStoryboard.Offset;
         }
 
-        private void OperateGroup1(ref int g1Iter, ref int iter, int g1EndIndex)
+        private void OperateGroup1(ref int g1Iter, ref int iter, int g1EndIndex, LogViewModel log)
         {
-            TmpStoreElem(g1Iter, iter);
+            TmpStoreElem(g1Iter, iter, log);
             mergedIndices[iter++] = g1Iter++;
             if (g1Iter <= g1EndIndex) IterNext(Group1Iterator, g1Iter);
         }
 
-        private void OperateGroup2(ref int g2Iter, ref int iter, int g2EndIndex)
+        private void OperateGroup2(ref int g2Iter, ref int iter, int g2EndIndex, LogViewModel log)
         {
-            TmpStoreElem(g2Iter, iter);
+            TmpStoreElem(g2Iter, iter, log);
             mergedIndices[iter++] = g2Iter++;
             if (g2Iter <= g2EndIndex) IterNext(Group2Iterator, g2Iter);
         }
@@ -129,12 +186,12 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// </summary>
         /// <param name="g1BegIndex"></param>
         /// <param name="g2BegIndex"></param>
-        private void ItersReturn(int g1BegIndex, int g2BegIndex)
+        private void ItersReturn(int g1BegIndex, int g2BegIndex, LogViewModel log)
         {
             var g1IterMove = GetIterMovementAnimation(Group1Iterator, g1BegIndex);
             var g2IterMove = GetIterMovementAnimation(Group2Iterator, g2BegIndex);
 
-            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { g1IterMove, g2IterMove });
+            MainStoryboard.AddAsyncAnimations(new List<SimulatedDoubleAnimation> { g1IterMove, g2IterMove }, log: log);
         }
 
         /// <summary>
@@ -192,7 +249,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// </summary>
         /// <param name="elemIndex"></param>
         /// <param name="toIndex"></param>
-        private void TmpStoreElem(int elemIndex, int toIndex)
+        private void TmpStoreElem(int elemIndex, int toIndex, LogViewModel log)
         {
             int elemRealIndex = table[elemIndex];
 
@@ -208,7 +265,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
                 downMove
             };
 
-            MainStoryboard.AddAsyncAnimations(animations, () => { ActivateElem(elemRealIndex); });
+            MainStoryboard.AddAsyncAnimations(animations, () => { ActivateElem(elemRealIndex); }, log: log);
             MoveElem(elemIndex, toIndex, null, null, null, false);
         }
 
@@ -228,7 +285,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
         /// </summary>
         /// <param name="begIndex"></param>
         /// <param name="endIndex"></param>
-        private void ElemsReturn(int begIndex, int endIndex)
+        private void ElemsReturn(int begIndex, int endIndex, LogViewModel log)
         {
             var rightMove = new SimulatedDoubleAnimation(by: begIndex * (float)AnimationHelper.StepLen, time: 500);
             var leftMove = new SimulatedDoubleAnimation(by: -begIndex * (float)AnimationHelper.StepLen, time: 500)
@@ -248,7 +305,7 @@ namespace DataStructureVisualizer.Common.AlgorithmFactories
             var tmpArrayContainer = new List<DependencyObject> { TmpArray };
             tmpArrayContainer.AddRange(valueItems);
 
-            MainStoryboard.AddAsyncAnimations(rightMove, tmpArrayContainer, AnimationHelper.HorizontallyMoveParam, () => { DeactivateElem(); });
+            MainStoryboard.AddAsyncAnimations(rightMove, tmpArrayContainer, AnimationHelper.HorizontallyMoveParam, () => { DeactivateElem(); }, log: log);
             MainStoryboard.AddAsyncAnimations(upMove, valueItems, AnimationHelper.VerticallyMoveParam);
             MainStoryboard.AddAsyncAnimations(stick);
             MainStoryboard.AddSyncAnimation(leftMove);

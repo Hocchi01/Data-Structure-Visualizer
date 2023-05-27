@@ -29,7 +29,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var codeBlockPanelView = GetCodeBlockPanelView();
             var container = canvas.FindName("binarySearchTreeItemsControl") as ItemsControl;
             var codeBlockPanel = CodeBlockPanelViewModel.Instance;
-            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard(false);
 
             var bstaf = new BinarySearchTreeAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
 
@@ -47,7 +47,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var codeBlockPanelView = GetCodeBlockPanelView();
             var container = canvas.FindName("binarySearchTreeItemsControl") as ItemsControl;
             var codeBlockPanel = CodeBlockPanelViewModel.Instance;
-            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard(false);
 
             var bstaf = new BinarySearchTreeAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
 
@@ -61,7 +61,7 @@ namespace DataStructureVisualizer.ViewModels.Canvas
             var codeBlockPanelView = GetCodeBlockPanelView();
             var container = canvas.FindName("binarySearchTreeItemsControl") as ItemsControl;
             var codeBlockPanel = CodeBlockPanelViewModel.Instance;
-            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard();
+            codeBlockPanel.CodeBlockStoryboard = new MyStoryboard(false);
 
             var bstaf = new BinarySearchTreeAlgorithmFactory(canvas, codeBlockPanelView, container, MainStoryboard, DataItems);
 

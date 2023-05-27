@@ -39,6 +39,11 @@ namespace DataStructureVisualizer.Common.Messages
             Values = values;
         }
 
+        public GenerateDataMessage(List<int> values)
+        {
+            Values = values.ToArray();
+        }
+
         public GenerateDataMessage()
         {
 
